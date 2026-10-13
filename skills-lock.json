@@ -1,0 +1,143 @@
+{
+  "version": 1,
+  "skills": {
+    "deploy-to-vercel": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/deploy-to-vercel/SKILL.md",
+      "computedHash": "3a0481591523c55ecfe2569b6b28b2dcbfa3742367667697219d29170981ad53"
+    },
+    "find-skills": {
+      "source": "vercel-labs/skills",
+      "sourceType": "github",
+      "skillPath": "skills/find-skills/SKILL.md",
+      "computedHash": "b146008599c31057cef1c145774cea5d5afb30e8f43fa802e47a4b461419aaaf"
+    },
+    "prisma-next": {
+      "source": "prisma/prisma-next",
+      "sourceType": "github",
+      "skillPath": "skills/prisma-next/SKILL.md",
+      "computedHash": "b52ac75c388fa0ab956e045d657871f2ee0556beda1529c0fb24c34b8abba431"
+    },
+    "prisma-next-build": {
+      "source": "prisma/prisma-next",
+      "sourceType": "github",
+      "skillPath": "skills/prisma-next-build/SKILL.md",
+      "computedHash": "ec2baef8672ab09f20fc7dd55441e3fbacba7ca3efdfedf948fb306029447f6f"
+    },
+    "prisma-next-contract": {
+      "source": "prisma/prisma-next",
+      "sourceType": "github",
+      "skillPath": "skills/prisma-next-contract/SKILL.md",
+      "computedHash": "79678026fe83749c3767c7427c70588eba1b79c05b0dc54719830715c85cff36"
+    },
+    "prisma-next-debug": {
+      "source": "prisma/prisma-next",
+      "sourceType": "github",
+      "skillPath": "skills/prisma-next-debug/SKILL.md",
+      "computedHash": "52ed9eeea88864e2c4afaee1e8ea1508d98ffa4da7ca7bcdf25bc0ed1b076e12"
+    },
+    "prisma-next-extension-upgrade": {
+      "source": "prisma/prisma-next",
+      "sourceType": "github",
+      "skillPath": "skills/extension-author/prisma-next-extension-upgrade/SKILL.md",
+      "computedHash": "63f2945397738fa742ac7ada7b5b994659ef9ae14f68bab3b93af911ef1fbec6"
+    },
+    "prisma-next-feedback": {
+      "source": "prisma/prisma-next",
+      "sourceType": "github",
+      "skillPath": "skills/prisma-next-feedback/SKILL.md",
+      "computedHash": "8c0b3fd53fa3fb67cafb682b6b5b3de735e12c2ca6af6ad49c7380c8e181c66a"
+    },
+    "prisma-next-migration-review": {
+      "source": "prisma/prisma-next",
+      "sourceType": "github",
+      "skillPath": "skills/prisma-next-migration-review/SKILL.md",
+      "computedHash": "fd5359a22e3e6ed12a671718cafe96ccc627b0aa59330fb95dc1f9149a577c2d"
+    },
+    "prisma-next-migrations": {
+      "source": "prisma/prisma-next",
+      "sourceType": "github",
+      "skillPath": "skills/prisma-next-migrations/SKILL.md",
+      "computedHash": "34b7a69e89c2e7e74ab0fe93121faa326e82da0bfb0f18752f437e5f75557adb"
+    },
+    "prisma-next-queries": {
+      "source": "prisma/prisma-next",
+      "sourceType": "github",
+      "skillPath": "skills/prisma-next-queries/SKILL.md",
+      "computedHash": "a7c10a00f06eb79dfde4f702ee47df94a57916f4e31cc12b57920a4311d85f61"
+    },
+    "prisma-next-quickstart": {
+      "source": "prisma/prisma-next",
+      "sourceType": "github",
+      "skillPath": "skills/prisma-next-quickstart/SKILL.md",
+      "computedHash": "da52052b2a19ec6b04ac4dd6e5d4240a8266fec0d1f889d117c7aa465c1a926c"
+    },
+    "prisma-next-runtime": {
+      "source": "prisma/prisma-next",
+      "sourceType": "github",
+      "skillPath": "skills/prisma-next-runtime/SKILL.md",
+      "computedHash": "5ab4c5abc8de728e5622f56903a5d1a1bab20e10dddddbad33e1c8104e949a18"
+    },
+    "prisma-next-supabase": {
+      "source": "prisma/prisma-next",
+      "sourceType": "github",
+      "skillPath": "skills/prisma-next-supabase/SKILL.md",
+      "computedHash": "687f8ac5dcdac451b31f1de9a146e5fa185e3e06af6cfecf26da6b060357aa9f"
+    },
+    "prisma-next-upgrade": {
+      "source": "prisma/prisma-next",
+      "sourceType": "github",
+      "skillPath": "skills/upgrade/prisma-next-upgrade/SKILL.md",
+      "computedHash": "f7c6ad111c953da25794cc313d30aa7843c0b726aca3c6d8c61636c2cf11e7bd"
+    },
+    "vercel-cli-with-tokens": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/vercel-cli-with-tokens/SKILL.md",
+      "computedHash": "d3ad6e1d6278a4df322ee5bf49211f921f4aaea1148fb127b4e928de04b39fef"
+    },
+    "vercel-composition-patterns": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/composition-patterns/SKILL.md",
+      "computedHash": "c444852365f652164a3d1c66df25f4086eb01a441053b13a0df4c0c1be2c00b8"
+    },
+    "vercel-optimize": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/vercel-optimize/SKILL.md",
+      "computedHash": "e42a3768a0104654334752cb78abb04305c46f6d5c7a0d4ccc30e35a23cecd38"
+    },
+    "vercel-react-best-practices": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/react-best-practices/SKILL.md",
+      "computedHash": "90dc616354026da3823d34169955600d828854835e247fe98fb0e6758eef53b5"
+    },
+    "vercel-react-native-skills": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/react-native-skills/SKILL.md",
+      "computedHash": "a804b4e848059822638c390359976f7021380bcefb1469d473aa4e9202c15ecb"
+    },
+    "vercel-react-view-transitions": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/react-view-transitions/SKILL.md",
+      "computedHash": "12f8e118b8ca5fa45e3f0b56c269fb2e35251b705d2320b26b0727a0f58adefc"
+    },
+    "web-design-guidelines": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/web-design-guidelines/SKILL.md",
+      "computedHash": "d8e7d3afe37dcc8a97b99ffb5afdb4d0919ae0092ea8b68f44eb201f035e33ac"
+    },
+    "writing-guidelines": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/writing-guidelines/SKILL.md",
+      "computedHash": "9c221f46dca7bdf94af9c27ce54a7b4ea323c590333f8bc0a55c65254c646584"
+    }
+  }
+}
