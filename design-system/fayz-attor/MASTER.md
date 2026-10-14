@@ -46,6 +46,19 @@ Brend tokenlari o'zgarmadi — bu ularning ochiq-fon juftligi.
 | `--danger-deep` | `#AC4232` | 5.24 ✅ | 5.87 ✅ | Ochiq fondagi xato matni |
 | `--success-deep` | `#237650` | 4.97 ✅ | 5.56 ✅ | Ochiq fondagi "Mavjud" matni |
 
+### Hosila tokenlar (to'q fon uchun)
+
+Asl `--muted` (#8FA7AC) to'q fonda ham 4.19 — chegaradan past. To'q yuzalardagi
+ikkilamchi matn uchun `--muted-on-dark` ishlatiladi. To'q yuzalarda chuqurlik
+**ochartirish emas, to'qaytirish** orqali beriladi: `--brand-mid` kartochka foni
+sifatida juda ochiq (gold undan atigi 3.11 bilan ajraladi).
+
+| Token | Hex | brand-deep fonda | surface-2 fonda | Qayerda |
+|---|---|---|---|---|
+| `--muted-on-dark` | `#B4C6CA` | 6.00 ✅ | 6.51 ✅ | To'q fondagi ikkilamchi matn |
+| `--surface-dark-card` | `#0A3942` | — | — | To'q fondagi kartochka (ivory 11.19, gold 5.56) |
+| `--surface-dark-2` | `#103F47` | — | — | To'q fondagi muted/secondary yuza |
+
 ### Tasdiqlangan kontrast juftliklari (WCAG hisoblangan)
 
 | Matn | Fon | Nisbat | Daraja |
@@ -72,6 +85,13 @@ Brend tokenlari o'zgarmadi — bu ularning ochiq-fon juftligi.
 | `--brand-light` | `--brand-deep` | 2.63 ❌ | Matn uchun emas — faqat border/dekor |
 | `--gold` | `--brand-mid` | 3.11 ❌ | Matn uchun emas |
 | `--pure-white` | `--success` | 3.38 ❌ | Badge foni `--success-deep` qil |
+| `--muted` | `--brand-mid` | 2.76 ❌ | `--muted-on-dark` ishlat |
+| `--gold-light` | `--brand-mid` | 4.26 ❌ | Kartochka foni `--surface-dark-card` qil |
+
+> **Amalda:** bu tokenlar `app/globals.css` da shadcn semantik nomlariga
+> bog'langan (`--background`, `--card`, `--muted-foreground` va h.k.).
+> Tailwind'da to'g'ridan-to'g'ri `bg-brand-deep`, `text-gold`, `text-muted-on-dark`
+> kabi utility'lar ham mavjud. Yangi juftlik qo'shishdan oldin kontrastni hisobla.
 
 ### Rang ishlatish qoidasi
 
