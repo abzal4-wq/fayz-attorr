@@ -1,0 +1,127 @@
+'use client'
+
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { SearchX } from 'lucide-react'
+import Link from 'next/link'
+import { ProductCard, ProductCardSkeleton } from './product-card'
+import { buildCatalogQuery } from '@/lib/catalog-params'
+
+/**
+ * Cheksiz scroll: mobil uchun paginationdan qulayroq.
+ *
+ * Birinchi sahifa serverda render qilingan holda keladi — SEO va birinchi
+ * ko'rinish tezligi uchun. Davomi IntersectionObserver orqali yuklanadi,
+ * tugma ham qoldirilgan (observer ishlamasa yoki klaviatura bilan).
+ */
+export function CatalogGrid({ initialProducts, initialHasMore, filters }) {
+  const [products, setProducts] = useState(initialProducts)
+  const [hasMore, setHasMore] = useState(initialHasMore)
+  const [page, setPage] = useState(1)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
+  const sentinelRef = useRef(null)
+
+  // Filtr o'zgarsa ro'yxat noldan boshlanadi
+  useEffect(() => {
+    setProducts(initialProducts)
+    setHasMore(initialHasMore)
+    setPage(1)
+    setError(null)
+  }, [initialProducts, initialHasMore])
+
+  const loadMore = useCallback(async () => {
+    if (loading || !hasMore) return
+
+    setLoading(true)
+    setError(null)
+
+    const nextPage = page + 1
+    const query = buildCatalogQuery({ ...filters, page: nextPage })
+
+    try {
+      const res = await fetch(`/api/katalog?${query}`)
+      const data = await res.json()
+      if (!res.ok || !data.ok) throw new Error('Yuklab bo\'lmadi')
+
+      setProducts((prev) => [...prev, ...data.products])
+      setHasMore(data.hasMore)
+      setPage(nextPage)
+    } catch {
+      setError("Keyingi atirlarni yuklab bo'lmadi. Internetni tekshiring.")
+    } finally {
+      setLoading(false)
+    }
+  }, [filters, hasMore, loading, page])
+
+  useEffect(() => {
+    const node = sentinelRef.current
+    if (!node || !hasMore) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) loadMore()
+      },
+      { rootMargin: '400px' }
+    )
+
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [hasMore, loadMore])
+
+  if (products.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border px-6 py-16 text-center">
+        <SearchX className="size-8 text-muted-deep" aria-hidden="true" />
+        <p className="mt-4 font-serif text-xl text-foreground">Atir topilmadi</p>
+        <p className="mt-2 max-w-sm text-sm text-muted-deep">
+          Tanlangan shartlarga mos atir yo'q. Filtrni kengaytirib ko'ring.
+        </p>
+        <Link
+          href="/katalog"
+          className="mt-6 inline-flex min-h-12 items-center justify-center rounded-lg bg-primary px-6 font-semibold text-primary-foreground transition-colors duration-200 hover:bg-gold-light"
+        >
+          Filtrni tozalash
+        </Link>
+      </div>
+    )
+  }
+
+  return (
+    <div>
+      <ul className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
+        {products.map((product, index) => (
+          <li key={product.id}>
+            <ProductCard product={product} priority={index < 4} />
+          </li>
+        ))}
+
+        {loading
+          ? Array.from({ length: 4 }, (_, i) => (
+              <li key={`skeleton-${i}`}>
+                <ProductCardSkeleton />
+              </li>
+            ))
+          : null}
+      </ul>
+
+      {error ? (
+        <p role="alert" className="mt-6 text-center text-sm text-danger-deep">
+          {error}
+        </p>
+      ) : null}
+
+      {hasMore ? (
+        <div ref={sentinelRef} className="mt-8 flex justify-center">
+          <button
+            type="button"
+            onClick={loadMore}
+            disabled={loading}
+            className="min-h-12 rounded-lg border border-border px-6 text-sm font-semibold text-foreground transition-colors duration-200 hover:border-brand-mid disabled:opacity-60"
+          >
+            {loading ? 'Yuklanmoqda...' : 'Yana ko\'rsatish'}
+          </button>
+        </div>
+      ) : null}
+    </div>
+  )
+}

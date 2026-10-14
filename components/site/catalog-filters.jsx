@@ -1,0 +1,340 @@
+'use client'
+
+import { useRouter } from 'next/navigation'
+import { useEffect, useState, useTransition } from 'react'
+import { SlidersHorizontal, X } from 'lucide-react'
+import { buildCatalogQuery, countActiveFilters } from '@/lib/catalog-params'
+import { GENDER_LABELS, formatSom } from '@/lib/format'
+import { cn } from '@/lib/utils'
+
+function Section({ title, children }) {
+  return (
+    <div className="border-b border-border py-5 first:pt-0 last:border-b-0">
+      <h3 className="mb-3 text-sm font-semibold text-foreground">{title}</h3>
+      {children}
+    </div>
+  )
+}
+
+function Checkbox({ checked, onChange, label, count }) {
+  return (
+    <label className="flex min-h-11 cursor-pointer items-center gap-3 text-sm">
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
+        className="size-4 cursor-pointer accent-brand-mid"
+      />
+      <span className="flex-1 text-foreground">{label}</span>
+      {count != null ? (
+        <span className="text-xs text-muted-deep">{count}</span>
+      ) : null}
+    </label>
+  )
+}
+
+/** Filtr tarkibi — sidebar va bottom sheet ichida bir xil ishlatiladi. */
+function FilterBody({ draft, setDraft, options }) {
+  function toggleIn(key, value) {
+    const current = draft[key]
+    const next = current.includes(value)
+      ? current.filter((v) => v !== value)
+      : [...current, value]
+    setDraft({ ...draft, [key]: next })
+  }
+
+  return (
+    <div>
+      <Section title="Kimga">
+        <div className="flex flex-wrap gap-2">
+          {Object.entries(GENDER_LABELS).map(([value, label]) => {
+            const active = draft.gender === value
+            return (
+              <button
+                key={value}
+                type="button"
+                aria-pressed={active}
+                onClick={() =>
+                  setDraft({ ...draft, gender: active ? null : value })
+                }
+                className={cn(
+                  'min-h-11 rounded-lg border px-4 text-sm font-medium transition-colors duration-200',
+                  active
+                    ? 'border-brand-deep bg-secondary text-secondary-foreground'
+                    : 'border-border text-foreground hover:border-brand-mid'
+                )}
+              >
+                {label}
+              </button>
+            )
+          })}
+        </div>
+      </Section>
+
+      {options.brands.length > 0 ? (
+        <Section title="Brend">
+          <div className="max-h-64 space-y-0.5 overflow-y-auto">
+            {options.brands.map((brand) => (
+              <Checkbox
+                key={brand.slug}
+                checked={draft.brandSlugs.includes(brand.slug)}
+                onChange={() => toggleIn('brandSlugs', brand.slug)}
+                label={brand.name}
+                count={brand.count}
+              />
+            ))}
+          </div>
+        </Section>
+      ) : null}
+
+      {options.sizes.length > 0 ? (
+        <Section title="Hajm">
+          <div className="flex flex-wrap gap-2">
+            {options.sizes.map((size) => {
+              const active = draft.sizeMl.includes(size.valueMl)
+              return (
+                <button
+                  key={size.id}
+                  type="button"
+                  aria-pressed={active}
+                  onClick={() => toggleIn('sizeMl', size.valueMl)}
+                  className={cn(
+                    'min-h-11 rounded-lg border px-3.5 text-sm transition-colors duration-200',
+                    active
+                      ? 'border-brand-deep bg-secondary text-secondary-foreground'
+                      : 'border-border text-foreground hover:border-brand-mid'
+                  )}
+                >
+                  {size.label}
+                </button>
+              )
+            })}
+          </div>
+        </Section>
+      ) : null}
+
+      <Section title="Narx">
+        <div className="flex items-center gap-2">
+          <label className="flex-1">
+            <span className="sr-only">Eng kam narx</span>
+            <input
+              type="number"
+              inputMode="numeric"
+              min={0}
+              placeholder={formatSom(options.minPrice, { withSuffix: false })}
+              value={draft.minPrice ?? ''}
+              onChange={(e) =>
+                setDraft({
+                  ...draft,
+                  minPrice: e.target.value === '' ? null : Number(e.target.value),
+                })
+              }
+              className="w-full min-h-11 rounded-lg border border-input bg-card px-3 text-[16px] text-card-foreground focus:border-brand-mid focus:outline-none"
+            />
+          </label>
+          <span className="text-muted-deep">—</span>
+          <label className="flex-1">
+            <span className="sr-only">Eng yuqori narx</span>
+            <input
+              type="number"
+              inputMode="numeric"
+              min={0}
+              placeholder={formatSom(options.maxPrice, { withSuffix: false })}
+              value={draft.maxPrice ?? ''}
+              onChange={(e) =>
+                setDraft({
+                  ...draft,
+                  maxPrice: e.target.value === '' ? null : Number(e.target.value),
+                })
+              }
+              className="w-full min-h-11 rounded-lg border border-input bg-card px-3 text-[16px] text-card-foreground focus:border-brand-mid focus:outline-none"
+            />
+          </label>
+        </div>
+        <p className="mt-2 text-xs text-muted-deep">
+          Do'kondagi narxlar: {formatSom(options.minPrice)} —{' '}
+          {formatSom(options.maxPrice)}
+        </p>
+      </Section>
+
+      <Section title="Qo'shimcha">
+        <Checkbox
+          checked={draft.onlyDiscount}
+          onChange={(v) => setDraft({ ...draft, onlyDiscount: v })}
+          label="Faqat chegirmadagilar"
+        />
+      </Section>
+    </div>
+  )
+}
+
+export function CatalogFilters({ filters, options, total }) {
+  const router = useRouter()
+  const [isPending, startTransition] = useTransition()
+  const [sheetOpen, setSheetOpen] = useState(false)
+  const [draft, setDraft] = useState(filters)
+
+  // Orqaga/oldinga bosilganda yoki havola almashganda qoralama yangilanadi
+  useEffect(() => {
+    setDraft(filters)
+  }, [filters])
+
+  function apply(next = draft) {
+    const query = buildCatalogQuery({ ...next, page: 1 })
+    setSheetOpen(false)
+    startTransition(() => {
+      router.push(query ? `/katalog?${query}` : '/katalog')
+    })
+  }
+
+  function clearAll() {
+    const empty = {
+      gender: null,
+      brandSlugs: [],
+      sizeMl: [],
+      minPrice: null,
+      maxPrice: null,
+      onlyDiscount: false,
+      sort: filters.sort,
+    }
+    setDraft(empty)
+    apply(empty)
+  }
+
+  const activeCount = countActiveFilters(filters)
+
+  return (
+    <>
+      {/* Desktop: chapdagi sidebar */}
+      <aside className="hidden w-64 shrink-0 lg:block">
+        <div className="sticky top-24">
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="font-serif text-xl text-foreground">Filtr</h2>
+            {activeCount > 0 ? (
+              <button
+                type="button"
+                onClick={clearAll}
+                className="text-sm text-muted-deep underline-offset-4 hover:text-foreground hover:underline"
+              >
+                Tozalash
+              </button>
+            ) : null}
+          </div>
+
+          <FilterBody draft={draft} setDraft={setDraft} options={options} />
+
+          <button
+            type="button"
+            onClick={() => apply()}
+            disabled={isPending}
+            className="mt-5 flex min-h-12 w-full items-center justify-center rounded-lg bg-primary px-4 font-semibold text-primary-foreground transition-colors duration-200 hover:bg-gold-light disabled:opacity-70"
+          >
+            Qo'llash
+          </button>
+        </div>
+      </aside>
+
+      {/* Mobil: sticky tugma */}
+      <button
+        type="button"
+        onClick={() => setSheetOpen(true)}
+        className="fixed bottom-20 left-1/2 z-30 flex min-h-12 -translate-x-1/2 items-center gap-2 rounded-full bg-brand-deep px-5 text-sm font-semibold text-ivory shadow-lg lg:hidden"
+      >
+        <SlidersHorizontal className="size-4" aria-hidden="true" />
+        Filtr
+        {activeCount > 0 ? (
+          <span className="flex size-5 items-center justify-center rounded-full bg-gold text-xs font-bold text-brand-darker">
+            {activeCount}
+          </span>
+        ) : null}
+      </button>
+
+      {/* Mobil: pastdan chiqadigan shisha panel */}
+      {sheetOpen ? (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Filtr"
+          className="fixed inset-0 z-50 flex items-end lg:hidden"
+        >
+          <button
+            type="button"
+            aria-label="Yopish"
+            onClick={() => setSheetOpen(false)}
+            className="absolute inset-0 bg-brand-darker/50"
+          />
+
+          <div className="glass-light relative max-h-[85vh] w-full overflow-y-auto rounded-t-2xl bg-background p-5 pb-safe">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="font-serif text-xl text-foreground">Filtr</h2>
+              <button
+                type="button"
+                onClick={() => setSheetOpen(false)}
+                aria-label="Yopish"
+                className="flex size-11 items-center justify-center rounded-lg text-muted-deep hover:text-foreground"
+              >
+                <X className="size-5" aria-hidden="true" />
+              </button>
+            </div>
+
+            <FilterBody draft={draft} setDraft={setDraft} options={options} />
+
+            <div className="sticky bottom-0 mt-5 flex gap-2 bg-background pb-2 pt-3">
+              {activeCount > 0 ? (
+                <button
+                  type="button"
+                  onClick={clearAll}
+                  className="min-h-12 rounded-lg border border-border px-4 text-sm font-semibold text-foreground"
+                >
+                  Tozalash
+                </button>
+              ) : null}
+              <button
+                type="button"
+                onClick={() => apply()}
+                disabled={isPending}
+                className="flex min-h-12 flex-1 items-center justify-center rounded-lg bg-primary px-4 font-semibold text-primary-foreground disabled:opacity-70"
+              >
+                Ko'rsatish{total != null ? ` (${total})` : ''}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+    </>
+  )
+}
+
+/** Saralash tanlovi — filtr panelidan tashqarida, ro'yxat tepasida. */
+export function CatalogSort({ filters }) {
+  const router = useRouter()
+
+  return (
+    <label className="flex items-center gap-2 text-sm">
+      <span className="sr-only">Saralash</span>
+      <select
+        value={filters.sort}
+        onChange={(e) => {
+          const query = buildCatalogQuery({
+            ...filters,
+            sort: e.target.value,
+            page: 1,
+          })
+          router.push(query ? `/katalog?${query}` : '/katalog')
+        }}
+        className="min-h-11 rounded-lg border border-input bg-card px-3 text-sm text-card-foreground focus:border-brand-mid focus:outline-none"
+      >
+        {Object.entries({
+          yangi: 'Yangi',
+          arzon: 'Avval arzoni',
+          qimmat: 'Avval qimmati',
+          ommabop: 'Ommabop',
+        }).map(([value, label]) => (
+          <option key={value} value={value}>
+            {label}
+          </option>
+        ))}
+      </select>
+    </label>
+  )
+}

@@ -81,8 +81,12 @@ model ProductVariant {
   product         Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
   sizeId          String
   size            Size        @relation(fields: [sizeId], references: [id])
-  price           Decimal     @db.Decimal(12, 2) // so'mda
+  price           Decimal     @db.Decimal(12, 2) // so'mda, chegirmasiz
   discountPercent Int         @default(0) // 0-100, ixtiyoriy
+  // Chegirmadan keyingi narx. Saqlanadi, chunki katalogdagi narx filtri va
+  // "arzon/qimmat" saralash SERVERDA bajarilishi kerak — Prisma hisoblangan
+  // qiymat bo'yicha filtrlay olmaydi. Har saqlashda qayta hisoblanadi.
+  finalPrice      Decimal     @default(0) @db.Decimal(12, 2)
   stockQty        Int         @default(0)
   inStock         Boolean     @default(true) // admin qo'lda ham o'chira oladi
   sku             String?

@@ -130,13 +130,18 @@ async function seedDemo() {
           ],
         },
         variants: {
-          create: Object.entries(p.prices).map(([ml, price]) => ({
-            sizeId: sizeByMl[Number(ml)],
-            price,
-            discountPercent: p.discount?.[ml] ?? 0,
-            stockQty: 10,
-            inStock: true,
-          })),
+          create: Object.entries(p.prices).map(([ml, price]) => {
+            const discount = p.discount?.[ml] ?? 0
+            return {
+              sizeId: sizeByMl[Number(ml)],
+              price,
+              discountPercent: discount,
+              // Katalogdagi narx filtri va saralash shu ustun bo'yicha ishlaydi
+              finalPrice: discount ? Math.round(price * (1 - discount / 100)) : price,
+              stockQty: 10,
+              inStock: true,
+            }
+          }),
         },
       },
     })
