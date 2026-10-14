@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { Clock, Instagram, MapPin, Phone, Send } from 'lucide-react'
+import { Clock, MapPin, Phone } from 'lucide-react'
+import { InstagramIcon, TelegramIcon } from './brand-icons'
 import { getStoreSettings } from '@/lib/settings'
 
 export async function SiteFooter() {
@@ -18,12 +19,12 @@ export async function SiteFooter() {
 
   const socials = [
     settings.telegramUrl && {
-      icon: Send,
+      icon: TelegramIcon,
       label: 'Telegram',
       href: settings.telegramUrl,
     },
     settings.instagramUrl && {
-      icon: Instagram,
+      icon: InstagramIcon,
       label: 'Instagram',
       href: settings.instagramUrl,
     },

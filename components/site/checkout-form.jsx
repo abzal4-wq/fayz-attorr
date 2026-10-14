@@ -3,9 +3,10 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { LoaderCircle, ShoppingBag, TriangleAlert } from 'lucide-react'
 import { PhoneInput } from '@/components/phone-input'
+import { TelegramMainButton } from './telegram-controls'
 import { cartTotal, useCart } from '@/lib/cart-store'
 import { useHydrated } from '@/lib/use-hydrated'
 import { formatPhone } from '@/lib/auth/phone'
@@ -48,6 +49,7 @@ export function CheckoutForm({ user, deliveryPrice, deliveryInfo }) {
   const [formError, setFormError] = useState(null)
   const [problems, setProblems] = useState([])
   const [pending, setPending] = useState(false)
+  const formRef = useRef(null)
 
   // Savat bo'shab qolsa (masalan boshqa tabda tozalangan) — savatga qaytaramiz
   useEffect(() => {
@@ -80,6 +82,11 @@ export function CheckoutForm({ user, deliveryPrice, deliveryInfo }) {
   function set(key, value) {
     setForm({ ...form, [key]: value })
   }
+
+  // Telegram MainButton ham, sahifadagi tugma ham shu yo'lni chaqiradi
+  const submitFromTelegram = useCallback(() => {
+    formRef.current?.requestSubmit()
+  }, [])
 
   async function handleSubmit(event) {
     event.preventDefault()
@@ -122,7 +129,20 @@ export function CheckoutForm({ user, deliveryPrice, deliveryInfo }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="grid gap-6 lg:grid-cols-3">
+    <form
+      ref={formRef}
+      onSubmit={handleSubmit}
+      noValidate
+      className="grid gap-6 lg:grid-cols-3"
+    >
+      {/* Mini App'da asosiy amal Telegram'ning o'z tugmasida bo'ladi */}
+      <TelegramMainButton
+        label="Buyurtmani tasdiqlash"
+        onClick={submitFromTelegram}
+        loading={pending}
+        disabled={pending}
+      />
+
       <div className="space-y-4 lg:col-span-2">
         <section className="space-y-4 rounded-xl border border-border bg-card p-4 sm:p-5">
           <h2 className="font-serif text-xl text-card-foreground">
