@@ -46,3 +46,7 @@ coverage/
 
 # agent skills (npx skills bilan qayta o'rnatiladi)
 .agents/
+
+
+# windsurf skill symlinklari (npx skills yaratadi)
+.windsurf/

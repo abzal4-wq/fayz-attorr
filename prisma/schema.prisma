@@ -1,0 +1,207 @@
+// FAYZ ATTOR — ma'lumotlar bazasi sxemasi
+// Asosiy g'oya: narx va mavjudlik HAJMGA bog'liq, shuning uchun ProductVariant.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Brand {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  slug      String    @unique
+  logoUrl   String?
+  logoId    String? // Cloudinary public_id — o'chirish uchun
+  sortOrder Int       @default(0)
+  isActive  Boolean   @default(true)
+  products  Product[]
+  createdAt DateTime  @default(now())
+
+  @@index([isActive, sortOrder])
+}
+
+// Admin oldindan qo'shadigan hajmlar: 10, 15, 20, 30, 50, 100 ml...
+model Size {
+  id        String           @id @default(cuid())
+  valueMl   Int              @unique
+  label     String // "50 ml"
+  sortOrder Int              @default(0)
+  isActive  Boolean          @default(true)
+  variants  ProductVariant[]
+
+  @@index([isActive, sortOrder])
+}
+
+enum Gender {
+  MEN
+  WOMEN
+  UNISEX
+}
+
+model Product {
+  id               String           @id @default(cuid())
+  name             String
+  slug             String           @unique
+  shortDescription String?
+  description      String?
+  gender           Gender
+  brandId          String
+  brand            Brand            @relation(fields: [brandId], references: [id])
+  images           ProductImage[]
+  variants         ProductVariant[]
+  isActive         Boolean          @default(true) // false => saytda KO'RINMAYDI
+  isFeatured       Boolean          @default(false)
+  viewCount        Int              @default(0)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  @@index([gender, isActive])
+  @@index([brandId, isActive])
+  @@index([isActive, isFeatured])
+  @@index([isActive, createdAt])
+}
+
+model ProductImage {
+  id        String  @id @default(cuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url       String
+  publicId  String // Cloudinary public_id — o'chirish uchun
+  sortOrder Int     @default(0)
+
+  @@index([productId, sortOrder])
+}
+
+model ProductVariant {
+  id              String      @id @default(cuid())
+  productId       String
+  product         Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  sizeId          String
+  size            Size        @relation(fields: [sizeId], references: [id])
+  price           Decimal     @db.Decimal(12, 2) // so'mda
+  discountPercent Int         @default(0) // 0-100, ixtiyoriy
+  stockQty        Int         @default(0)
+  inStock         Boolean     @default(true) // admin qo'lda ham o'chira oladi
+  sku             String?
+  orderItems      OrderItem[]
+
+  @@unique([productId, sizeId])
+  @@index([productId])
+}
+
+model User {
+  id           String   @id @default(cuid())
+  phone        String   @unique // +998XXXXXXXXX formatida saqlanadi
+  passwordHash String
+  fullName     String?
+  orders       Order[]
+  createdAt    DateTime @default(now())
+}
+
+enum OrderStatus {
+  NEW
+  CONFIRMED
+  PACKING
+  DELIVERING
+  COMPLETED
+  CANCELLED
+}
+
+// Hozircha online to'lov yo'q. Maydonlar keyingi Payme/Click/Uzum
+// integratsiyasi uchun tayyor turadi.
+enum PaymentStatus {
+  UNPAID
+  PENDING
+  PAID
+  REFUNDED
+}
+
+enum PaymentMethod {
+  CASH_ON_DELIVERY
+  PAYME
+  CLICK
+  UZUM
+}
+
+model Order {
+  id            String        @id @default(cuid())
+  orderNumber   Int           @unique @default(autoincrement())
+  userId        String?
+  user          User?         @relation(fields: [userId], references: [id])
+  customerName  String
+  customerPhone String
+  address       String
+  comment       String?
+  status        OrderStatus   @default(NEW)
+  totalAmount   Decimal       @db.Decimal(12, 2)
+  items         OrderItem[]
+  adminNote     String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  // To'lov moduli — hozircha ishlatilmaydi, bo'sh turadi
+  paymentStatus PaymentStatus @default(UNPAID)
+  paymentMethod PaymentMethod @default(CASH_ON_DELIVERY)
+  paidAt        DateTime?
+  paymentRef    String? // tashqi to'lov tizimi tranzaksiya ID'si
+
+  @@index([status, createdAt])
+  @@index([customerPhone])
+  @@index([userId, createdAt])
+}
+
+// Buyurtma paytidagi narx va nom SAQLANADI — keyin mahsulot
+// o'zgarsa ham chek buzilmaydi.
+model OrderItem {
+  id          String          @id @default(cuid())
+  orderId     String
+  order       Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  variantId   String?
+  variant     ProductVariant? @relation(fields: [variantId], references: [id], onDelete: SetNull)
+  productName String
+  brandName   String
+  sizeLabel   String
+  unitPrice   Decimal         @db.Decimal(12, 2)
+  quantity    Int
+  imageUrl    String?
+
+  @@index([orderId])
+  @@index([variantId])
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  passwordHash String
+  role         String   @default("admin")
+  createdAt    DateTime @default(now())
+}
+
+// Do'kon sozlamalari — admin paneldan tahrirlanadi.
+// Bitta qator (singleton), id = "settings".
+model StoreSettings {
+  id            String   @id @default("settings")
+  phone         String   @default("")
+  address       String   @default("")
+  workingHours  String   @default("")
+  telegramUrl   String   @default("")
+  instagramUrl  String   @default("")
+  deliveryInfo  String   @default("")
+  deliveryPrice Decimal  @default(0) @db.Decimal(12, 2)
+  updatedAt     DateTime @updatedAt
+}
+
+// Login/registratsiya urinishlarini cheklash uchun.
+// Serverless'da xotiradagi counter ishonchsiz — bazada saqlanadi.
+model RateLimit {
+  id        String   @id @default(cuid())
+  key       String // "login:<ip>", "register:<ip>", "order:<ip>"
+  count     Int      @default(1)
+  expiresAt DateTime
+
+  @@unique([key])
+  @@index([expiresAt])
+}
