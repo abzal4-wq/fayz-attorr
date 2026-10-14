@@ -6,7 +6,8 @@ import { useState } from 'react'
 import { Pencil, Plus, Tags, Trash2 } from 'lucide-react'
 import { ConfirmModal, Modal } from './modal'
 import { ImageField } from './image-field'
-import { Alert, Badge, Button, EmptyState, Field, Input, PageHeader, Toggle } from './ui'
+import { Button, Field, Input, Toggle } from './ui'
+import { Alert, Badge, EmptyState, PageHeader } from './display'
 
 const emptyForm = { name: '', sortOrder: 0, isActive: true }
 

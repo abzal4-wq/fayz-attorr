@@ -6,7 +6,8 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 import { Package, Pencil, Plus, Search, Trash2 } from 'lucide-react'
 import { ConfirmModal } from './modal'
-import { Badge, Button, EmptyState, Input, PageHeader, Select, Toggle } from './ui'
+import { Button, Input, Select, Toggle } from './ui'
+import { Badge, EmptyState, PageHeader } from './display'
 import { GENDER_LABELS, formatSom } from '@/lib/format'
 
 export function ProductsList({ products, brands, filters }) {

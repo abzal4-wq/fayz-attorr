@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { ProductForm } from '@/components/admin/product-form'
-import { EmptyState } from '@/components/admin/ui'
+import { EmptyState } from '@/components/admin/display'
 import { prisma } from '@/lib/prisma'
 import { Tags } from 'lucide-react'
 

@@ -4,7 +4,8 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { Pencil, Plus, Ruler, Trash2 } from 'lucide-react'
 import { ConfirmModal, Modal } from './modal'
-import { Alert, Badge, Button, EmptyState, Field, Input, PageHeader, Toggle } from './ui'
+import { Button, Field, Input, Toggle } from './ui'
+import { Alert, Badge, EmptyState, PageHeader } from './display'
 
 const emptyForm = { valueMl: '', label: '', sortOrder: '', isActive: true }
 

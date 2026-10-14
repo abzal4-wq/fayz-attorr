@@ -6,7 +6,8 @@ import { useState } from 'react'
 import { ArrowLeft } from 'lucide-react'
 import { ProductImages } from './product-images'
 import { VariantRows } from './variant-rows'
-import { Alert, Button, Field, Input, Select, Textarea, Toggle } from './ui'
+import { Button, Field, Input, Select, Textarea, Toggle } from './ui'
+import { Alert } from './display'
 import { GENDER_LABELS } from '@/lib/format'
 
 const GENDERS = ['WOMEN', 'MEN', 'UNISEX']
