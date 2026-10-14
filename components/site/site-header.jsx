@@ -4,7 +4,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { ShoppingBag, User } from 'lucide-react'
+import { User } from 'lucide-react'
+import { CartButton } from './cart-drawer'
 import { cn } from '@/lib/utils'
 
 const navLinks = [
@@ -73,13 +74,7 @@ export function SiteHeader() {
             <User className="size-5" aria-hidden="true" />
           </Link>
 
-          <Link
-            href="/savat"
-            aria-label="Savat"
-            className="flex size-11 items-center justify-center rounded-lg text-muted-on-dark transition-colors duration-200 hover:text-ivory"
-          >
-            <ShoppingBag className="size-5" aria-hidden="true" />
-          </Link>
+          <CartButton />
         </div>
       </div>
     </header>
