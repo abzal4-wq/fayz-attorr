@@ -159,12 +159,12 @@ faqat DNS yozuvlarini qo'yasiz, boshqa hech narsa kerak emas.
 
 | Tur | Nom | Qiymat |
 |---|---|---|
-| A |  |  |
-| A |  |  |
-| CNAME |  |  |
+| A | `@` | `216.198.79.1` |
+| A | `@` | `64.29.17.1` |
+| CNAME | `www` | `13e84f1fafa073b6.vercel-dns-017.com` |
 
 Registrator ikkita A yozuvini qo'llab-quvvatlamasa, bittasi ham
-yetarli. Eski muqobil: A  -> .
+yetarli. Eski muqobil: A `@` → `76.76.21.21`.
 
 DNS tarqalishi 10 daqiqadan bir necha soatgacha. HTTPS sertifikatini
 Vercel avtomatik oladi.
