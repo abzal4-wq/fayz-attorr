@@ -6,10 +6,32 @@ import { getFeaturedProducts, getHomeBrands } from '@/lib/catalog'
 import { getStoreSettings } from '@/lib/settings'
 import { getT } from '@/lib/i18n/server'
 
+/**
+ * Katalogdan o'qiydi, lekin xato bo'lsa bo'sh ro'yxat qaytaradi.
+ *
+ * NEGA: bosh sahifaning asosiy qismi (hero, kategoriyalar, ustunliklar)
+ * bazaga umuman bog'liq emas. Avval atirlar so'rovi yiqilsa BUTUN
+ * sahifa 500 qaytarardi — mijoz katalogga o'ta ham olmasdi. Endi
+ * shunday paytda slayder va brendlar qatori shunchaki ko'rinmaydi.
+ *
+ * Xato yashirilmaydi: u logga yoziladi (Vercel Runtime Logs).
+ * Katalog va mahsulot sahifalari esa ataylab bunday qilmaydi —
+ * u yerda atirlarsiz ko'rsatadigan narsa yo'q, shuning uchun xato
+ * sahifasi to'g'riroq.
+ */
+async function optional(label, load) {
+  try {
+    return await load()
+  } catch (error) {
+    console.error(`Bosh sahifa: ${label} yuklanmadi:`, error?.message)
+    return []
+  }
+}
+
 export default async function HomePage() {
   const [featured, brands, settings, t] = await Promise.all([
-    getFeaturedProducts(10),
-    getHomeBrands(12),
+    optional('tanlangan atirlar', () => getFeaturedProducts(10)),
+    optional('brendlar', () => getHomeBrands(12)),
     getStoreSettings(),
     getT(),
   ])

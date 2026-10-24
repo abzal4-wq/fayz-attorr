@@ -191,6 +191,11 @@
     "home": "Bosh sahifa",
     "catalog": "Katalog"
   },
+  "error": {
+    "title": "Nimadir noto'g'ri ketdi",
+    "text": "Sahifani ochishda xatolik yuz berdi. Qayta urinib ko'ring — takrorlansa, birozdan keyin kiring.",
+    "retry": "Qayta urinish"
+  },
   "validation": {
     "phoneRequired": "Telefon raqamini kiriting",
     "phoneInvalid": "Telefon raqami noto'g'ri. Masalan: +998 (90) 123-45-67",

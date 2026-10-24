@@ -17,7 +17,8 @@
     "i18n": "node scripts/check-i18n.mjs",
     "audit": "node scripts/mobile-audit.mjs",
     "miniapp": "node scripts/miniapp-test.mjs",
-    "lh": "node scripts/lighthouse-audit.mjs"
+    "lh": "node scripts/lighthouse-audit.mjs",
+    "flow": "node --env-file=.env scripts/admin-flow-test.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",

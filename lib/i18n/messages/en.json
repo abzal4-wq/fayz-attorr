@@ -200,6 +200,11 @@
     "home": "Home",
     "catalog": "Catalog"
   },
+  "error": {
+    "title": "Something went wrong",
+    "text": "The page could not be loaded. Please try again — if it keeps happening, come back in a little while.",
+    "retry": "Try again"
+  },
   "validation": {
     "phoneRequired": "Enter your phone number",
     "phoneInvalid": "That phone number is not valid. For example: +998 (90) 123-45-67",
