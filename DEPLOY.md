@@ -143,24 +143,45 @@ qayta ishga tushirish shart emas.
 
 ## 5. Domen
 
-Vercel panelida: **Settings → Domains → Add** → `fayzattor.uz`.
+Loyiha Vercel'da: **https://fayz-attor.vercel.app**
+(`kaster-uz/fayz-attor`, region `fra1`)
 
-Vercel ko'rsatadigan DNS yozuvlarini domen registratoringizda qo'ying:
+### fayzattor.uz hali RO'YXATDAN O'TMAGAN
+
+Tekshirildi: Google DNS ham, `.uz` registratorining o'z serveri
+(`ns1.uz`) ham domenni topmadi. Ya'ni uni avval **sotib olish** kerak
+(masalan ahost.uz, uzinfocom.uz yoki boshqa `.uz` registratoridan).
+
+Domen Vercel loyihasiga allaqachon qo'shib qo'yilgan — sotib olgach
+faqat DNS yozuvlarini qo'yasiz, boshqa hech narsa kerak emas.
+
+### Sotib olgach qo'yiladigan DNS yozuvlari
 
 | Tur | Nom | Qiymat |
 |---|---|---|
-| A | `@` | `76.76.21.21` |
-| CNAME | `www` | `cname.vercel-dns.com` |
+| A |  |  |
+| A |  |  |
+| CNAME |  |  |
 
-> Aniq qiymatlarni Vercel o'zi beradi — yuqoridagilar namuna. DNS
-> tarqalishi odatda 10 daqiqadan bir necha soatgacha vaqt oladi.
-> HTTPS sertifikatini Vercel avtomatik oladi.
+Registrator ikkita A yozuvini qo'llab-quvvatlamasa, bittasi ham
+yetarli. Eski muqobil: A  -> .
 
-Domen ishlagach `NEXT_PUBLIC_SITE_URL` to'g'riligini tekshiring va
-qayta deploy qiling (u `sitemap.xml`, `robots.txt` va Open Graph
-havolalarida ishlatiladi).
+DNS tarqalishi 10 daqiqadan bir necha soatgacha. HTTPS sertifikatini
+Vercel avtomatik oladi.
 
----
+Tekshirish: `npx vercel domains inspect fayzattor.uz`
+
+### Sayt hozir hammaga ochiq emas
+
+Vercel loyihada **Deployment Protection** yoqilgan
+(`all_except_custom_domains`): `.vercel.app` manzili Vercel hisobiga
+kirishni talab qiladi, custom domen esa ochiq bo'ladi.
+
+Ya'ni `fayzattor.uz` ulangach sayt o'z-o'zidan ommaga ochiladi.
+
+Agar domen kelgunicha saytni odamlarga ko'rsatmoqchi bo'lsangiz:
+**Vercel → loyiha → Settings → Deployment Protection → Vercel
+Authentication → Disabled**.
 
 ## 6. Telegram webhook
 
