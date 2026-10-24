@@ -54,14 +54,14 @@ export default async function ProductPage({ params }) {
         >
           <Link
             href="/katalog"
-            className="text-muted-deep underline-offset-4 hover:text-foreground hover:underline"
+            className="inline-flex min-h-11 items-center text-muted-deep underline-offset-4 hover:text-foreground hover:underline"
           >
             {t('catalog.title')}
           </Link>
           <ChevronRight className="size-3.5 text-muted-deep" aria-hidden="true" />
           <Link
             href={`/katalog?gender=${product.gender}`}
-            className="text-muted-deep underline-offset-4 hover:text-foreground hover:underline"
+            className="inline-flex min-h-11 items-center text-muted-deep underline-offset-4 hover:text-foreground hover:underline"
           >
             {t(`gender.${product.gender}`)}
           </Link>
@@ -78,12 +78,12 @@ export default async function ProductPage({ params }) {
           <div>
             <Link
               href={`/katalog?brend=${product.brandSlug}`}
-              className="text-sm text-muted-deep underline-offset-4 hover:text-foreground hover:underline"
+              className="inline-flex min-h-11 items-center text-sm text-muted-deep underline-offset-4 hover:text-foreground hover:underline"
             >
               {product.brandName}
             </Link>
 
-            <h1 className="mt-1 font-serif text-3xl text-foreground md:text-4xl">
+            <h1 className="font-serif text-3xl text-foreground md:text-4xl">
               {product.name}
             </h1>
 

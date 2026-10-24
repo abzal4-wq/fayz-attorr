@@ -57,14 +57,21 @@ export default async function HomePage() {
   return (
     <main>
       {/* Hero */}
-      <section className="dark relative overflow-hidden text-foreground">
-        <div
-          className="absolute inset-0 -z-10"
-          style={{
-            background:
-              'linear-gradient(160deg, #0D454E 0%, #0A3942 55%, #072B32 100%)',
-          }}
-        />
+      {/*
+        Gradient ALOHIDA qatlam emas, bo'limning o'z foni. Avval u
+        `absolute inset-0 -z-10` div edi — vizual jihatdan bir xil
+        ko'rinadi, lekin fon rasman mavjud bo'lmaydi: a11y tekshiruvi
+        ivory matnni ochiq sahifa foniga nisbatan o'lchab 1.58:1 deb
+        hisoblardi, va qatlam bo'yalmasa (forced-colors, CSS yuklanmasa)
+        matn haqiqatan ko'rinmas qolardi.
+      */}
+      <section
+        className="dark relative overflow-hidden text-foreground"
+        style={{
+          backgroundImage:
+            'linear-gradient(160deg, #0D454E 0%, #0A3942 55%, #072B32 100%)',
+        }}
+      >
         <div className="mx-auto flex max-w-[1280px] flex-col items-center px-4 py-16 text-center sm:px-6 md:py-24">
           <Image
             src="/monogram.png"
@@ -128,7 +135,7 @@ export default async function HomePage() {
             </h2>
             <Link
               href="/katalog"
-              className="whitespace-nowrap text-sm text-muted-deep underline-offset-4 transition-colors hover:text-foreground hover:underline"
+              className="inline-flex min-h-11 items-center whitespace-nowrap text-sm text-muted-deep underline-offset-4 transition-colors hover:text-foreground hover:underline"
             >
               {t('home.seeAll')}
             </Link>

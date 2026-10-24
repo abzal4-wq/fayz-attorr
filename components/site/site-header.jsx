@@ -41,7 +41,7 @@ export function SiteHeader() {
       )}
     >
       <div className="mx-auto flex h-16 max-w-[1280px] items-center gap-4 px-4 sm:px-6">
-        <Link href="/" className="flex shrink-0 items-center gap-2.5">
+        <Link href="/" className="flex min-h-11 shrink-0 items-center gap-2.5">
           <Image
             src="/monogram.png"
             alt=""

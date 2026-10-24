@@ -39,8 +39,15 @@ async function CatalogContent({ filters }) {
 
   return (
     <div className="mx-auto flex max-w-[1280px] gap-8 px-4 py-6 sm:px-6">
-      <CatalogFilters filters={filters} options={options} total={total} />
+      {/*
+        Filtr paneli DOM'da h1 dan KEYIN turadi, ko'rinishda esa chapda —
+        `lg:order-first` shuni ta'minlaydi.
 
+        Nega: panel sarlavhasi <h2>, sahifaniki <h1>. Avval panel oldinda
+        edi va hujjat h2 bilan boshlanardi — ekran o'quvchi sahifa
+        sarlavhasini topa olmasdi (Lighthouse "heading-order" buzilishi).
+        Ko'rinish o'zgarmaydi, tartib esa to'g'rilanadi.
+      */}
       <div className="min-w-0 flex-1">
         <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
           <div>
@@ -57,12 +64,21 @@ async function CatalogContent({ filters }) {
           <CatalogSort filters={filters} />
         </div>
 
+        {/*
+          Ko'rinmas sarlavha, lekin kerak: kartochka nomlari <h3>, sahifa
+          sarlavhasi <h1> — oradagi <h2> bo'lmasa daraja sakrab ketadi va
+          ekran o'quvchi tuzilmani noto'g'ri o'qiydi.
+        */}
+        <h2 className="sr-only">{t('catalog.resultsHeading')}</h2>
+
         <CatalogGrid
           initialProducts={products}
           initialHasMore={hasMore}
           filters={filters}
         />
       </div>
+
+      <CatalogFilters filters={filters} options={options} total={total} />
     </div>
   )
 }

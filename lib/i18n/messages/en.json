@@ -10,7 +10,10 @@
     "products": "Items",
     "delivery": "Delivery",
     "goToCatalog": "Go to catalog",
-    "pieces": { "one": "{n} pc", "other": "{n} pcs" },
+    "pieces": {
+      "one": "{n} pc",
+      "other": "{n} pcs"
+    },
     "outOfStock": "Out of stock"
   },
   "gender": {
@@ -71,7 +74,10 @@
   },
   "catalog": {
     "title": "Catalog",
-    "count": { "one": "{n} perfume", "other": "{n} perfumes" },
+    "count": {
+      "one": "{n} perfume",
+      "other": "{n} perfumes"
+    },
     "filter": "Filter",
     "clear": "Clear",
     "apply": "Apply",
@@ -94,6 +100,7 @@
     "emptyTitle": "No perfumes found",
     "emptyText": "Nothing matches these filters. Try widening them.",
     "emptyAction": "Clear filters",
+    "resultsHeading": "Perfumes found",
     "loadMore": "Show more",
     "loadError": "Could not load more perfumes. Check your connection."
   },
@@ -115,7 +122,10 @@
   },
   "cart": {
     "title": "Cart",
-    "withCount": { "one": "Cart, {n} item", "other": "Cart, {n} items" },
+    "withCount": {
+      "one": "Cart, {n} item",
+      "other": "Cart, {n} items"
+    },
     "empty": "Your cart is empty",
     "emptyHintDrawer": "Add a perfume you like — it will wait for you here.",
     "emptyHintPage": "Add a perfume you like — it stays even if you refresh the page.",
@@ -218,7 +228,10 @@
     "justSoldOut": "Sorry, that item just sold out. Please refresh your cart.",
     "productGone": "This item is no longer available",
     "variantSoldOut": "{label} — sold out",
-    "variantLowStock": { "one": "{label} — only {qty} left in stock", "other": "{label} — only {qty} left in stock" }
+    "variantLowStock": {
+      "one": "{label} — only {qty} left in stock",
+      "other": "{label} — only {qty} left in stock"
+    }
   },
   "meta": {
     "homeTitle": "Fayz Attor — original perfumes",

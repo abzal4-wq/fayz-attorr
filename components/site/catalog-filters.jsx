@@ -216,7 +216,8 @@ export function CatalogFilters({ filters, options, total }) {
   return (
     <>
       {/* Desktop: chapdagi sidebar */}
-      <aside className="hidden w-64 shrink-0 lg:block">
+      {/* order-first: DOM da oxirida, ko'rinishda chapda (katalog/page.js izohi) */}
+      <aside className="hidden w-64 shrink-0 lg:order-first lg:block">
         <div className="sticky top-24">
           <div className="mb-3 flex items-center justify-between">
             <h2 className="font-serif text-xl text-foreground">
@@ -226,7 +227,7 @@ export function CatalogFilters({ filters, options, total }) {
               <button
                 type="button"
                 onClick={clearAll}
-                className="text-sm text-muted-deep underline-offset-4 hover:text-foreground hover:underline"
+                className="inline-flex min-h-11 items-center text-sm text-muted-deep underline-offset-4 hover:text-foreground hover:underline"
               >
                 {t('catalog.clear')}
               </button>
@@ -339,7 +340,8 @@ export function CatalogSort({ filters }) {
           })
           router.push(query ? `/katalog?${query}` : '/katalog')
         }}
-        className="min-h-11 rounded-lg border border-input bg-card px-3 text-sm text-card-foreground focus:border-brand-mid focus:outline-none"
+        // text-[16px] shart: kichikroq bo'lsa iOS fokusda sahifani zoom qiladi
+        className="min-h-11 rounded-lg border border-input bg-card px-3 text-[16px] text-card-foreground focus:border-brand-mid focus:outline-none"
       >
         {[
           ['yangi', 'catalog.sortNew'],

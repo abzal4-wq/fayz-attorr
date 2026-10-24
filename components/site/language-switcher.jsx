@@ -64,7 +64,10 @@ export function LanguageSwitcher() {
         disabled={isPending}
         aria-haspopup="menu"
         aria-expanded={open}
-        aria-label={t('header.chooseLanguage')}
+        // aria-label ichida ko'rinadigan "UZ" ham bor: aks holda ovozli
+        // boshqaruvda odam "UZ" deydi, nom esa "Tilni tanlash" bo'lib
+        // qolardi (WCAG 2.5.3 — auditda topildi)
+        aria-label={`${t('header.language')}: ${LOCALE_LABELS[locale].short}`}
         className="flex h-11 min-w-11 items-center justify-center gap-1.5 rounded-lg px-2 text-sm font-medium text-muted-on-dark transition-colors duration-200 hover:text-ivory disabled:opacity-60"
       >
         {/*

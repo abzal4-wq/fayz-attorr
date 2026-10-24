@@ -94,6 +94,7 @@
     "emptyTitle": "Atir topilmadi",
     "emptyText": "Tanlangan shartlarga mos atir yo'q. Filtrni kengaytirib ko'ring.",
     "emptyAction": "Filtrni tozalash",
+    "resultsHeading": "Topilgan atirlar",
     "loadMore": "Yana ko'rsatish",
     "loadError": "Keyingi atirlarni yuklab bo'lmadi. Internetni tekshiring."
   },

@@ -50,3 +50,8 @@ coverage/
 
 # windsurf skill symlinklari (npx skills yaratadi)
 .windsurf/
+
+# audit natijalari (npm run audit / lh qayta yaratadi)
+audit-shots/
+audit-findings.json
+lighthouse-results.json

@@ -15,7 +15,16 @@ const navItems = [
   { href: '/profil', key: 'bottomNav.profile', icon: User },
 ]
 
-/** Mobil pastki navigatsiya. Desktopda ko'rinmaydi. */
+/**
+ * Mobil pastki navigatsiya. Desktopda ko'rinmaydi.
+ *
+ * Fon ATAYLAB qattiq, shisha emas. Ikki sabab:
+ *  1. Kontrast: shisha ustida faol holatdagi gold yorliq 3.92:1 beradi,
+ *     qattiq brand-deep ustida 4.72:1 — 11px matn uchun 4.5 kerak.
+ *  2. Tezlik: bu element ekranda doim turadi va orqasidan kontent
+ *     scroll bo'ladi — blur har kadrda qayta hisoblanardi. MASTER.md
+ *     scroll qilinadigan joyda blur ishlatishni taqiqlaydi.
+ */
 export function BottomNav() {
   const pathname = usePathname()
   const t = useT()
@@ -26,7 +35,7 @@ export function BottomNav() {
   return (
     <nav
       aria-label={t('bottomNav.label')}
-      className="dark glass fixed inset-x-0 bottom-0 z-40 lg:hidden"
+      className="dark fixed inset-x-0 bottom-0 z-40 border-t border-border bg-brand-deep lg:hidden"
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
     >
       <ul className="mx-auto flex h-16 max-w-md items-stretch">

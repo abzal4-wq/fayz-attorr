@@ -22,7 +22,7 @@ export default function SiteLayout({ children }) {
     <TelegramProvider>
       <TelegramBackButton />
 
-      <div className="flex min-h-screen flex-col bg-background">
+      <div className="flex min-h-app flex-col bg-background">
         <SiteHeader />
 
         {/* pb-bottom-nav: mobil pastki navigatsiya kontentni yopib qolmasligi uchun */}

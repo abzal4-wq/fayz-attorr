@@ -11,7 +11,7 @@ export default async function NotFound() {
   const t = await getT()
 
   return (
-    <main className="dark flex min-h-screen flex-col items-center justify-center bg-background px-4 text-center text-foreground">
+    <main className="dark flex min-h-app flex-col items-center justify-center bg-background px-4 text-center text-foreground">
       <p className="font-serif text-6xl text-gold">404</p>
       <h1 className="mt-4 font-serif text-2xl text-ivory md:text-3xl">
         {t('notFound.title')}

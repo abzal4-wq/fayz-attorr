@@ -27,7 +27,7 @@ export default async function LoginPage({ searchParams }) {
           {t('auth.noAccount')}{' '}
           <Link
             href={`/royxatdan-otish${params?.keyin ? `?keyin=${encodeURIComponent(redirectTo)}` : ''}`}
-            className="font-medium text-gold underline-offset-4 hover:underline"
+            className="inline-block py-2.5 font-medium text-gold underline-offset-4 hover:underline"
           >
             {t('auth.goRegister')}
           </Link>

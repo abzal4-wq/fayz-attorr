@@ -26,7 +26,7 @@ export default async function RegisterPage({ searchParams }) {
           {t('auth.hasAccount')}{' '}
           <Link
             href={`/kirish${params?.keyin ? `?keyin=${encodeURIComponent(redirectTo)}` : ''}`}
-            className="font-medium text-gold underline-offset-4 hover:underline"
+            className="inline-block py-2.5 font-medium text-gold underline-offset-4 hover:underline"
           >
             {t('auth.goLogin')}
           </Link>

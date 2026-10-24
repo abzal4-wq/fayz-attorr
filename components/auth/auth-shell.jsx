@@ -6,15 +6,16 @@ import Link from 'next/link'
  * To'q teal fon + bitta shisha kartochka (ekranda yagona blur elementi).
  */
 export function AuthShell({ title, subtitle, children, footer }) {
+  // Gradient alohida `-z-10` qatlam emas, `<main>`ning o'z foni —
+  // nega aynan shunday, app/(site)/page.js dagi izohda yozilgan.
   return (
-    <main className="dark flex min-h-screen flex-col items-center justify-center bg-background px-4 py-10">
-      <div
-        className="pointer-events-none absolute inset-0 -z-10"
-        style={{
-          background:
-            'linear-gradient(160deg, #0D454E 0%, #0A3942 55%, #072B32 100%)',
-        }}
-      />
+    <main
+      className="dark flex min-h-app flex-col items-center justify-center bg-background px-4 py-10"
+      style={{
+        backgroundImage:
+          'linear-gradient(160deg, #0D454E 0%, #0A3942 55%, #072B32 100%)',
+      }}
+    >
 
       <Link href="/" className="mb-8 inline-flex flex-col items-center gap-3">
         <Image

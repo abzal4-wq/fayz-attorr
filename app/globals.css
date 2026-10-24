@@ -208,12 +208,45 @@
    Scroll qilinadigan ro'yxatlarda ishlatilmaydi — faqat
    statik/fixed elementlarda (header, drawer, bottom nav, modal).
    ============================================================ */
+/*
+ * Shisha qatlami TO'Q bo'lishi SHART.
+ *
+ * Avval bu `rgba(255,255,255,0.08)` edi — ya'ni 8% oq parda. U to'q fon
+ * ustida ishlaydi, lekin sayt foni OCHIQ (ivory). Natijada yopishqoq
+ * header scroll qilinganda va pastki navigatsiya deyarli oqarib ketar,
+ * ustidagi `text-ivory` matn esa 1.01:1 kontrast bilan ko'rinmas holga
+ * kelardi. Brauzerda o'lchab topildi (`npm run audit`).
+ *
+ * Endi asos — brand-darker 82%: orqadagi kontent hamon ko'rinib turadi
+ * (shisha effekti saqlanadi), lekin matn o'qiladi:
+ *   ivory 7.89:1 · muted-on-dark 4.99:1
+ * DIQQAT: gold MATN shisha ustida 3.92:1 beradi — u yerda gold-light
+ * (5.38:1) ishlatilsin yoki fon qattiq bo'lsin.
+ */
 @utility glass {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(7, 43, 50, 0.82);
   backdrop-filter: blur(16px) saturate(140%);
   -webkit-backdrop-filter: blur(16px) saturate(140%);
   border: 1px solid rgba(255, 255, 255, 0.14);
   box-shadow: 0 8px 32px rgba(7, 43, 50, 0.28);
+}
+
+/*
+ * Blur ishlamaydigan muhitlar uchun zaxira: eski Android WebView,
+ * backdrop-filter o'chirilgan Firefox, tizimda "shaffoflikni kamaytirish"
+ * yoqilgan telefon. U yerda 82% parda ortidagi matn xiralashmay ko'rinib
+ * turadi va header ustidagi yozuv bilan aralashadi — shuning uchun
+ * fon deyarli qattiq qilinadi.
+ */
+@supports not (
+  (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
+) {
+  .glass {
+    background: rgba(7, 43, 50, 0.96);
+  }
+  .glass-light {
+    background: rgba(245, 242, 234, 0.96);
+  }
 }
 
 @utility glass-light {
@@ -248,6 +281,25 @@
   100% {
     background-position: 0 50%;
   }
+}
+
+/*
+ * Ekran balandligi — `min-h-screen` o'rniga shu ishlatiladi.
+ *
+ * Uchta qatlam, brauzer tushunganini oladi:
+ *  1. 100vh  — eng eski zaxira
+ *  2. 100dvh — mobil brauzerda yig'iladigan URL paneli hisobga olinadi
+ *              (100vh telefonda ekrandan baland bo'lib, pastki qismi
+ *              ko'rinmay qoladi)
+ *  3. --tg-viewport — Telegram Mini App'da haqiqiy foydalanish mumkin
+ *     bo'lgan balandlik; uni telegram-provider.jsx yozadi, chunki
+ *     Telegram header'i tepadan joy oladi va 100dvh ham ko'p bo'lib
+ *     qoladi.
+ */
+@utility min-h-app {
+  min-height: 100vh;
+  min-height: 100dvh;
+  min-height: var(--tg-viewport, 100dvh);
 }
 
 /* ---------- Mobil: safe area ---------- */

@@ -59,7 +59,7 @@ export async function SiteFooter() {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="text-muted-on-dark underline-offset-4 transition-colors duration-200 hover:text-ivory hover:underline"
+                  className="inline-flex min-h-11 items-center text-muted-on-dark underline-offset-4 transition-colors duration-200 hover:text-ivory hover:underline"
                 >
                   {link.label}
                 </Link>
@@ -74,20 +74,22 @@ export async function SiteFooter() {
           {contacts.length > 0 ? (
             <ul className="mt-4 space-y-3 text-sm">
               {contacts.map(({ icon: Icon, label, href }) => (
-                <li key={label} className="flex items-start gap-2.5">
+                <li key={label} className="flex items-center gap-2.5">
                   <Icon
-                    className="mt-0.5 size-4 shrink-0 text-gold"
+                    className="size-4 shrink-0 text-gold"
                     aria-hidden="true"
                   />
                   {href ? (
                     <a
                       href={href}
-                      className="text-muted-on-dark underline-offset-4 transition-colors duration-200 hover:text-ivory hover:underline"
+                      className="inline-flex min-h-11 items-center text-muted-on-dark underline-offset-4 transition-colors duration-200 hover:text-ivory hover:underline"
                     >
                       {label}
                     </a>
                   ) : (
-                    <span className="text-muted-on-dark">{label}</span>
+                    <span className="inline-flex min-h-11 items-center text-muted-on-dark">
+                      {label}
+                    </span>
                   )}
                 </li>
               ))}
