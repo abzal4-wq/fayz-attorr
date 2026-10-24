@@ -58,3 +58,6 @@ lighthouse-results.json
 
 # Vercel deploy tokeni (.vercel allaqachon yuqorida)
 .vercel-token
+
+.vercel
+.env*
