@@ -9,37 +9,32 @@ bajariladigan ishlar.
 
 ---
 
-## 0. Oldindan hal qilinadigan ikki narsa
+## 0. Bajarilgan tayyorgarlik
 
-### Admin paroli
+Quyidagilar allaqachon qilingan — bilib qo'yishingiz uchun:
 
-Hozirgi parol — `***`. U 10 ta kichik harfdan iborat va lug'atdagi
-so'zlardan tuzilgan. Panel ichida mijozlarning **telefon raqamlari,
-manzillari va buyurtmalari** turadi, panel esa deploy'dan keyin ochiq
-internetda bo'ladi. Parolni almashtiring.
+### Admin paroli almashtirildi
 
-Kuchli parol yaratish:
+Eski parol kuchsiz edi: 10 ta kichik harf, lug'atdagi so'zlardan
+tuzilgan. Yangi parol — 24 belgi, ~139 bit entropiya — **`.env`
+faylidagi `ADMIN_PASSWORD`** da turibdi. Bazaga ham qo'llangan:
+eski parol endi 401 qaytaradi.
 
-```bash
-node -e "console.log(require('crypto').randomBytes(18).toString('base64url'))"
-```
+> Parolni `.env` dan nusxalab, xavfsiz joyda saqlang. Vercel'ga ham
+> aynan shu qiymatni kiritasiz. `.env` git'ga tushmaydi.
 
-Natijani `.env` dagi `ADMIN_PASSWORD` ga yozing va **parolni saqlab
-qo'ying** — u faqat seed paytida ishlatiladi.
+Keyinchalik almashtirmoqchi bo'lsangiz: `.env` dagi `ADMIN_PASSWORD`
+ni o'zgartiring va `node prisma/seed.mjs` ni ishga tushiring — seed
+endi mavjud adminning parolini ham yangilaydi.
 
-### Demo mahsulotlar
+### Demo mahsulotlar o'chirildi
 
-Bazada 4 ta namunaviy atir bor (Dior, Chanel, Lattafa, Armaf) — narxlari
-va tavsiflari o'ylab topilgan. Jonli saytda soxta mahsulot turishi
-yaxshi emas. Ularni o'chirish:
+Bazada 0 ta atir va 0 ta brend. 6 ta hajm (10–100 ml) qoldirildi —
+ular ishingizga yaraydi. Atirlar va brendlarni admin paneldan
+qo'shasiz.
 
-```bash
-node prisma/seed.mjs --clear-demo
-```
-
-O'z atirlaringizni admin panelidan qo'shasiz.
-
----
+Sayt bo'sh katalog bilan ham to'g'ri ko'rinadi (tekshirilgan,
+CLS 0).
 
 ## 1. Git remote (GitHub)
 
@@ -134,14 +129,15 @@ Ya'ni migratsiyalar deploy paytida avtomatik qo'llanadi. Agar baza
 ulanmasa — build yiqiladi va **buzuq sayt chiqmaydi**. Shunday bo'lishi
 kerak.
 
-Birinchi deploy'dan keyin admin hisobini yarating:
+Admin hisobi va hajmlar bazada allaqachon bor (baza bitta — lokal va
+Vercel bir xil Neon'ga ulanadi), shuning uchun deploy'dan keyin seed
+qayta ishga tushirish shart emas.
 
-```bash
-node prisma/seed.mjs
-```
-
-(Bu `.env` dagi `ADMIN_USERNAME` / `ADMIN_PASSWORD` dan admin yaratadi.
-Baza bitta bo'lgani uchun buni lokal mashinadan ishga tushirsa bo'ladi.)
+> **Build Google Fonts sababli yiqilishi mumkin.** `next/font`
+> build paytida shriftlarni Google'dan yuklab oladi va bu so'rov
+> ba'zan uzilib qoladi (xato: `An error occurred in next/font`).
+> Bu kod xatosi emas — Vercel'da **Redeploy** bosing, odatda ikkinchi
+> urinishda o'tadi.
 
 ---
 
@@ -205,6 +201,12 @@ Vercel'dagi qiymatni to'g'rilang va qayta deploy qiling.
 ```bash
 AUDIT_BASE=https://fayzattor.uz npm run audit -- --all
 AUDIT_BASE=https://fayzattor.uz npm run lh
+```
+
+Atir qo'shgandan keyin mahsulot sahifasini ham tekshirish uchun:
+
+```bash
+AUDIT_BASE=https://fayzattor.uz AUDIT_PRODUCT=/atir/<slug> npm run audit
 ```
 
 Qo'lda tekshiriladiganlar:

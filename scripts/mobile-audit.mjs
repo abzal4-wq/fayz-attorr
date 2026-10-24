@@ -30,16 +30,21 @@ const SHOT_DIR = 'audit-shots'
 const WIDTHS = ALL_WIDTHS ? [375, 414, 768, 1024, 1440] : [375]
 const LOCALES = ['uz', 'ru', 'en']
 
+const PRODUCT_PATH = process.env.AUDIT_PRODUCT || ''
+
 const PAGES = [
   ['bosh sahifa', '/'],
   ['katalog', '/katalog'],
   ['katalog+filtr', '/katalog?gender=WOMEN&chegirma=1'],
-  ['mahsulot', '/atir/demo-dior-sauvage'],
+  // Mahsulot sahifasi: bazadagi birinchi atir. Demo ma'lumot o'chirilgach
+  // qat'iy slug ishlamay qoldi va audit 404 sahifani sinab \"toza\" deb
+  // yozardi — shuning uchun endi AUDIT_PRODUCT bilan beriladi.
   ['savat', '/savat'],
   ['kirish', '/kirish'],
   ["ro'yxatdan o'tish", '/royxatdan-otish'],
   ['404', '/yoq-sahifa'],
   ['buyurtma qabul', '/buyurtma/muvaffaqiyat?raqam=1001'],
+  ...(PRODUCT_PATH ? [['mahsulot', PRODUCT_PATH]] : []),
 ]
 
 const CHROME_PATHS = [

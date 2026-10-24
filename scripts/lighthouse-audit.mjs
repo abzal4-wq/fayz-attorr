@@ -13,10 +13,14 @@ import lighthouse from 'lighthouse'
 
 const BASE = process.env.AUDIT_BASE || 'http://127.0.0.1:3939'
 
+// Mahsulot sahifasi qat'iy yozilmaydi: demo ma'lumot o'chirilgach slug
+// yo'qoladi va Lighthouse 404 ni o'lchab, ballarni 0 deb ko'rsatardi.
+const PRODUCT_PATH = process.env.AUDIT_PRODUCT || ''
+
 const PAGES = [
   ['bosh sahifa', '/'],
   ['katalog', '/katalog'],
-  ['mahsulot', '/atir/demo-dior-sauvage'],
+  ...(PRODUCT_PATH ? [['mahsulot', PRODUCT_PATH]] : []),
 ]
 
 const CHROME = [

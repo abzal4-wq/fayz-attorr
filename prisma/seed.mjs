@@ -25,12 +25,27 @@ async function seedAdmin() {
     )
   }
   const passwordHash = await bcrypt.hash(password, 12)
+
+  // `update` ATAYLAB bo'sh emas: .env dagi ADMIN_PASSWORD — yagona
+  // haqiqat manbai. Avval bu yerda `update: {}` turardi, ya'ni parolni
+  // .env da almashtirib seed'ni qayta ishga tushirsangiz, bazada ESKI
+  // parol qolaverardi va buni hech narsa aytmasdi.
+  const existing = await prisma.adminUser.findUnique({
+    where: { username },
+    select: { id: true },
+  })
+
   await prisma.adminUser.upsert({
     where: { username },
-    update: {},
+    update: { passwordHash },
     create: { username, passwordHash, role: 'admin' },
   })
-  console.log(`Admin: "${username}" tayyor`)
+
+  console.log(
+    existing
+      ? `Admin: "${username}" paroli .env dagi qiymatga yangilandi`
+      : `Admin: "${username}" yaratildi`
+  )
 }
 
 async function seedSettings() {

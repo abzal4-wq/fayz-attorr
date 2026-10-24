@@ -72,7 +72,14 @@ export function CatalogGrid({ initialProducts, initialHasMore, filters }) {
 
   if (products.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border px-6 py-16 text-center">
+      /*
+        min-h-[60vh] ataylab: yuklanayotganda o'rnida 8 ta skeleton
+        kartochka turadi (taxminan 1000px). Natija bo'sh chiqsa, bu
+        joy birdan qisqarib, ostidagi hamma narsa yuqoriga sakrardi —
+        Lighthouse CLS 0.151 ko'rsatgan edi. Bo'sh katalog ayni
+        ochilish kunidagi holat, filtr hech narsa topmaganda ham shu.
+      */
+      <div className="flex min-h-[60vh] flex-col items-center justify-center rounded-xl border border-dashed border-border px-6 py-16 text-center">
         <SearchX className="size-8 text-muted-deep" aria-hidden="true" />
         <p className="mt-4 font-serif text-xl text-foreground">
           {t('catalog.emptyTitle')}
