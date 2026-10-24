@@ -55,3 +55,6 @@ coverage/
 audit-shots/
 audit-findings.json
 lighthouse-results.json
+
+# Vercel deploy tokeni (.vercel allaqachon yuqorida)
+.vercel-token
