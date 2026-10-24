@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Bir branch'ga ketma-ket push qilinsa, eskisini bekor qiladi
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tekshiruv:
+    runs-on: ubuntu-latest
+
+    env:
+      # Build paytida haqiqiy bazaga ULANILMAYDI — Prisma faqat
+      # URL shaklini talab qiladi (modul yuklanishida tekshiriladi).
+      # Sahifalar dinamik, sitemap ham so'rov paytida tuziladi,
+      # shuning uchun CI uchun sir kerak emas.
+      DATABASE_URL: postgresql://user:pass@localhost:5432/db
+      DIRECT_URL: postgresql://user:pass@localhost:5432/db
+      JWT_SECRET: ci-uchun-soxta-qiymat-kamida-32-belgi-bolsin
+      ADMIN_JWT_SECRET: ci-uchun-boshqa-soxta-qiymat-kamida-32-belgi
+      NEXT_PUBLIC_SITE_URL: https://fayzattor.uz
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Paketlar
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Lug'atlar mos kelishi (uz / ru / en)
+        run: npm run i18n
+
+      - name: Build
+        run: npm run build

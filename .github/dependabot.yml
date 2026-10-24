@@ -1,0 +1,26 @@
+version: 2
+
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: 'chore'
+    groups:
+      # Mayda yangilanishlar bitta PR'ga yig'iladi — aks holda har
+      # hafta o'nlab PR keladi va ularni hech kim ko'rmay qo'yadi.
+      kichik-yangilanishlar:
+        update-types: ['minor', 'patch']
+    ignore:
+      # Next 16 ga o'tish alohida ish: u semver-major va App Router
+      # xatti-harakatini o'zgartiradi. Qo'lda rejalashtiriladi.
+      - dependency-name: next
+        update-types: ['version-update:semver-major']
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly

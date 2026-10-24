@@ -13,10 +13,32 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
  *
  * Shaxsiy sahifalar (savat, profil, buyurtma) ataylab yo'q: ularda
  * indekslanadigan mazmun yo'q (robots.js da ham yopilgan).
+ *
+ * So'rov paytida tuziladi, build paytida emas.
+ *
+ * Avval Next uni build paytida "pishirib" qo'yardi — ya'ni build
+ * JONLI bazaga bog'liq bo'lib qolgandi: Neon bir lahza javob bermasa
+ * (masalan uyqudan uyg'onayotganda) butun deploy yiqilardi. Ustiga
+ * sitemap keyingi deploy'gacha eskirib turardi.
+ *
+ * Endi u har so'rovda tuziladi, lekin baza so'rovi 60 soniya
+ * keshlanadi (`getSitemapEntries`), ya'ni robot tez-tez kelsa ham
+ * bazaga yuk tushmaydi.
  */
+export const dynamic = 'force-dynamic'
+
 export default async function sitemap() {
-  const { products, brands } = await getSitemapEntries()
   const now = new Date()
+
+  // Baza ishlamasa ham sitemap qaytishi kerak: statik sahifalar
+  // baribir indekslansin, xato esa butun javobni buzmasin.
+  let products = []
+  let brands = []
+  try {
+    ;({ products, brands } = await getSitemapEntries())
+  } catch (error) {
+    console.error('sitemap: katalogni oqib bolmadi:', error?.message)
+  }
 
   return [
     {
