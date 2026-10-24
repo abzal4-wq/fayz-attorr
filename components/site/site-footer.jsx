@@ -3,9 +3,10 @@ import Link from 'next/link'
 import { Clock, MapPin, Phone } from 'lucide-react'
 import { InstagramIcon, TelegramIcon } from './brand-icons'
 import { getStoreSettings } from '@/lib/settings'
+import { getT } from '@/lib/i18n/server'
 
 export async function SiteFooter() {
-  const settings = await getStoreSettings()
+  const [settings, t] = await Promise.all([getStoreSettings(), getT()])
 
   const contacts = [
     settings.phone && {
@@ -42,18 +43,18 @@ export async function SiteFooter() {
             className="h-20 w-20 rounded-xl"
           />
           <p className="mt-4 max-w-xs text-sm text-muted-on-dark">
-            Ko'p brendli atir do'koni. Ayollar, erkaklar va unisex atirlar.
+            {t('footer.tagline')}
           </p>
         </div>
 
-        <nav aria-label="Katalog">
-          <h2 className="font-serif text-lg text-ivory">Katalog</h2>
+        <nav aria-label={t('footer.catalog')}>
+          <h2 className="font-serif text-lg text-ivory">{t('footer.catalog')}</h2>
           <ul className="mt-4 space-y-2 text-sm">
             {[
-              { href: '/katalog?gender=WOMEN', label: 'Ayollar uchun' },
-              { href: '/katalog?gender=MEN', label: 'Erkaklar uchun' },
-              { href: '/katalog?gender=UNISEX', label: 'Unisex' },
-              { href: '/katalog?chegirma=1', label: 'Chegirmadagilar' },
+              { href: '/katalog?gender=WOMEN', label: t('genderFor.WOMEN') },
+              { href: '/katalog?gender=MEN', label: t('genderFor.MEN') },
+              { href: '/katalog?gender=UNISEX', label: t('genderFor.UNISEX') },
+              { href: '/katalog?chegirma=1', label: t('footer.discounted') },
             ].map((link) => (
               <li key={link.href}>
                 <Link
@@ -68,7 +69,7 @@ export async function SiteFooter() {
         </nav>
 
         <div>
-          <h2 className="font-serif text-lg text-ivory">Aloqa</h2>
+          <h2 className="font-serif text-lg text-ivory">{t('footer.contact')}</h2>
 
           {contacts.length > 0 ? (
             <ul className="mt-4 space-y-3 text-sm">

@@ -3,6 +3,7 @@ import { guardAdmin } from '@/lib/admin-api'
 import { prisma } from '@/lib/prisma'
 import { sizeSchema } from '@/lib/validation/admin'
 import { formatZodError } from '@/lib/validation/auth'
+import { revalidateCatalog } from '@/lib/revalidate'
 
 export async function GET() {
   const guard = await guardAdmin()
@@ -60,5 +61,6 @@ export async function POST(request) {
     },
   })
 
+  revalidateCatalog()
   return ok({ size }, { status: 201 })
 }

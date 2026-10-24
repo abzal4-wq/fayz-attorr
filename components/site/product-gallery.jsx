@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
 import { ImageOff, X, ZoomIn } from 'lucide-react'
+import { useT } from '@/lib/i18n/client'
 import { cn } from '@/lib/utils'
 
 /**
@@ -12,6 +13,7 @@ import { cn } from '@/lib/utils'
  * - Zoom: rasmni bosish to'liq ekranda ochadi
  */
 export function ProductGallery({ images, alt }) {
+  const t = useT()
   const [active, setActive] = useState(0)
   const [zoomed, setZoomed] = useState(false)
   const scrollerRef = useRef(null)
@@ -62,7 +64,7 @@ export function ProductGallery({ images, alt }) {
                 setActive(index)
                 setZoomed(true)
               }}
-              aria-label={`${index + 1}-rasmni kattalashtirish`}
+              aria-label={t('product.zoomNth', { n: index + 1 })}
               className="w-full shrink-0 snap-center"
             >
               <Image
@@ -103,7 +105,7 @@ export function ProductGallery({ images, alt }) {
                 <button
                   type="button"
                   onClick={() => setActive(index)}
-                  aria-label={`${index + 1}-rasm`}
+                  aria-label={t('product.thumbNth', { n: index + 1 })}
                   aria-current={index === active ? 'true' : undefined}
                   className={cn(
                     'block overflow-hidden rounded-lg border-2 transition-colors duration-200',
@@ -128,7 +130,7 @@ export function ProductGallery({ images, alt }) {
         <button
           type="button"
           onClick={() => setZoomed(true)}
-          aria-label="Rasmni kattalashtirish"
+          aria-label={t('product.zoom')}
           className="group relative min-w-0 flex-1 overflow-hidden rounded-xl"
         >
           <Image
@@ -151,12 +153,12 @@ export function ProductGallery({ images, alt }) {
         <div
           role="dialog"
           aria-modal="true"
-          aria-label="Rasm"
+          aria-label={t('product.galleryLabel')}
           className="fixed inset-0 z-50 flex items-center justify-center bg-brand-darker/95 p-4"
         >
           <button
             type="button"
-            aria-label="Yopish"
+            aria-label={t('common.close')}
             onClick={() => setZoomed(false)}
             className="absolute inset-0"
           />
@@ -170,7 +172,7 @@ export function ProductGallery({ images, alt }) {
           <button
             type="button"
             onClick={() => setZoomed(false)}
-            aria-label="Yopish"
+            aria-label={t('common.close')}
             className="absolute right-4 top-4 flex size-11 items-center justify-center rounded-full bg-ivory/10 text-ivory transition-colors hover:bg-ivory/20"
           >
             <X className="size-5" aria-hidden="true" />

@@ -5,25 +5,27 @@ import { usePathname } from 'next/navigation'
 import { Home, Search, ShoppingBag, User } from 'lucide-react'
 import { cartCount, useCart } from '@/lib/cart-store'
 import { useHydrated } from '@/lib/use-hydrated'
+import { useT } from '@/lib/i18n/client'
 import { cn } from '@/lib/utils'
 
 const navItems = [
-  { href: '/', label: 'Bosh sahifa', icon: Home, exact: true },
-  { href: '/katalog', label: 'Katalog', icon: Search },
-  { href: '/savat', label: 'Savat', icon: ShoppingBag },
-  { href: '/profil', label: 'Profil', icon: User },
+  { href: '/', key: 'bottomNav.home', icon: Home, exact: true },
+  { href: '/katalog', key: 'bottomNav.catalog', icon: Search },
+  { href: '/savat', key: 'bottomNav.cart', icon: ShoppingBag },
+  { href: '/profil', key: 'bottomNav.profile', icon: User },
 ]
 
 /** Mobil pastki navigatsiya. Desktopda ko'rinmaydi. */
 export function BottomNav() {
   const pathname = usePathname()
+  const t = useT()
   const cartItems = useCart((state) => state.items)
   const hydrated = useHydrated()
   const count = hydrated ? cartCount(cartItems) : 0
 
   return (
     <nav
-      aria-label="Asosiy navigatsiya"
+      aria-label={t('bottomNav.label')}
       className="dark glass fixed inset-x-0 bottom-0 z-40 lg:hidden"
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
     >
@@ -52,7 +54,7 @@ export function BottomNav() {
                     </span>
                   ) : null}
                 </span>
-                <span className="text-[11px]">{item.label}</span>
+                <span className="text-[11px]">{t(item.key)}</span>
               </Link>
             </li>
           )

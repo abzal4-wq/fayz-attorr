@@ -2,27 +2,34 @@ import { fail, ok, readJson } from '@/lib/api'
 import { verifyPassword } from '@/lib/auth/password'
 import { consumeAttempt, getClientIp, resetAttempts } from '@/lib/auth/rate-limit'
 import { createUserSession } from '@/lib/auth/session'
-import { formatZodError, loginSchema } from '@/lib/validation/auth'
+import { formatZodError, makeLoginSchema } from '@/lib/validation/auth'
 import { prisma } from '@/lib/prisma'
+import { getT } from '@/lib/i18n/server'
 
 export async function POST(request) {
   const ip = getClientIp(request)
 
+  // Xato matnlari mijoz tanlagan tilda qaytadi — formadagi xabarlar
+  // sahifa tilidan farq qilib qolmasligi uchun
+  const t = await getT()
+
   const limit = await consumeAttempt('login', ip)
   if (!limit.allowed) {
     return fail(
-      `Juda ko'p urinish. ${Math.ceil(limit.retryAfterSeconds / 60)} daqiqadan keyin qayta urinib ko'ring.`,
+      t('errors.tooManyAttempts', {
+        minutes: Math.ceil(limit.retryAfterSeconds / 60),
+      }),
       { status: 429, headers: { 'Retry-After': String(limit.retryAfterSeconds) } }
     )
   }
 
   const body = await readJson(request)
-  if (!body) return fail("So'rov formati noto'g'ri")
+  if (!body) return fail(t('errors.badRequest'))
 
-  const parsed = loginSchema.safeParse(body)
+  const parsed = makeLoginSchema(t).safeParse(body)
   if (!parsed.success) {
     const { fieldErrors } = formatZodError(parsed.error)
-    return fail("Ma'lumotlarni tekshiring", { fieldErrors })
+    return fail(t('errors.checkData'), { fieldErrors })
   }
 
   const { phone, password } = parsed.data
@@ -37,7 +44,7 @@ export async function POST(request) {
   const valid = await verifyPassword(password, user?.passwordHash)
 
   if (!user || !valid) {
-    return fail("Telefon raqami yoki parol noto'g'ri", { status: 401 })
+    return fail(t('errors.wrongCredentials'), { status: 401 })
   }
 
   await resetAttempts('login', ip)

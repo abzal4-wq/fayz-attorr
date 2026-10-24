@@ -4,50 +4,53 @@ import { ArrowRight, ShieldCheck, Sparkles, Truck } from 'lucide-react'
 import { ProductCard } from '@/components/site/product-card'
 import { getFeaturedProducts, getHomeBrands } from '@/lib/catalog'
 import { getStoreSettings } from '@/lib/settings'
-
-const categories = [
-  {
-    href: '/katalog?gender=WOMEN',
-    label: 'Ayollar uchun',
-    description: 'Nozik va shirin notalar',
-  },
-  {
-    href: '/katalog?gender=MEN',
-    label: 'Erkaklar uchun',
-    description: 'Keskin va chuqur hidlar',
-  },
-  {
-    href: '/katalog?gender=UNISEX',
-    label: 'Unisex',
-    description: 'Hammaga mos kombinatsiyalar',
-  },
-]
+import { getT } from '@/lib/i18n/server'
 
 export default async function HomePage() {
-  const [featured, brands, settings] = await Promise.all([
+  const [featured, brands, settings, t] = await Promise.all([
     getFeaturedProducts(10),
     getHomeBrands(12),
     getStoreSettings(),
+    getT(),
   ])
+
+  const categories = [
+    {
+      href: '/katalog?gender=WOMEN',
+      label: t('genderFor.WOMEN'),
+      description: t('home.categoryWomenDesc'),
+    },
+    {
+      href: '/katalog?gender=MEN',
+      label: t('genderFor.MEN'),
+      description: t('home.categoryMenDesc'),
+    },
+    {
+      href: '/katalog?gender=UNISEX',
+      label: t('genderFor.UNISEX'),
+      description: t('home.categoryUnisexDesc'),
+    },
+  ]
 
   const advantages = [
     {
       icon: ShieldCheck,
-      title: 'Original mahsulot',
-      text: "Har bir atir rasmiy yetkazib beruvchilardan keladi.",
+      title: t('home.advantageOriginalTitle'),
+      text: t('home.advantageOriginalText'),
     },
     {
       icon: Truck,
       title:
-        settings.deliveryPrice === 0 ? 'Bepul yetkazib berish' : 'Tez yetkazib berish',
-      text:
-        settings.deliveryInfo ||
-        "Toshkent shahri va viloyati bo'ylab 1–3 kun ichida.",
+        settings.deliveryPrice === 0
+          ? t('home.advantageDeliveryFreeTitle')
+          : t('home.advantageDeliveryFastTitle'),
+      // Do'kon sozlamasida yozilgani ustun: u aniq shartlarni bildiradi
+      text: settings.deliveryInfo || t('home.advantageDeliveryText'),
     },
     {
       icon: Sparkles,
-      title: 'Keng tanlov',
-      text: "Turli hajmlar — har biriga alohida narx. O'zingizga mosini tanlang.",
+      title: t('home.advantageChoiceTitle'),
+      text: t('home.advantageChoiceText'),
     },
   ]
 
@@ -75,18 +78,17 @@ export default async function HomePage() {
             Fayz Attor
           </h1>
           <p className="mt-3 text-sm uppercase tracking-[0.18em] text-muted-on-dark">
-            Original atirlar
+            {t('home.tagline')}
           </p>
           <p className="mt-6 max-w-xl text-pretty text-muted-on-dark">
-            Ayollar, erkaklar va unisex atirlar. Har bir atir uchun bir nechta
-            hajm va alohida narx.
+            {t('home.intro')}
           </p>
 
           <Link
             href="/katalog"
             className="mt-8 inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-primary px-6 font-semibold text-primary-foreground transition-colors duration-200 hover:bg-gold-light"
           >
-            Katalogni ko'rish
+            {t('home.viewCatalog')}
             <ArrowRight className="size-4" aria-hidden="true" />
           </Link>
         </div>
@@ -95,7 +97,7 @@ export default async function HomePage() {
       {/* Kategoriyalar */}
       <section className="mx-auto max-w-[1280px] px-4 py-12 sm:px-6">
         <h2 className="font-serif text-2xl text-foreground md:text-3xl">
-          Kategoriyalar
+          {t('home.categories')}
         </h2>
         <div className="mt-6 grid gap-4 sm:grid-cols-3">
           {categories.map((c) => (
@@ -122,13 +124,13 @@ export default async function HomePage() {
         <section className="mx-auto max-w-[1280px] px-4 pb-12 sm:px-6">
           <div className="flex items-baseline justify-between gap-4">
             <h2 className="font-serif text-2xl text-foreground md:text-3xl">
-              Tanlangan atirlar
+              {t('home.featured')}
             </h2>
             <Link
               href="/katalog"
               className="whitespace-nowrap text-sm text-muted-deep underline-offset-4 transition-colors hover:text-foreground hover:underline"
             >
-              Barchasi
+              {t('home.seeAll')}
             </Link>
           </div>
 
@@ -149,7 +151,9 @@ export default async function HomePage() {
       {/* Brendlar */}
       {brands.length > 0 ? (
         <section className="mx-auto max-w-[1280px] px-4 pb-12 sm:px-6">
-          <h2 className="font-serif text-2xl text-foreground md:text-3xl">Brendlar</h2>
+          <h2 className="font-serif text-2xl text-foreground md:text-3xl">
+            {t('home.brands')}
+          </h2>
           <ul className="mt-6 flex flex-wrap gap-3">
             {brands.map((brand) => (
               <li key={brand.slug}>

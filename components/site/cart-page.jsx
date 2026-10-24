@@ -5,9 +5,11 @@ import Link from 'next/link'
 import { Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react'
 import { cartTotal, useCart } from '@/lib/cart-store'
 import { useHydrated } from '@/lib/use-hydrated'
-import { formatSom } from '@/lib/format'
+import { useMoney, useT } from '@/lib/i18n/client'
 
 export function CartPage({ deliveryPrice, deliveryInfo }) {
+  const t = useT()
+  const money = useMoney()
   const items = useCart((state) => state.items)
   const setQuantity = useCart((state) => state.setQuantity)
   const removeItem = useCart((state) => state.removeItem)
@@ -28,16 +30,17 @@ export function CartPage({ deliveryPrice, deliveryInfo }) {
     return (
       <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border px-6 py-16 text-center">
         <ShoppingBag className="size-10 text-muted-deep" aria-hidden="true" />
-        <p className="mt-4 font-serif text-xl text-foreground">Savat bo'sh</p>
+        <p className="mt-4 font-serif text-xl text-foreground">
+          {t('cart.empty')}
+        </p>
         <p className="mt-2 max-w-sm text-sm text-muted-deep">
-          Yoqqan atirni savatga qo'shing — sahifani yangilasangiz ham
-          yo'qolmaydi.
+          {t('cart.emptyHintPage')}
         </p>
         <Link
           href="/katalog"
           className="mt-6 inline-flex min-h-12 items-center justify-center rounded-lg bg-primary px-6 font-semibold text-primary-foreground transition-colors duration-200 hover:bg-gold-light"
         >
-          Katalogga o'tish
+          {t('common.goToCatalog')}
         </Link>
       </div>
     )
@@ -83,7 +86,7 @@ export function CartPage({ deliveryPrice, deliveryInfo }) {
                   <button
                     type="button"
                     onClick={() => setQuantity(item.variantId, item.quantity - 1)}
-                    aria-label="Kamaytirish"
+                    aria-label={t('common.decrease')}
                     className="flex size-11 items-center justify-center text-foreground"
                   >
                     <Minus className="size-4" aria-hidden="true" />
@@ -94,7 +97,7 @@ export function CartPage({ deliveryPrice, deliveryInfo }) {
                   <button
                     type="button"
                     onClick={() => setQuantity(item.variantId, item.quantity + 1)}
-                    aria-label="Ko'paytirish"
+                    aria-label={t('common.increase')}
                     className="flex size-11 items-center justify-center text-foreground"
                   >
                     <Plus className="size-4" aria-hidden="true" />
@@ -102,7 +105,7 @@ export function CartPage({ deliveryPrice, deliveryInfo }) {
                 </div>
 
                 <p className="font-bold text-gold-deep">
-                  {formatSom(item.unitPrice * item.quantity)}
+                  {money(item.unitPrice * item.quantity)}
                 </p>
               </div>
             </div>
@@ -110,7 +113,7 @@ export function CartPage({ deliveryPrice, deliveryInfo }) {
             <button
               type="button"
               onClick={() => removeItem(item.variantId)}
-              aria-label={`${item.name} ni savatdan o'chirish`}
+              aria-label={t('cart.remove', { name: item.name })}
               className="flex size-11 shrink-0 items-center justify-center self-start rounded-lg text-muted-deep transition-colors hover:bg-destructive/10 hover:text-danger-deep"
             >
               <Trash2 className="size-4" aria-hidden="true" />
@@ -121,37 +124,39 @@ export function CartPage({ deliveryPrice, deliveryInfo }) {
 
       <aside className="lg:sticky lg:top-24 lg:h-fit">
         <div className="rounded-xl border border-border bg-card p-4 sm:p-5">
-          <h2 className="font-serif text-xl text-card-foreground">Buyurtma</h2>
+          <h2 className="font-serif text-xl text-card-foreground">
+            {t('cart.summary')}
+          </h2>
 
           <dl className="mt-4 space-y-2 text-sm">
             <div className="flex justify-between">
-              <dt className="text-muted-deep">Mahsulotlar</dt>
-              <dd className="text-card-foreground">{formatSom(subtotal)}</dd>
+              <dt className="text-muted-deep">{t('common.products')}</dt>
+              <dd className="text-card-foreground">{money(subtotal)}</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-muted-deep">Yetkazib berish</dt>
+              <dt className="text-muted-deep">{t('common.delivery')}</dt>
               <dd className="text-card-foreground">
-                {deliveryPrice > 0 ? formatSom(deliveryPrice) : 'Bepul'}
+                {deliveryPrice > 0 ? money(deliveryPrice) : t('common.free')}
               </dd>
             </div>
           </dl>
 
           <div className="mt-4 flex items-baseline justify-between border-t border-border pt-4">
-            <span className="font-medium text-card-foreground">Jami</span>
+            <span className="font-medium text-card-foreground">
+              {t('common.total')}
+            </span>
             <span className="text-xl font-bold text-gold-deep">
-              {formatSom(subtotal + deliveryPrice)}
+              {money(subtotal + deliveryPrice)}
             </span>
           </div>
 
-          <p className="mt-2 text-xs text-muted-deep">
-            Yakuniy summa buyurtma berishda server tomonidan tasdiqlanadi.
-          </p>
+          <p className="mt-2 text-xs text-muted-deep">{t('cart.notePage')}</p>
 
           <Link
             href="/buyurtma"
             className="mt-5 flex min-h-12 items-center justify-center rounded-lg bg-primary px-6 font-semibold text-primary-foreground transition-colors duration-200 hover:bg-gold-light"
           >
-            Buyurtma berish
+            {t('cart.checkout')}
           </Link>
 
           {deliveryInfo ? (

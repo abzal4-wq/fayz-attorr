@@ -4,18 +4,18 @@ import { SiteHeader } from '@/components/site/site-header'
 import { TelegramProvider } from '@/components/site/telegram-provider'
 import { TelegramBackButton } from '@/components/site/telegram-controls'
 
-/**
- * Sayt sahifalari bazadan o'qiydi (atirlar, brendlar, do'kon sozlamalari),
- * lekin Next buni bilmaydi va ularni build paytida muzlatib qo'yadi —
- * natijada yangi atir yoki o'zgargan sozlama qayta deploy qilmaguncha
- * saytda ko'rinmaydi.
+/*
+ * DIQQAT: bu sahifalar ATAYLAB dinamik render bo'ladi.
  *
- * Shuning uchun sahifalar har 60 soniyada qayta tiklanadi: admin
- * o'zgartirishi bir daqiqa ichida chiqadi, baza esa har so'rovda
- * bezovta qilinmaydi. searchParams/cookie ishlatadigan sahifalar
- * (katalog, buyurtma, profil) baribir to'liq dinamik bo'lib qoladi.
+ * Til cookie'da saqlanadi (`lib/i18n/config.js`), ya'ni ildiz layout
+ * `cookies()` ni o'qiydi — bunday sahifani Next build paytida muzlatib
+ * qo'ya olmaydi. Avvalgi `revalidate = 60` shu sababli olib tashlandi:
+ * u endi hech narsaga ta'sir qilmasdi, faqat chalg'itardi.
+ *
+ * Kesh yo'qolmadi, pastga tushdi: baza so'rovlari `lib/catalog.js` va
+ * `lib/settings.js` ichida 60 soniya keshlanadi (`lib/cache.js`).
+ * Natija: HTML har safar to'g'ri tilda, bazaga esa yuk ortmaydi.
  */
-export const revalidate = 60
 
 export default function SiteLayout({ children }) {
   return (

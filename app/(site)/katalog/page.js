@@ -4,16 +4,17 @@ import { CatalogGrid } from '@/components/site/catalog-grid'
 import { ProductCardSkeleton } from '@/components/site/product-card'
 import { getCatalogProducts, getFilterOptions } from '@/lib/catalog'
 import { parseCatalogParams } from '@/lib/catalog-params'
-import { GENDER_LABELS } from '@/lib/format'
+import { getT } from '@/lib/i18n/server'
 
 export async function generateMetadata({ searchParams }) {
-  const params = await searchParams
+  const [params, t] = await Promise.all([searchParams, getT()])
   const { gender } = parseCatalogParams(params)
 
   return {
-    title: gender ? `${GENDER_LABELS[gender]} uchun atirlar` : 'Katalog',
-    description:
-      "Fayz Attor katalogi: original atirlar, turli hajmlar va narxlar. Brend, hajm va narx bo'yicha filtrlang.",
+    title: gender
+      ? t('meta.catalogGenderTitle', { gender: t(`gender.${gender}`) })
+      : t('meta.catalogTitle'),
+    description: t('meta.catalogDescription'),
   }
 }
 
@@ -30,9 +31,10 @@ function GridSkeleton() {
 }
 
 async function CatalogContent({ filters }) {
-  const [{ products, total, hasMore }, options] = await Promise.all([
+  const [{ products, total, hasMore }, options, t] = await Promise.all([
     getCatalogProducts(filters),
     getFilterOptions(),
+    getT(),
   ])
 
   return (
@@ -43,9 +45,13 @@ async function CatalogContent({ filters }) {
         <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
           <div>
             <h1 className="font-serif text-2xl text-foreground md:text-3xl">
-              {filters.gender ? `${GENDER_LABELS[filters.gender]} uchun` : 'Katalog'}
+              {filters.gender
+                ? t(`genderFor.${filters.gender}`)
+                : t('catalog.title')}
             </h1>
-            <p className="mt-1 text-sm text-muted-deep">{total} ta atir</p>
+            <p className="mt-1 text-sm text-muted-deep">
+              {t('catalog.count', { n: total })}
+            </p>
           </div>
 
           <CatalogSort filters={filters} />

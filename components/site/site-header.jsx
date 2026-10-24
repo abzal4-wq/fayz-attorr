@@ -6,17 +6,20 @@ import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { User } from 'lucide-react'
 import { CartButton } from './cart-drawer'
+import { LanguageSwitcher } from './language-switcher'
+import { useT } from '@/lib/i18n/client'
 import { cn } from '@/lib/utils'
 
 const navLinks = [
-  { href: '/katalog?gender=WOMEN', label: 'Ayollar' },
-  { href: '/katalog?gender=MEN', label: 'Erkaklar' },
-  { href: '/katalog?gender=UNISEX', label: 'Unisex' },
-  { href: '/katalog', label: 'Barchasi' },
+  { href: '/katalog?gender=WOMEN', key: 'gender.WOMEN' },
+  { href: '/katalog?gender=MEN', key: 'gender.MEN' },
+  { href: '/katalog?gender=UNISEX', key: 'gender.UNISEX' },
+  { href: '/katalog', key: 'header.all' },
 ]
 
 export function SiteHeader() {
   const pathname = usePathname()
+  const t = useT()
   const [scrolled, setScrolled] = useState(false)
 
   // Shisha effekti faqat scroll qilinganda yoqiladi: sahifa tepasida
@@ -59,15 +62,17 @@ export function SiteHeader() {
               href={link.href}
               className="rounded-lg px-3 py-2 text-sm text-muted-on-dark transition-colors duration-200 hover:text-ivory"
             >
-              {link.label}
+              {t(link.key)}
             </Link>
           ))}
         </nav>
 
         <div className="ml-auto flex items-center gap-1">
+          <LanguageSwitcher />
+
           <Link
             href="/profil"
-            aria-label="Profil"
+            aria-label={t('header.profile')}
             aria-current={pathname === '/profil' ? 'page' : undefined}
             className="flex size-11 items-center justify-center rounded-lg text-muted-on-dark transition-colors duration-200 hover:text-ivory"
           >

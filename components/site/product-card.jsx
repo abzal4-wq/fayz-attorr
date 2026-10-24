@@ -1,7 +1,9 @@
+'use client'
+
 import Image from 'next/image'
 import Link from 'next/link'
 import { ImageOff } from 'lucide-react'
-import { formatSom } from '@/lib/format'
+import { useMoney, useT } from '@/lib/i18n/client'
 
 /**
  * Katalog va sliderdagi atir kartochkasi.
@@ -10,8 +12,16 @@ import { formatSom } from '@/lib/format'
  * shuning uchun shisha/blur YO'Q, qattiq fon. Hover effekti faqat
  * desktopda (mobil grid'da u baribir ishlamaydi, lekin rangni "yopishib"
  * qoldiradi).
+ *
+ * 'use client' ataylab: kartochka ham server sahifasida (bosh sahifa),
+ * ham client komponentida (katalog gridi, cheksiz scroll) ishlatiladi.
+ * Client bo'lgani uchun ikkala joyda `useT` bir xil ishlaydi — SSR
+ * baribir HTML qaytaradi, SEO yo'qolmaydi.
  */
 export function ProductCard({ product, priority = false }) {
+  const t = useT()
+  const money = useMoney()
+
   const {
     slug,
     name,
@@ -28,8 +38,8 @@ export function ProductCard({ product, priority = false }) {
     minPrice == null
       ? null
       : minPrice === maxPrice
-        ? formatSom(minPrice)
-        : `${formatSom(minPrice, { withSuffix: false })} – ${formatSom(maxPrice)}`
+        ? money(minPrice)
+        : `${money(minPrice, { withSuffix: false })} – ${money(maxPrice)}`
 
   return (
     <Link
@@ -62,7 +72,7 @@ export function ProductCard({ product, priority = false }) {
         {outOfStock ? (
           <div className="absolute inset-0 flex items-center justify-center bg-brand-darker/60">
             <span className="rounded-full bg-brand-darker px-3 py-1.5 text-sm font-medium text-ivory">
-              Tugagan
+              {t('common.outOfStock')}
             </span>
           </div>
         ) : null}
@@ -79,7 +89,7 @@ export function ProductCard({ product, priority = false }) {
             <>
               {oldMinPrice ? (
                 <p className="text-xs text-muted-deep line-through">
-                  {formatSom(oldMinPrice)}
+                  {money(oldMinPrice)}
                 </p>
               ) : null}
               <p className="font-bold text-gold-deep">{priceLabel}</p>

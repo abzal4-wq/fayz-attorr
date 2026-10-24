@@ -3,6 +3,7 @@ import { guardAdmin } from '@/lib/admin-api'
 import { prisma } from '@/lib/prisma'
 import { settingsSchema } from '@/lib/validation/admin'
 import { formatZodError } from '@/lib/validation/auth'
+import { revalidateSettings } from '@/lib/revalidate'
 
 export async function PATCH(request) {
   const guard = await guardAdmin()
@@ -24,5 +25,6 @@ export async function PATCH(request) {
     create: { id: 'settings', ...parsed.data },
   })
 
+  revalidateSettings()
   return ok({ settings: { ...settings, deliveryPrice: Number(settings.deliveryPrice) } })
 }

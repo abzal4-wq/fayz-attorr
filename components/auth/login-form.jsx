@@ -4,21 +4,26 @@ import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Eye, EyeOff, LoaderCircle } from 'lucide-react'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { PhoneInput } from '@/components/phone-input'
 import { FieldError, FormError, Label, SubmitButton } from './form-parts'
-import { loginSchema } from '@/lib/validation/auth'
+import { makeLoginSchema } from '@/lib/validation/auth'
+import { useT } from '@/lib/i18n/client'
 
 export function LoginForm({ redirectTo = '/' }) {
+  const t = useT()
   const router = useRouter()
   const [showPassword, setShowPassword] = useState(false)
+
+  // Til almashsa sxema ham yangi tilda qayta tuziladi
+  const schema = useMemo(() => makeLoginSchema(t), [t])
 
   const {
     register,
     handleSubmit,
     setError,
     formState: { errors, isSubmitting },
-  } = useForm({ resolver: zodResolver(loginSchema) })
+  } = useForm({ resolver: zodResolver(schema) })
 
   async function onSubmit(values) {
     const res = await fetch('/api/auth/login', {
@@ -35,7 +40,7 @@ export function LoginForm({ redirectTo = '/' }) {
         }
       }
       setError('root', {
-        message: data?.message || "Kirishda xatolik yuz berdi. Qayta urinib ko'ring.",
+        message: data?.message || t('auth.loginFailed'),
       })
       return
     }
@@ -47,7 +52,7 @@ export function LoginForm({ redirectTo = '/' }) {
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
       <div>
-        <Label htmlFor="phone">Telefon raqami</Label>
+        <Label htmlFor="phone">{t('auth.phone')}</Label>
         <PhoneInput
           id="phone"
           autoFocus
@@ -58,7 +63,7 @@ export function LoginForm({ redirectTo = '/' }) {
       </div>
 
       <div>
-        <Label htmlFor="password">Parol</Label>
+        <Label htmlFor="password">{t('auth.password')}</Label>
         <div className="relative">
           <input
             id="password"
@@ -71,7 +76,9 @@ export function LoginForm({ redirectTo = '/' }) {
           <button
             type="button"
             onClick={() => setShowPassword((v) => !v)}
-            aria-label={showPassword ? 'Parolni yashirish' : "Parolni ko'rsatish"}
+            aria-label={
+              showPassword ? t('auth.hidePassword') : t('auth.showPassword')
+            }
             className="absolute right-1 top-1/2 flex size-11 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-card-foreground"
           >
             {showPassword ? (
@@ -90,10 +97,10 @@ export function LoginForm({ redirectTo = '/' }) {
         {isSubmitting ? (
           <>
             <LoaderCircle className="size-5 animate-spin" aria-hidden="true" />
-            Kirilmoqda...
+            {t('auth.loggingIn')}
           </>
         ) : (
-          'Kirish'
+          t('auth.loginTitle')
         )}
       </SubmitButton>
     </form>

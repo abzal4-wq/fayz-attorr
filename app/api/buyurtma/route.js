@@ -3,16 +3,20 @@ import { consumeAttempt, getClientIp } from '@/lib/auth/rate-limit'
 import { getCurrentUser } from '@/lib/auth/session'
 import { OrderError, createOrder } from '@/lib/orders'
 import { notifyNewOrder } from '@/lib/telegram'
-import { orderSchema } from '@/lib/validation/order'
+import { makeOrderSchema } from '@/lib/validation/order'
 import { formatZodError } from '@/lib/validation/auth'
+import { getT } from '@/lib/i18n/server'
 
 export async function POST(request) {
   const ip = getClientIp(request)
+  const t = await getT()
 
   const limit = await consumeAttempt('order', ip)
   if (!limit.allowed) {
     return fail(
-      `Juda ko'p urinish. ${Math.ceil(limit.retryAfterSeconds / 60)} daqiqadan keyin qayta urinib ko'ring.`,
+      t('errors.tooManyAttempts', {
+        minutes: Math.ceil(limit.retryAfterSeconds / 60),
+      }),
       { status: 429, headers: { 'Retry-After': String(limit.retryAfterSeconds) } }
     )
   }
@@ -20,23 +24,26 @@ export async function POST(request) {
   // Buyurtma berish uchun ro'yxatdan o'tish shart
   const user = await getCurrentUser()
   if (!user) {
-    return fail("Buyurtma berish uchun avval tizimga kiring", { status: 401 })
+    return fail(t('errors.orderLoginRequired'), { status: 401 })
   }
 
   const body = await readJson(request)
-  if (!body) return fail("So'rov formati noto'g'ri")
+  if (!body) return fail(t('errors.badRequest'))
 
-  const parsed = orderSchema.safeParse(body)
+  const parsed = makeOrderSchema(t).safeParse(body)
   if (!parsed.success) {
     const { fieldErrors, formErrors } = formatZodError(parsed.error)
-    return fail(formErrors[0] ?? "Ma'lumotlarni tekshiring", { fieldErrors })
+    return fail(formErrors[0] ?? t('errors.checkData'), { fieldErrors })
   }
 
   const { items, ...customer } = parsed.data
 
   let order
   try {
-    order = await createOrder({ items, customer, userId: user.id })
+    // `t` ham beriladi: "mahsulot tugab qoldi" kabi xabarlar mijoz
+    // tilida bo'lishi kerak. Telegram xabari esa baribir o'zbekcha —
+    // uni admin o'qiydi, mijoz emas.
+    order = await createOrder({ items, customer, userId: user.id, t })
   } catch (error) {
     if (error instanceof OrderError) {
       // Qaysi mahsulot muammoli ekanini ham yuboramiz — forma ularni
@@ -44,10 +51,7 @@ export async function POST(request) {
       return fail(error.message, { status: 409, details: error.details })
     }
     console.error('Buyurtma yaratishda xato:', error)
-    return fail(
-      "Buyurtmani qabul qilib bo'lmadi. Birozdan keyin qayta urinib ko'ring.",
-      { status: 500 }
-    )
+    return fail(t('errors.orderFailed'), { status: 500 })
   }
 
   // Telegram xatosi buyurtmani BUZMASLIGI kerak — shuning uchun

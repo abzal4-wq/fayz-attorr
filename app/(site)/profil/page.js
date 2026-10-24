@@ -5,12 +5,15 @@ import { Package } from 'lucide-react'
 import { LogoutButton } from '@/components/auth/logout-button'
 import { getCurrentUser } from '@/lib/auth/session'
 import { formatPhone } from '@/lib/auth/phone'
-import { formatDateTime, formatSom } from '@/lib/format'
+import { formatDateTime } from '@/lib/format'
 import { prisma } from '@/lib/prisma'
 import { toNumber } from '@/lib/admin-api'
-import { ORDER_STATUS_LABELS } from '@/lib/validation/admin'
+import { getMoney, getT } from '@/lib/i18n/server'
 
-export const metadata = { title: 'Profil' }
+export async function generateMetadata() {
+  const t = await getT()
+  return { title: t('meta.profileTitle') }
+}
 
 /** Status rangi — mijoz tomoni uchun (ochiq fonda, kontrast tekshirilgan). */
 const STATUS_TONE = {
@@ -26,46 +29,54 @@ export default async function ProfilePage() {
   const user = await getCurrentUser()
   if (!user) redirect('/kirish?keyin=%2Fprofil')
 
-  const rows = await prisma.order.findMany({
-    where: { userId: user.id },
-    orderBy: { createdAt: 'desc' },
-    include: { items: true },
-  })
+  const [rows, t, money] = await Promise.all([
+    prisma.order.findMany({
+      where: { userId: user.id },
+      orderBy: { createdAt: 'desc' },
+      include: { items: true },
+    }),
+    getT(),
+    getMoney(),
+  ])
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-6 pb-16 sm:px-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <h1 className="font-serif text-2xl text-foreground md:text-3xl">Profil</h1>
-        <LogoutButton />
+        <h1 className="font-serif text-2xl text-foreground md:text-3xl">
+          {t('profile.title')}
+        </h1>
+        <LogoutButton>{t('profile.logout')}</LogoutButton>
       </div>
 
       <dl className="mt-6 divide-y divide-border rounded-xl border border-border bg-card">
         <div className="flex items-center justify-between gap-4 p-4">
-          <dt className="text-sm text-muted-deep">Ism</dt>
+          <dt className="text-sm text-muted-deep">{t('profile.name')}</dt>
           <dd className="text-card-foreground">{user.fullName || '—'}</dd>
         </div>
         <div className="flex items-center justify-between gap-4 p-4">
-          <dt className="text-sm text-muted-deep">Telefon</dt>
+          <dt className="text-sm text-muted-deep">{t('profile.phone')}</dt>
           <dd className="text-card-foreground">{formatPhone(user.phone)}</dd>
         </div>
       </dl>
 
       <h2 className="mt-10 font-serif text-xl text-foreground md:text-2xl">
-        Mening buyurtmalarim
+        {t('profile.myOrders')}
       </h2>
 
       {rows.length === 0 ? (
         <div className="mt-4 flex flex-col items-center justify-center rounded-xl border border-dashed border-border px-6 py-14 text-center">
           <Package className="size-8 text-muted-deep" aria-hidden="true" />
-          <p className="mt-4 font-medium text-foreground">Hali buyurtma yo'q</p>
+          <p className="mt-4 font-medium text-foreground">
+            {t('profile.noOrders')}
+          </p>
           <p className="mt-1 text-sm text-muted-deep">
-            Birinchi buyurtmangizdan keyin u shu yerda ko'rinadi.
+            {t('profile.noOrdersHint')}
           </p>
           <Link
             href="/katalog"
             className="mt-6 inline-flex min-h-12 items-center justify-center rounded-lg bg-primary px-6 font-semibold text-primary-foreground transition-colors duration-200 hover:bg-gold-light"
           >
-            Katalogga o'tish
+            {t('common.goToCatalog')}
           </Link>
         </div>
       ) : (
@@ -78,7 +89,7 @@ export default async function ProfilePage() {
               <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border p-4">
                 <div>
                   <p className="font-semibold text-card-foreground">
-                    Buyurtma #{order.orderNumber}
+                    {t('profile.orderNumber', { number: order.orderNumber })}
                   </p>
                   <p className="text-sm text-muted-deep">
                     {formatDateTime(order.createdAt)}
@@ -89,7 +100,7 @@ export default async function ProfilePage() {
                     STATUS_TONE[order.status] ?? 'bg-muted text-muted-deep'
                   }`}
                 >
-                  {ORDER_STATUS_LABELS[order.status] ?? order.status}
+                  {t(`orderStatus.${order.status}`)}
                 </span>
               </div>
 
@@ -112,20 +123,23 @@ export default async function ProfilePage() {
                         {item.productName}
                       </p>
                       <p className="text-sm text-muted-deep">
-                        {item.brandName} · {item.sizeLabel} · {item.quantity} dona
+                        {item.brandName} · {item.sizeLabel} ·{' '}
+                        {t('common.pieces', { n: item.quantity })}
                       </p>
                     </div>
                     <p className="whitespace-nowrap text-sm text-muted-deep">
-                      {formatSom(toNumber(item.unitPrice) * item.quantity)}
+                      {money(toNumber(item.unitPrice) * item.quantity)}
                     </p>
                   </li>
                 ))}
               </ul>
 
               <div className="flex items-center justify-between gap-4 bg-muted/40 p-4">
-                <span className="text-sm text-muted-deep">Jami</span>
+                <span className="text-sm text-muted-deep">
+                  {t('common.total')}
+                </span>
                 <span className="font-bold text-gold-deep">
-                  {formatSom(toNumber(order.totalAmount))}
+                  {money(toNumber(order.totalAmount))}
                 </span>
               </div>
             </li>

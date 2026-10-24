@@ -9,6 +9,7 @@ import {
 } from '@/lib/products-admin'
 import { productSchema } from '@/lib/validation/admin'
 import { formatZodError } from '@/lib/validation/auth'
+import { revalidateCatalog } from '@/lib/revalidate'
 
 export async function PATCH(request, { params }) {
   const guard = await guardAdmin()
@@ -41,6 +42,7 @@ export async function PATCH(request, { params }) {
           : {}),
       },
     })
+    revalidateCatalog()
     return ok({ product })
   }
 
@@ -108,6 +110,7 @@ export async function PATCH(request, { params }) {
     // Cloudinary'ni faqat baza muvaffaqiyatli yangilangandan keyin tozalaymiz
     await purgeImages(orphanedImages)
 
+    revalidateCatalog()
     return ok({ product })
   } catch (error) {
     return fail(error.message || "Atirni saqlab bo'lmadi", { status: 400 })
@@ -132,5 +135,6 @@ export async function DELETE(request, { params }) {
 
   await purgeImages(product.images.map((img) => img.publicId))
 
+  revalidateCatalog()
   return ok()
 }

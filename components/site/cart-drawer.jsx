@@ -6,10 +6,11 @@ import { useEffect, useState } from 'react'
 import { Minus, Plus, ShoppingBag, Trash2, X } from 'lucide-react'
 import { cartCount, cartTotal, useCart } from '@/lib/cart-store'
 import { useHydrated } from '@/lib/use-hydrated'
-import { formatSom } from '@/lib/format'
+import { useMoney, useT } from '@/lib/i18n/client'
 
 /** Header'dagi savat tugmasi — soni bilan. Bosilganda drawer ochiladi. */
 export function CartButton() {
+  const t = useT()
   const [open, setOpen] = useState(false)
   const items = useCart((state) => state.items)
   const hydrated = useHydrated()
@@ -20,7 +21,9 @@ export function CartButton() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        aria-label={count > 0 ? `Savat, ${count} ta mahsulot` : 'Savat'}
+        aria-label={
+          count > 0 ? t('cart.withCount', { n: count }) : t('cart.title')
+        }
         className="relative flex size-11 items-center justify-center rounded-lg text-muted-on-dark transition-colors duration-200 hover:text-ivory"
       >
         <ShoppingBag className="size-5" aria-hidden="true" />
@@ -37,6 +40,8 @@ export function CartButton() {
 }
 
 function CartDrawer({ open, onClose }) {
+  const t = useT()
+  const money = useMoney()
   const items = useCart((state) => state.items)
   const setQuantity = useCart((state) => state.setQuantity)
   const removeItem = useCart((state) => state.removeItem)
@@ -63,12 +68,12 @@ function CartDrawer({ open, onClose }) {
     <div
       role="dialog"
       aria-modal="true"
-      aria-label="Savat"
+      aria-label={t('cart.title')}
       className="dark fixed inset-0 z-50 flex justify-end"
     >
       <button
         type="button"
-        aria-label="Yopish"
+        aria-label={t('common.close')}
         onClick={onClose}
         className="absolute inset-0 bg-brand-darker/50"
       />
@@ -76,11 +81,11 @@ function CartDrawer({ open, onClose }) {
       {/* Mobilda to'liq ekran, desktopda yon panel */}
       <div className="glass relative flex h-full w-full flex-col bg-brand-deep sm:max-w-md">
         <div className="flex items-center justify-between gap-4 border-b border-border p-4">
-          <h2 className="font-serif text-xl text-ivory">Savat</h2>
+          <h2 className="font-serif text-xl text-ivory">{t('cart.title')}</h2>
           <button
             type="button"
             onClick={onClose}
-            aria-label="Yopish"
+            aria-label={t('common.close')}
             className="flex size-11 items-center justify-center rounded-lg text-muted-on-dark transition-colors hover:text-ivory"
           >
             <X className="size-5" aria-hidden="true" />
@@ -90,16 +95,18 @@ function CartDrawer({ open, onClose }) {
         {items.length === 0 ? (
           <div className="flex flex-1 flex-col items-center justify-center p-6 text-center">
             <ShoppingBag className="size-10 text-muted-on-dark" aria-hidden="true" />
-            <p className="mt-4 font-serif text-xl text-ivory">Savat bo'sh</p>
+            <p className="mt-4 font-serif text-xl text-ivory">
+              {t('cart.empty')}
+            </p>
             <p className="mt-2 text-sm text-muted-on-dark">
-              Yoqqan atirni savatga qo'shing — u shu yerda turadi.
+              {t('cart.emptyHintDrawer')}
             </p>
             <Link
               href="/katalog"
               onClick={onClose}
               className="mt-6 inline-flex min-h-12 items-center justify-center rounded-lg bg-primary px-6 font-semibold text-primary-foreground transition-colors duration-200 hover:bg-gold-light"
             >
-              Katalogga o'tish
+              {t('common.goToCatalog')}
             </Link>
           </div>
         ) : (
@@ -141,7 +148,7 @@ function CartDrawer({ open, onClose }) {
                           onClick={() =>
                             setQuantity(item.variantId, item.quantity - 1)
                           }
-                          aria-label="Kamaytirish"
+                          aria-label={t('common.decrease')}
                           className="flex size-9 items-center justify-center text-ivory"
                         >
                           <Minus className="size-3.5" aria-hidden="true" />
@@ -154,7 +161,7 @@ function CartDrawer({ open, onClose }) {
                           onClick={() =>
                             setQuantity(item.variantId, item.quantity + 1)
                           }
-                          aria-label="Ko'paytirish"
+                          aria-label={t('common.increase')}
                           className="flex size-9 items-center justify-center text-ivory"
                         >
                           <Plus className="size-3.5" aria-hidden="true" />
@@ -164,7 +171,7 @@ function CartDrawer({ open, onClose }) {
                       <button
                         type="button"
                         onClick={() => removeItem(item.variantId)}
-                        aria-label={`${item.name} ni savatdan o'chirish`}
+                        aria-label={t('cart.remove', { name: item.name })}
                         className="flex size-9 items-center justify-center rounded-lg text-muted-on-dark transition-colors hover:text-destructive"
                       >
                         <Trash2 className="size-4" aria-hidden="true" />
@@ -173,7 +180,7 @@ function CartDrawer({ open, onClose }) {
                   </div>
 
                   <p className="whitespace-nowrap font-semibold text-gold">
-                    {formatSom(item.unitPrice * item.quantity)}
+                    {money(item.unitPrice * item.quantity)}
                   </p>
                 </li>
               ))}
@@ -181,13 +188,13 @@ function CartDrawer({ open, onClose }) {
 
             <div className="border-t border-border p-4 pb-safe">
               <div className="flex items-center justify-between">
-                <span className="text-muted-on-dark">Jami</span>
+                <span className="text-muted-on-dark">{t('common.total')}</span>
                 <span className="text-xl font-bold text-gold">
-                  {formatSom(total)}
+                  {money(total)}
                 </span>
               </div>
               <p className="mt-1 text-xs text-muted-on-dark">
-                Yakuniy summa buyurtma berishda tasdiqlanadi.
+                {t('cart.noteDrawer')}
               </p>
 
               <Link
@@ -195,14 +202,14 @@ function CartDrawer({ open, onClose }) {
                 onClick={onClose}
                 className="mt-4 flex min-h-12 items-center justify-center rounded-lg bg-primary px-6 font-semibold text-primary-foreground transition-colors duration-200 hover:bg-gold-light"
               >
-                Buyurtma berish
+                {t('cart.checkout')}
               </Link>
               <Link
                 href="/savat"
                 onClick={onClose}
                 className="mt-2 flex min-h-11 items-center justify-center text-sm text-muted-on-dark underline-offset-4 hover:text-ivory hover:underline"
               >
-                Savatni to'liq ko'rish
+                {t('cart.viewFull')}
               </Link>
             </div>
           </>

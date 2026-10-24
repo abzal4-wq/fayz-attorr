@@ -2,27 +2,31 @@ import { fail, ok, readJson } from '@/lib/api'
 import { hashPassword } from '@/lib/auth/password'
 import { consumeAttempt, getClientIp } from '@/lib/auth/rate-limit'
 import { createUserSession } from '@/lib/auth/session'
-import { formatZodError, registerSchema } from '@/lib/validation/auth'
+import { formatZodError, makeRegisterSchema } from '@/lib/validation/auth'
 import { prisma } from '@/lib/prisma'
+import { getT } from '@/lib/i18n/server'
 
 export async function POST(request) {
   const ip = getClientIp(request)
+  const t = await getT()
 
   const limit = await consumeAttempt('register', ip)
   if (!limit.allowed) {
     return fail(
-      `Juda ko'p urinish. ${Math.ceil(limit.retryAfterSeconds / 60)} daqiqadan keyin qayta urinib ko'ring.`,
+      t('errors.tooManyAttempts', {
+        minutes: Math.ceil(limit.retryAfterSeconds / 60),
+      }),
       { status: 429, headers: { 'Retry-After': String(limit.retryAfterSeconds) } }
     )
   }
 
   const body = await readJson(request)
-  if (!body) return fail("So'rov formati noto'g'ri")
+  if (!body) return fail(t('errors.badRequest'))
 
-  const parsed = registerSchema.safeParse(body)
+  const parsed = makeRegisterSchema(t).safeParse(body)
   if (!parsed.success) {
     const { fieldErrors } = formatZodError(parsed.error)
-    return fail("Ma'lumotlarni tekshiring", { fieldErrors })
+    return fail(t('errors.checkData'), { fieldErrors })
   }
 
   const { phone, password, fullName } = parsed.data
@@ -32,8 +36,8 @@ export async function POST(request) {
     select: { id: true },
   })
   if (existing) {
-    return fail('Bu raqam allaqachon ro\'yxatdan o\'tgan', {
-      fieldErrors: { phone: "Bu raqam band. Kirishni sinab ko'ring." },
+    return fail(t('errors.phoneTaken'), {
+      fieldErrors: { phone: t('errors.phoneTakenField') },
     })
   }
 

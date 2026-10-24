@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { Check, Minus, Plus, ShoppingBag } from 'lucide-react'
 import { useCart } from '@/lib/cart-store'
-import { formatSom } from '@/lib/format'
+import { useMoney, useT } from '@/lib/i18n/client'
 import { cn } from '@/lib/utils'
 
 /**
@@ -13,6 +13,8 @@ import { cn } from '@/lib/utils'
  * Hajm almashganda narx darhol o'zgaradi. Tugagan hajmni tanlab bo'lmaydi.
  */
 export function ProductPurchase({ product }) {
+  const t = useT()
+  const money = useMoney()
   const addItem = useCart((state) => state.addItem)
 
   // Boshlang'ich tanlov: birinchi mavjud hajm, hammasi tugagan bo'lsa birinchisi
@@ -52,7 +54,9 @@ export function ProductPurchase({ product }) {
     <div>
       {/* Hajm tanlash */}
       <fieldset>
-        <legend className="mb-3 text-sm font-semibold text-foreground">Hajm</legend>
+        <legend className="mb-3 text-sm font-semibold text-foreground">
+          {t('product.size')}
+        </legend>
         <div className="flex flex-wrap gap-2">
           {product.variants.map((variant) => {
             const active = variant.id === selectedId
@@ -88,10 +92,10 @@ export function ProductPurchase({ product }) {
           {selected.discountPercent > 0 ? (
             <div className="flex flex-wrap items-baseline gap-3">
               <span className="text-2xl font-bold text-gold-deep">
-                {formatSom(selected.finalPrice)}
+                {money(selected.finalPrice)}
               </span>
               <span className="text-muted-deep line-through">
-                {formatSom(selected.price)}
+                {money(selected.price)}
               </span>
               <span className="rounded-full bg-destructive px-2.5 py-1 text-xs font-semibold text-white">
                 −{selected.discountPercent}%
@@ -99,15 +103,17 @@ export function ProductPurchase({ product }) {
             </div>
           ) : (
             <span className="text-2xl font-bold text-gold-deep">
-              {formatSom(selected.finalPrice)}
+              {money(selected.finalPrice)}
             </span>
           )}
 
           <p className="mt-2 text-sm">
             {selected.available ? (
-              <span className="text-success-deep">Mavjud</span>
+              <span className="text-success-deep">{t('product.available')}</span>
             ) : (
-              <span className="text-danger-deep">Bu hajm tugagan</span>
+              <span className="text-danger-deep">
+                {t('product.sizeOutOfStock')}
+              </span>
             )}
           </p>
         </div>
@@ -116,7 +122,7 @@ export function ProductPurchase({ product }) {
       {/* Miqdor va savatga qo'shish */}
       {allOutOfStock ? (
         <p className="mt-6 rounded-lg border border-border bg-muted p-4 text-sm text-muted-deep">
-          Hozircha bu atirning barcha hajmlari tugagan. Tez orada qaytadi.
+          {t('product.allOutOfStock')}
         </p>
       ) : (
         <div className="mt-6 flex flex-col gap-3 sm:flex-row">
@@ -125,7 +131,7 @@ export function ProductPurchase({ product }) {
               type="button"
               onClick={() => setQuantity((q) => Math.max(1, q - 1))}
               disabled={quantity <= 1}
-              aria-label="Kamaytirish"
+              aria-label={t('common.decrease')}
               className="flex size-12 items-center justify-center text-foreground disabled:opacity-40"
             >
               <Minus className="size-4" aria-hidden="true" />
@@ -140,7 +146,7 @@ export function ProductPurchase({ product }) {
               type="button"
               onClick={() => setQuantity((q) => Math.min(maxQuantity, q + 1))}
               disabled={quantity >= maxQuantity}
-              aria-label="Ko'paytirish"
+              aria-label={t('common.increase')}
               className="flex size-12 items-center justify-center text-foreground disabled:opacity-40"
             >
               <Plus className="size-4" aria-hidden="true" />
@@ -156,12 +162,12 @@ export function ProductPurchase({ product }) {
             {added ? (
               <>
                 <Check className="size-5" aria-hidden="true" />
-                Savatga qo'shildi
+                {t('product.added')}
               </>
             ) : (
               <>
                 <ShoppingBag className="size-5" aria-hidden="true" />
-                Savatga qo'shish
+                {t('product.addToCart')}
               </>
             )}
           </button>
@@ -173,7 +179,7 @@ export function ProductPurchase({ product }) {
           href="/savat"
           className="mt-3 inline-block text-sm text-brand-mid underline-offset-4 hover:underline"
         >
-          Savatga o'tish
+          {t('product.goToCart')}
         </Link>
       ) : null}
     </div>

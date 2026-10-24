@@ -4,6 +4,7 @@ import { confirmUpload } from '@/lib/cloudinary'
 import { prisma } from '@/lib/prisma'
 import { brandSchema } from '@/lib/validation/admin'
 import { formatZodError } from '@/lib/validation/auth'
+import { revalidateCatalog } from '@/lib/revalidate'
 
 export async function GET() {
   const guard = await guardAdmin()
@@ -82,5 +83,6 @@ export async function POST(request) {
     },
   })
 
+  revalidateCatalog()
   return ok({ brand }, { status: 201 })
 }

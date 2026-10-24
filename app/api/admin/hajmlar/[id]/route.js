@@ -3,6 +3,7 @@ import { guardAdmin } from '@/lib/admin-api'
 import { prisma } from '@/lib/prisma'
 import { sizeSchema } from '@/lib/validation/admin'
 import { formatZodError } from '@/lib/validation/auth'
+import { revalidateCatalog } from '@/lib/revalidate'
 
 export async function PATCH(request, { params }) {
   const guard = await guardAdmin()
@@ -48,6 +49,7 @@ export async function PATCH(request, { params }) {
   if (isActive !== undefined) data.isActive = isActive
 
   const size = await prisma.size.update({ where: { id }, data })
+  revalidateCatalog()
   return ok({ size })
 }
 
@@ -72,5 +74,6 @@ export async function DELETE(request, { params }) {
   }
 
   await prisma.size.delete({ where: { id } })
+  revalidateCatalog()
   return ok()
 }

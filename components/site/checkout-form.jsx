@@ -10,7 +10,7 @@ import { TelegramMainButton } from './telegram-controls'
 import { cartTotal, useCart } from '@/lib/cart-store'
 import { useHydrated } from '@/lib/use-hydrated'
 import { formatPhone } from '@/lib/auth/phone'
-import { formatSom } from '@/lib/format'
+import { useMoney, useT } from '@/lib/i18n/client'
 
 function Field({ label, htmlFor, error, hint, children }) {
   return (
@@ -34,6 +34,8 @@ const inputClass =
   'w-full min-h-12 rounded-lg border border-input bg-card px-4 text-[16px] text-card-foreground transition-colors duration-200 placeholder:text-muted-deep focus:border-brand-mid focus:outline-none focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2 aria-[invalid=true]:border-destructive'
 
 export function CheckoutForm({ user, deliveryPrice, deliveryInfo }) {
+  const t = useT()
+  const money = useMoney()
   const router = useRouter()
   const items = useCart((state) => state.items)
   const clear = useCart((state) => state.clear)
@@ -66,12 +68,14 @@ export function CheckoutForm({ user, deliveryPrice, deliveryInfo }) {
     return (
       <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border px-6 py-16 text-center">
         <ShoppingBag className="size-10 text-muted-deep" aria-hidden="true" />
-        <p className="mt-4 font-serif text-xl text-foreground">Savat bo'sh</p>
+        <p className="mt-4 font-serif text-xl text-foreground">
+          {t('cart.empty')}
+        </p>
         <Link
           href="/katalog"
           className="mt-6 inline-flex min-h-12 items-center justify-center rounded-lg bg-primary px-6 font-semibold text-primary-foreground hover:bg-gold-light"
         >
-          Katalogga o'tish
+          {t('common.goToCatalog')}
         </Link>
       </div>
     )
@@ -114,7 +118,7 @@ export function CheckoutForm({ user, deliveryPrice, deliveryInfo }) {
     if (!res.ok) {
       setPending(false)
       setErrors(data?.fieldErrors ?? {})
-      setFormError(data?.message ?? "Buyurtmani yuborib bo'lmadi")
+      setFormError(data?.message ?? t('checkout.failed'))
 
       if (Array.isArray(data?.details)) setProblems(data.details)
 
@@ -137,7 +141,7 @@ export function CheckoutForm({ user, deliveryPrice, deliveryInfo }) {
     >
       {/* Mini App'da asosiy amal Telegram'ning o'z tugmasida bo'ladi */}
       <TelegramMainButton
-        label="Buyurtmani tasdiqlash"
+        label={t('checkout.submit')}
         onClick={submitFromTelegram}
         loading={pending}
         disabled={pending}
@@ -146,10 +150,14 @@ export function CheckoutForm({ user, deliveryPrice, deliveryInfo }) {
       <div className="space-y-4 lg:col-span-2">
         <section className="space-y-4 rounded-xl border border-border bg-card p-4 sm:p-5">
           <h2 className="font-serif text-xl text-card-foreground">
-            Yetkazib berish ma'lumotlari
+            {t('checkout.deliveryHeading')}
           </h2>
 
-          <Field label="Ismingiz" htmlFor="customerName" error={errors.customerName}>
+          <Field
+            label={t('checkout.name')}
+            htmlFor="customerName"
+            error={errors.customerName}
+          >
             <input
               id="customerName"
               autoComplete="name"
@@ -157,15 +165,15 @@ export function CheckoutForm({ user, deliveryPrice, deliveryInfo }) {
               aria-invalid={errors.customerName ? 'true' : undefined}
               onChange={(e) => set('customerName', e.target.value)}
               className={inputClass}
-              placeholder="Aziz Karimov"
+              placeholder={t('checkout.namePlaceholder')}
             />
           </Field>
 
           <Field
-            label="Telefon raqami"
+            label={t('checkout.phone')}
             htmlFor="customerPhone"
             error={errors.customerPhone}
-            hint="Operator shu raqamga qo'ng'iroq qilib buyurtmani tasdiqlaydi."
+            hint={t('checkout.phoneHint')}
           >
             <PhoneInput
               id="customerPhone"
@@ -176,10 +184,10 @@ export function CheckoutForm({ user, deliveryPrice, deliveryInfo }) {
           </Field>
 
           <Field
-            label="Manzil"
+            label={t('checkout.address')}
             htmlFor="address"
             error={errors.address}
-            hint="Tuman, ko'cha, uy va xonadon raqamini yozing."
+            hint={t('checkout.addressHint')}
           >
             <textarea
               id="address"
@@ -188,25 +196,25 @@ export function CheckoutForm({ user, deliveryPrice, deliveryInfo }) {
               aria-invalid={errors.address ? 'true' : undefined}
               onChange={(e) => set('address', e.target.value)}
               className="w-full rounded-lg border border-input bg-card px-4 py-3 text-[16px] text-card-foreground transition-colors duration-200 placeholder:text-muted-deep focus:border-brand-mid focus:outline-none aria-[invalid=true]:border-destructive"
-              placeholder="Toshkent, Chilonzor 19-kvartal, 45-uy, 12-xonadon"
+              placeholder={t('checkout.addressPlaceholder')}
             />
           </Field>
 
-          <Field label="Izoh" htmlFor="comment" error={errors.comment}>
+          <Field label={t('checkout.comment')} htmlFor="comment" error={errors.comment}>
             <textarea
               id="comment"
               rows={2}
               value={form.comment}
               onChange={(e) => set('comment', e.target.value)}
               className="w-full rounded-lg border border-input bg-card px-4 py-3 text-[16px] text-card-foreground transition-colors duration-200 placeholder:text-muted-deep focus:border-brand-mid focus:outline-none"
-              placeholder="Qo'shimcha izoh (ixtiyoriy)"
+              placeholder={t('checkout.commentPlaceholder')}
             />
           </Field>
         </section>
 
         <section className="overflow-hidden rounded-xl border border-border bg-card">
           <h2 className="border-b border-border p-4 font-serif text-xl text-card-foreground">
-            Mahsulotlar
+            {t('checkout.items')}
           </h2>
           <ul className="divide-y divide-border">
             {items.map((item) => (
@@ -227,11 +235,12 @@ export function CheckoutForm({ user, deliveryPrice, deliveryInfo }) {
                     {item.name}
                   </p>
                   <p className="text-sm text-muted-deep">
-                    {item.brandName} · {item.sizeLabel} · {item.quantity} dona
+                    {item.brandName} · {item.sizeLabel} ·{' '}
+                    {t('common.pieces', { n: item.quantity })}
                   </p>
                 </div>
                 <p className="whitespace-nowrap font-semibold text-gold-deep">
-                  {formatSom(item.unitPrice * item.quantity)}
+                  {money(item.unitPrice * item.quantity)}
                 </p>
               </li>
             ))}
@@ -241,31 +250,34 @@ export function CheckoutForm({ user, deliveryPrice, deliveryInfo }) {
 
       <aside className="lg:sticky lg:top-24 lg:h-fit">
         <div className="rounded-xl border border-border bg-card p-4 sm:p-5">
-          <h2 className="font-serif text-xl text-card-foreground">Jami</h2>
+          <h2 className="font-serif text-xl text-card-foreground">
+            {t('common.total')}
+          </h2>
 
           <dl className="mt-4 space-y-2 text-sm">
             <div className="flex justify-between">
-              <dt className="text-muted-deep">Mahsulotlar</dt>
-              <dd className="text-card-foreground">{formatSom(subtotal)}</dd>
+              <dt className="text-muted-deep">{t('common.products')}</dt>
+              <dd className="text-card-foreground">{money(subtotal)}</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-muted-deep">Yetkazib berish</dt>
+              <dt className="text-muted-deep">{t('common.delivery')}</dt>
               <dd className="text-card-foreground">
-                {deliveryPrice > 0 ? formatSom(deliveryPrice) : 'Bepul'}
+                {deliveryPrice > 0 ? money(deliveryPrice) : t('common.free')}
               </dd>
             </div>
           </dl>
 
           <div className="mt-4 flex items-baseline justify-between border-t border-border pt-4">
-            <span className="font-medium text-card-foreground">To'lanadi</span>
+            <span className="font-medium text-card-foreground">
+              {t('checkout.payable')}
+            </span>
             <span className="text-xl font-bold text-gold-deep">
-              {formatSom(subtotal + deliveryPrice)}
+              {money(subtotal + deliveryPrice)}
             </span>
           </div>
 
           <p className="mt-3 rounded-lg bg-muted p-3 text-sm text-muted-deep">
-            To'lov yetkazib berishda — naqd yoki karta orqali. Operator
-            qo'ng'iroq qilib tasdiqlaydi.
+            {t('checkout.paymentNote')}
           </p>
 
           {formError ? (
@@ -295,10 +307,10 @@ export function CheckoutForm({ user, deliveryPrice, deliveryInfo }) {
             {pending ? (
               <>
                 <LoaderCircle className="size-5 animate-spin" aria-hidden="true" />
-                Yuborilmoqda...
+                {t('checkout.submitting')}
               </>
             ) : (
-              'Buyurtmani tasdiqlash'
+              t('checkout.submit')
             )}
           </button>
 

@@ -4,22 +4,26 @@ import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Eye, EyeOff, LoaderCircle } from 'lucide-react'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { PhoneInput } from '@/components/phone-input'
 import { FieldError, FormError, Label, SubmitButton, TextInput } from './form-parts'
-import { registerSchema } from '@/lib/validation/auth'
+import { makeRegisterSchema } from '@/lib/validation/auth'
 import { MIN_PASSWORD_LENGTH } from '@/lib/auth/password'
+import { useT } from '@/lib/i18n/client'
 
 export function RegisterForm({ redirectTo = '/' }) {
+  const t = useT()
   const router = useRouter()
   const [showPassword, setShowPassword] = useState(false)
+
+  const schema = useMemo(() => makeRegisterSchema(t), [t])
 
   const {
     register,
     handleSubmit,
     setError,
     formState: { errors, isSubmitting },
-  } = useForm({ resolver: zodResolver(registerSchema) })
+  } = useForm({ resolver: zodResolver(schema) })
 
   async function onSubmit(values) {
     const res = await fetch('/api/auth/register', {
@@ -36,8 +40,7 @@ export function RegisterForm({ redirectTo = '/' }) {
         }
       }
       setError('root', {
-        message:
-          data?.message || "Ro'yxatdan o'tishda xatolik yuz berdi. Qayta urinib ko'ring.",
+        message: data?.message || t('auth.registerFailed'),
       })
       return
     }
@@ -49,12 +52,12 @@ export function RegisterForm({ redirectTo = '/' }) {
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
       <div>
-        <Label htmlFor="fullName">Ismingiz</Label>
+        <Label htmlFor="fullName">{t('auth.yourName')}</Label>
         <TextInput
           id="fullName"
           autoFocus
           autoComplete="name"
-          placeholder="Aziz Karimov"
+          placeholder={t('auth.namePlaceholder')}
           aria-invalid={errors.fullName ? 'true' : undefined}
           {...register('fullName')}
         />
@@ -62,7 +65,7 @@ export function RegisterForm({ redirectTo = '/' }) {
       </div>
 
       <div>
-        <Label htmlFor="phone">Telefon raqami</Label>
+        <Label htmlFor="phone">{t('auth.phone')}</Label>
         <PhoneInput
           id="phone"
           aria-invalid={errors.phone ? 'true' : undefined}
@@ -72,7 +75,7 @@ export function RegisterForm({ redirectTo = '/' }) {
       </div>
 
       <div>
-        <Label htmlFor="password">Parol</Label>
+        <Label htmlFor="password">{t('auth.password')}</Label>
         <div className="relative">
           <input
             id="password"
@@ -85,7 +88,9 @@ export function RegisterForm({ redirectTo = '/' }) {
           <button
             type="button"
             onClick={() => setShowPassword((v) => !v)}
-            aria-label={showPassword ? 'Parolni yashirish' : "Parolni ko'rsatish"}
+            aria-label={
+              showPassword ? t('auth.hidePassword') : t('auth.showPassword')
+            }
             className="absolute right-1 top-1/2 flex size-11 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-card-foreground"
           >
             {showPassword ? (
@@ -99,7 +104,7 @@ export function RegisterForm({ redirectTo = '/' }) {
           <FieldError error={errors.password} />
         ) : (
           <p className="mt-2 text-sm text-muted-on-dark">
-            Kamida {MIN_PASSWORD_LENGTH} ta belgi
+            {t('auth.passwordHint', { n: MIN_PASSWORD_LENGTH })}
           </p>
         )}
       </div>
@@ -110,10 +115,10 @@ export function RegisterForm({ redirectTo = '/' }) {
         {isSubmitting ? (
           <>
             <LoaderCircle className="size-5 animate-spin" aria-hidden="true" />
-            Yuborilmoqda...
+            {t('auth.registering')}
           </>
         ) : (
-          "Ro'yxatdan o'tish"
+          t('auth.registerTitle')
         )}
       </SubmitButton>
     </form>

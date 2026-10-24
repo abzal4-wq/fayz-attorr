@@ -3,8 +3,12 @@
 import { useRouter } from 'next/navigation'
 import { useEffect, useState, useTransition } from 'react'
 import { SlidersHorizontal, X } from 'lucide-react'
-import { buildCatalogQuery, countActiveFilters } from '@/lib/catalog-params'
-import { GENDER_LABELS, formatSom } from '@/lib/format'
+import {
+  GENDERS,
+  buildCatalogQuery,
+  countActiveFilters,
+} from '@/lib/catalog-params'
+import { useMoney, useT } from '@/lib/i18n/client'
 import { cn } from '@/lib/utils'
 
 function Section({ title, children }) {
@@ -35,6 +39,9 @@ function Checkbox({ checked, onChange, label, count }) {
 
 /** Filtr tarkibi — sidebar va bottom sheet ichida bir xil ishlatiladi. */
 function FilterBody({ draft, setDraft, options }) {
+  const t = useT()
+  const money = useMoney()
+
   function toggleIn(key, value) {
     const current = draft[key]
     const next = current.includes(value)
@@ -45,9 +52,9 @@ function FilterBody({ draft, setDraft, options }) {
 
   return (
     <div>
-      <Section title="Kimga">
+      <Section title={t('catalog.sectionGender')}>
         <div className="flex flex-wrap gap-2">
-          {Object.entries(GENDER_LABELS).map(([value, label]) => {
+          {GENDERS.map((value) => {
             const active = draft.gender === value
             return (
               <button
@@ -64,7 +71,7 @@ function FilterBody({ draft, setDraft, options }) {
                     : 'border-border text-foreground hover:border-brand-mid'
                 )}
               >
-                {label}
+                {t(`gender.${value}`)}
               </button>
             )
           })}
@@ -72,7 +79,7 @@ function FilterBody({ draft, setDraft, options }) {
       </Section>
 
       {options.brands.length > 0 ? (
-        <Section title="Brend">
+        <Section title={t('catalog.sectionBrand')}>
           <div className="max-h-64 space-y-0.5 overflow-y-auto">
             {options.brands.map((brand) => (
               <Checkbox
@@ -88,7 +95,7 @@ function FilterBody({ draft, setDraft, options }) {
       ) : null}
 
       {options.sizes.length > 0 ? (
-        <Section title="Hajm">
+        <Section title={t('catalog.sectionSize')}>
           <div className="flex flex-wrap gap-2">
             {options.sizes.map((size) => {
               const active = draft.sizeMl.includes(size.valueMl)
@@ -113,15 +120,15 @@ function FilterBody({ draft, setDraft, options }) {
         </Section>
       ) : null}
 
-      <Section title="Narx">
+      <Section title={t('catalog.sectionPrice')}>
         <div className="flex items-center gap-2">
           <label className="flex-1">
-            <span className="sr-only">Eng kam narx</span>
+            <span className="sr-only">{t('catalog.minPrice')}</span>
             <input
               type="number"
               inputMode="numeric"
               min={0}
-              placeholder={formatSom(options.minPrice, { withSuffix: false })}
+              placeholder={money(options.minPrice, { withSuffix: false })}
               value={draft.minPrice ?? ''}
               onChange={(e) =>
                 setDraft({
@@ -134,12 +141,12 @@ function FilterBody({ draft, setDraft, options }) {
           </label>
           <span className="text-muted-deep">—</span>
           <label className="flex-1">
-            <span className="sr-only">Eng yuqori narx</span>
+            <span className="sr-only">{t('catalog.maxPrice')}</span>
             <input
               type="number"
               inputMode="numeric"
               min={0}
-              placeholder={formatSom(options.maxPrice, { withSuffix: false })}
+              placeholder={money(options.maxPrice, { withSuffix: false })}
               value={draft.maxPrice ?? ''}
               onChange={(e) =>
                 setDraft({
@@ -152,16 +159,18 @@ function FilterBody({ draft, setDraft, options }) {
           </label>
         </div>
         <p className="mt-2 text-xs text-muted-deep">
-          Do'kondagi narxlar: {formatSom(options.minPrice)} —{' '}
-          {formatSom(options.maxPrice)}
+          {t('catalog.priceRange', {
+            min: money(options.minPrice),
+            max: money(options.maxPrice),
+          })}
         </p>
       </Section>
 
-      <Section title="Qo'shimcha">
+      <Section title={t('catalog.sectionExtra')}>
         <Checkbox
           checked={draft.onlyDiscount}
           onChange={(v) => setDraft({ ...draft, onlyDiscount: v })}
-          label="Faqat chegirmadagilar"
+          label={t('catalog.onlyDiscount')}
         />
       </Section>
     </div>
@@ -169,6 +178,7 @@ function FilterBody({ draft, setDraft, options }) {
 }
 
 export function CatalogFilters({ filters, options, total }) {
+  const t = useT()
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const [sheetOpen, setSheetOpen] = useState(false)
@@ -209,14 +219,16 @@ export function CatalogFilters({ filters, options, total }) {
       <aside className="hidden w-64 shrink-0 lg:block">
         <div className="sticky top-24">
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="font-serif text-xl text-foreground">Filtr</h2>
+            <h2 className="font-serif text-xl text-foreground">
+              {t('catalog.filter')}
+            </h2>
             {activeCount > 0 ? (
               <button
                 type="button"
                 onClick={clearAll}
                 className="text-sm text-muted-deep underline-offset-4 hover:text-foreground hover:underline"
               >
-                Tozalash
+                {t('catalog.clear')}
               </button>
             ) : null}
           </div>
@@ -229,7 +241,7 @@ export function CatalogFilters({ filters, options, total }) {
             disabled={isPending}
             className="mt-5 flex min-h-12 w-full items-center justify-center rounded-lg bg-primary px-4 font-semibold text-primary-foreground transition-colors duration-200 hover:bg-gold-light disabled:opacity-70"
           >
-            Qo'llash
+            {t('catalog.apply')}
           </button>
         </div>
       </aside>
@@ -241,7 +253,7 @@ export function CatalogFilters({ filters, options, total }) {
         className="fixed bottom-20 left-1/2 z-30 flex min-h-12 -translate-x-1/2 items-center gap-2 rounded-full bg-brand-deep px-5 text-sm font-semibold text-ivory shadow-lg lg:hidden"
       >
         <SlidersHorizontal className="size-4" aria-hidden="true" />
-        Filtr
+        {t('catalog.filter')}
         {activeCount > 0 ? (
           <span className="flex size-5 items-center justify-center rounded-full bg-gold text-xs font-bold text-brand-darker">
             {activeCount}
@@ -254,23 +266,25 @@ export function CatalogFilters({ filters, options, total }) {
         <div
           role="dialog"
           aria-modal="true"
-          aria-label="Filtr"
+          aria-label={t('catalog.filter')}
           className="fixed inset-0 z-50 flex items-end lg:hidden"
         >
           <button
             type="button"
-            aria-label="Yopish"
+            aria-label={t('common.close')}
             onClick={() => setSheetOpen(false)}
             className="absolute inset-0 bg-brand-darker/50"
           />
 
           <div className="glass-light relative max-h-[85vh] w-full overflow-y-auto rounded-t-2xl bg-background p-5 pb-safe">
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="font-serif text-xl text-foreground">Filtr</h2>
+              <h2 className="font-serif text-xl text-foreground">
+                {t('catalog.filter')}
+              </h2>
               <button
                 type="button"
                 onClick={() => setSheetOpen(false)}
-                aria-label="Yopish"
+                aria-label={t('common.close')}
                 className="flex size-11 items-center justify-center rounded-lg text-muted-deep hover:text-foreground"
               >
                 <X className="size-5" aria-hidden="true" />
@@ -286,7 +300,7 @@ export function CatalogFilters({ filters, options, total }) {
                   onClick={clearAll}
                   className="min-h-12 rounded-lg border border-border px-4 text-sm font-semibold text-foreground"
                 >
-                  Tozalash
+                  {t('catalog.clear')}
                 </button>
               ) : null}
               <button
@@ -295,7 +309,9 @@ export function CatalogFilters({ filters, options, total }) {
                 disabled={isPending}
                 className="flex min-h-12 flex-1 items-center justify-center rounded-lg bg-primary px-4 font-semibold text-primary-foreground disabled:opacity-70"
               >
-                Ko'rsatish{total != null ? ` (${total})` : ''}
+                {total != null
+                  ? t('catalog.showCount', { n: total })
+                  : t('catalog.show')}
               </button>
             </div>
           </div>
@@ -307,11 +323,12 @@ export function CatalogFilters({ filters, options, total }) {
 
 /** Saralash tanlovi — filtr panelidan tashqarida, ro'yxat tepasida. */
 export function CatalogSort({ filters }) {
+  const t = useT()
   const router = useRouter()
 
   return (
     <label className="flex items-center gap-2 text-sm">
-      <span className="sr-only">Saralash</span>
+      <span className="sr-only">{t('catalog.sort')}</span>
       <select
         value={filters.sort}
         onChange={(e) => {
@@ -324,14 +341,14 @@ export function CatalogSort({ filters }) {
         }}
         className="min-h-11 rounded-lg border border-input bg-card px-3 text-sm text-card-foreground focus:border-brand-mid focus:outline-none"
       >
-        {Object.entries({
-          yangi: 'Yangi',
-          arzon: 'Avval arzoni',
-          qimmat: 'Avval qimmati',
-          ommabop: 'Ommabop',
-        }).map(([value, label]) => (
+        {[
+          ['yangi', 'catalog.sortNew'],
+          ['arzon', 'catalog.sortCheap'],
+          ['qimmat', 'catalog.sortExpensive'],
+          ['ommabop', 'catalog.sortPopular'],
+        ].map(([value, key]) => (
           <option key={value} value={value}>
-            {label}
+            {t(key)}
           </option>
         ))}
       </select>

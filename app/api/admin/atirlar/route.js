@@ -8,6 +8,7 @@ import {
 } from '@/lib/products-admin'
 import { productSchema } from '@/lib/validation/admin'
 import { formatZodError } from '@/lib/validation/auth'
+import { revalidateCatalog } from '@/lib/revalidate'
 
 export async function POST(request) {
   const guard = await guardAdmin()
@@ -68,6 +69,7 @@ export async function POST(request) {
       return created
     })
 
+    revalidateCatalog()
     return ok({ product }, { status: 201 })
   } catch (error) {
     return fail(error.message || 'Atirni saqlab bo\'lmadi', { status: 400 })

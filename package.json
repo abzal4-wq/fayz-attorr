@@ -12,7 +12,8 @@
     "db:migrate": "prisma migrate dev",
     "db:studio": "prisma studio",
     "postinstall": "prisma generate",
-    "tg": "node scripts/telegram-webhook.mjs"
+    "tg": "node scripts/telegram-webhook.mjs",
+    "i18n": "node scripts/check-i18n.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",

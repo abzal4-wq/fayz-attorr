@@ -4,6 +4,7 @@ import { confirmUpload, deleteImage } from '@/lib/cloudinary'
 import { prisma } from '@/lib/prisma'
 import { brandSchema } from '@/lib/validation/admin'
 import { formatZodError } from '@/lib/validation/auth'
+import { revalidateCatalog } from '@/lib/revalidate'
 
 export async function PATCH(request, { params }) {
   const guard = await guardAdmin()
@@ -74,6 +75,7 @@ export async function PATCH(request, { params }) {
 
   if (logoToDelete) await deleteImage(logoToDelete)
 
+  revalidateCatalog()
   return ok({ brand })
 }
 
@@ -100,5 +102,6 @@ export async function DELETE(request, { params }) {
   await prisma.brand.delete({ where: { id } })
   if (brand.logoId) await deleteImage(brand.logoId)
 
+  revalidateCatalog()
   return ok()
 }

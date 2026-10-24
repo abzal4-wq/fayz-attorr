@@ -4,27 +4,31 @@ import { AuthShell } from '@/components/auth/auth-shell'
 import { RegisterForm } from '@/components/auth/register-form'
 import { getUserId } from '@/lib/auth/session'
 import { safeRedirectPath } from '@/lib/safe-redirect'
+import { getT } from '@/lib/i18n/server'
 
-export const metadata = { title: "Ro'yxatdan o'tish" }
+export async function generateMetadata() {
+  const t = await getT()
+  return { title: t('meta.registerTitle') }
+}
 
 export default async function RegisterPage({ searchParams }) {
-  const params = await searchParams
+  const [params, t] = await Promise.all([searchParams, getT()])
   const redirectTo = safeRedirectPath(params?.keyin)
 
   if (await getUserId()) redirect(redirectTo)
 
   return (
     <AuthShell
-      title="Ro'yxatdan o'tish"
-      subtitle="Buyurtma berish uchun telefon raqamingizni qoldiring."
+      title={t('auth.registerTitle')}
+      subtitle={t('auth.registerSubtitle')}
       footer={
         <>
-          Hisobingiz bormi?{' '}
+          {t('auth.hasAccount')}{' '}
           <Link
             href={`/kirish${params?.keyin ? `?keyin=${encodeURIComponent(redirectTo)}` : ''}`}
             className="font-medium text-gold underline-offset-4 hover:underline"
           >
-            Kiring
+            {t('auth.goLogin')}
           </Link>
         </>
       }
