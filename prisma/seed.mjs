@@ -66,6 +66,7 @@ const DEMO_PRODUCTS = [
     brand: 'dior',
     gender: 'MEN',
     shortDescription: 'Bergamot va ambroksan asosidagi yangi, keskin hid.',
+    image: '/demo/dior-sauvage.webp',
     prices: { 30: 320000, 50: 450000, 100: 790000 },
     featured: true,
   },
@@ -75,6 +76,7 @@ const DEMO_PRODUCTS = [
     brand: 'chanel',
     gender: 'WOMEN',
     shortDescription: 'Apelsin, jasmin va paçuli uyg\'unligi.',
+    image: '/demo/chanel-coco-mademoiselle.webp',
     prices: { 30: 410000, 50: 620000 },
     featured: true,
   },
@@ -84,6 +86,7 @@ const DEMO_PRODUCTS = [
     brand: 'lattafa',
     gender: 'MEN',
     shortDescription: 'Qora murch, tamaki va vanil notalari.',
+    image: '/demo/lattafa-asad.webp',
     prices: { 30: 120000, 50: 180000 },
     discount: { 50: 15 },
   },
@@ -93,6 +96,7 @@ const DEMO_PRODUCTS = [
     brand: 'armaf',
     gender: 'UNISEX',
     shortDescription: 'Limon, olma va qora smorodina ochilishi.',
+    image: '/demo/armaf-club-de-nuit.webp',
     prices: { 50: 210000, 100: 340000 },
   },
 ]
@@ -122,13 +126,6 @@ async function seedDemo() {
         shortDescription: p.shortDescription,
         brandId: brandIds[p.brand],
         isFeatured: Boolean(p.featured),
-        images: {
-          create: [
-            // Demo rasm — loyihaning o'z faylidan, Cloudinary'siz.
-            // publicId "local:" bilan boshlanadi => o'chirishda Cloudinary chaqirilmaydi.
-            { url: '/monogram.png', publicId: 'local:demo-monogram', sortOrder: 0 },
-          ],
-        },
         variants: {
           create: Object.entries(p.prices).map(([ml, price]) => {
             const discount = p.discount?.[ml] ?? 0
@@ -145,6 +142,21 @@ async function seedDemo() {
         },
       },
     })
+
+    // Rasm upsert'dan tashqarida yangilanadi: `update: {}` mavjud yozuvga tegmaydi,
+    // shuning uchun --demo ni qayta ishga tushirish eski rasmni almashtirmay qolardi.
+    // Demo rasmlar loyihaning public/ papkasidan — Cloudinary'siz; publicId "local:"
+    // bilan boshlanadi => o'chirishda Cloudinary chaqirilmaydi.
+    await prisma.productImage.deleteMany({ where: { productId: product.id } })
+    await prisma.productImage.create({
+      data: {
+        productId: product.id,
+        url: p.image,
+        publicId: `local:${p.slug}`,
+        sortOrder: 0,
+      },
+    })
+
     console.log(`Demo mahsulot: ${p.name} (${product.slug})`)
   }
   console.log(
