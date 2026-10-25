@@ -1,6 +1,5 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "_izoh": "regions shu yerda yozilgani YETARLI EMAS. Deploydan keyin funksiya baribir hkg1 da ishladi (logdan ko'rindi), chunki loyihaning o'z sozlamasi iad1 da turgan edi. Haqiqiy sozlama: Vercel -> Settings -> Functions -> Region = fra1 (yoki API: serverlessFunctionRegion). Fra1 tanlangan, chunki Neon eu-central-1 (Frankfurt) da.",
   "regions": ["fra1"],
   "framework": "nextjs"
 }

@@ -59,6 +59,24 @@ git push -u origin master
 
 ---
 
+## Region haqida muhim eslatma
+
+`vercel.json` dagi `"regions": ["fra1"]` **o'zi yetarli emas**. Bir
+marta shunday deb o'ylab, deploy'dan keyin logda funksiya `hkg1`
+(Gonkong) da ishlayotganini ko'rdik — loyihaning o'z sozlamasi
+(`iad1`) ustun kelgan ekan.
+
+Haqiqiy sozlama: **Vercel → Settings → Functions → Region = `fra1`**.
+Hozir shunday qo'yilgan. Tekshirish: javobdagi `X-Vercel-Id`
+`hkg1::fra1::...` ko'rinishida bo'lsin — ikkinchi qism bajarilish
+regioni.
+
+`fra1` tanlangan, chunki Neon bazasi `eu-central-1` (Frankfurt) da.
+
+> `vercel.json` ga **izoh qo'shib bo'lmaydi**: Vercel begona kalitlarni
+> rad etadi va deploy `Schema verification failed` bilan yiqiladi.
+> (Shu xato bir marta ketma-ket uchta deploy'ni buzgan.)
+
 ## 2. Vercel loyihasi
 
 ```bash
