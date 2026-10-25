@@ -30,7 +30,36 @@ const SHOT_DIR = 'audit-shots'
 const WIDTHS = ALL_WIDTHS ? [375, 414, 768, 1024, 1440] : [375]
 const LOCALES = ['uz', 'ru', 'en']
 
-const PRODUCT_PATH = process.env.AUDIT_PRODUCT || ''
+/**
+ * Mahsulot sahifasi manzilini normallashtiradi.
+ *
+ * Uch ko'rinishni ham qabul qiladi: 'blue-de-chanel',
+ * '/atir/blue-de-chanel' va to'liq URL.
+ *
+ * Git Bash (MSYS) '/' bilan boshlanadigan muhit o'zgaruvchisini
+ * Windows yo'liga aylantirib yuboradi:
+ *   /atir/blue-de-chanel -> C:/Program Files/Git/atir/blue-de-chanel
+ * Shuning uchun oxiridagi '/atir/<slug>' qismi ajratib olinadi.
+ */
+function normalizeProductPath(raw) {
+  const value = String(raw ?? '').trim()
+  if (!value) return ''
+
+  const match = value.match(/\/atir\/[^/\\]+$/)
+  if (match) return match[0]
+
+  if (value.startsWith('http')) {
+    try {
+      return new URL(value).pathname
+    } catch {
+      return ''
+    }
+  }
+
+  return value.includes('/') ? value : `/atir/${value}`
+}
+
+const PRODUCT_PATH = normalizeProductPath(process.env.AUDIT_PRODUCT)
 
 const PAGES = [
   ['bosh sahifa', '/'],
@@ -236,6 +265,21 @@ try {
     for (const [label, path] of PAGES) {
       for (const locale of locales) {
         const page = await browser.newPage()
+
+        /*
+         * Konsol xatolari ham yig'iladi.
+         *
+         * Hydration nomuvofiqligi (React #418) aynan shu yerda
+         * ko'rinadi va boshqa hech qayerda bilinmaydi: sahifa
+         * ochiladi, tashqi ko'rinishi joyida, lekin server va
+         * brauzer boshqa narsa chizgan bo'ladi. Bir marta shunday
+         * xato jonli saytda ancha turib qoldi.
+         */
+        const consoleErrors = []
+        page.on('console', (m) => {
+          if (m.type() === 'error') consoleErrors.push(m.text().slice(0, 160))
+        })
+        page.on('pageerror', (e) => consoleErrors.push(e.message.slice(0, 160)))
         await page.setViewport({
           width,
           height: 780,
@@ -255,6 +299,31 @@ try {
           await page.close()
           continue
         }
+
+        /*
+         * Joylashuv tinchishini kutamiz.
+         *
+         * networkidle2 dan keyin ham rasmlar hali o'z o'lchamini
+         * olmagan bo'lishi mumkin — o'sha payt o'lchansa, tugma
+         * 80x80 o'rniga 4x4 bo'lib ko'rinadi va audit yo'q xato
+         * haqida xabar beradi. Bir marta shunday beqarorlik bo'ldi.
+         */
+        await page.evaluate(
+          () =>
+            new Promise((resolve) => {
+              const done = () => requestAnimationFrame(() => setTimeout(resolve, 150))
+              const images = [...document.images].filter((i) => !i.complete)
+              if (images.length === 0) return done()
+
+              let left = images.length
+              const tick = () => --left <= 0 && done()
+              images.forEach((i) => {
+                i.addEventListener('load', tick, { once: true })
+                i.addEventListener('error', tick, { once: true })
+              })
+              setTimeout(done, 3000) // har holda cheksiz kutmaymiz
+            })
+        )
 
         const m = await page.evaluate(MEASURE)
 
@@ -276,6 +345,14 @@ try {
         if (m.tiny.length) {
           note('matn <11px', where,
             m.tiny.slice(0, 4).map((t) => `"${t.text}" ${t.size}px`).join(' | '))
+        }
+        /*
+         * 404 sahifasida brauzer hujjatning o'zi uchun "Failed to
+         * load resource: 404" yozadi — bu kutilgan narsa, xato emas.
+         * Shu sababli o'sha sahifada konsol tekshirilmaydi.
+         */
+        if (label !== '404' && consoleErrors.length) {
+          note('konsol xatosi', where, consoleErrors.slice(0, 2).join(' | '))
         }
         if (m.clipped.length) {
           note('matn kesilgan', where,

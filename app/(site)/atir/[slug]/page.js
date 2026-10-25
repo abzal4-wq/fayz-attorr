@@ -99,7 +99,7 @@ export default async function ProductPage({ params }) {
 
             {product.description ? (
               <details className="group mt-8 border-t border-border pt-4">
-                <summary className="flex cursor-pointer list-none items-center justify-between font-medium text-foreground">
+                <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between font-medium text-foreground">
                   {t('product.fullDescription')}
                   <ChevronRight
                     className="size-4 transition-transform duration-200 group-open:rotate-90"

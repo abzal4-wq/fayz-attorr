@@ -1,6 +1,7 @@
 import { fail, ok, readJson } from '@/lib/api'
 import { guardAdmin, uniqueSlug } from '@/lib/admin-api'
-import { confirmUpload, deleteImage } from '@/lib/cloudinary'
+import { confirmUpload } from '@/lib/cloudinary'
+import { purgeBrandLogo } from '@/lib/products-admin'
 import { prisma } from '@/lib/prisma'
 import { brandSchema } from '@/lib/validation/admin'
 import { formatZodError } from '@/lib/validation/auth'
@@ -73,7 +74,7 @@ export async function PATCH(request, { params }) {
 
   const brand = await prisma.brand.update({ where: { id }, data })
 
-  if (logoToDelete) await deleteImage(logoToDelete)
+  if (logoToDelete) await purgeBrandLogo(logoToDelete)
 
   revalidateCatalog()
   return ok({ brand })
@@ -100,7 +101,7 @@ export async function DELETE(request, { params }) {
   }
 
   await prisma.brand.delete({ where: { id } })
-  if (brand.logoId) await deleteImage(brand.logoId)
+  if (brand.logoId) await purgeBrandLogo(brand.logoId)
 
   revalidateCatalog()
   return ok()
