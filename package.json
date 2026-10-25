@@ -8,6 +8,7 @@
     "vercel-build": "prisma migrate deploy && next build",
     "start": "next start",
     "lint": "eslint",
+    "test": "node --import ./tests/setup.mjs --test tests/*.test.mjs",
     "seed": "node prisma/seed.mjs",
     "seed:demo": "node prisma/seed.mjs --demo",
     "db:migrate": "prisma migrate dev",

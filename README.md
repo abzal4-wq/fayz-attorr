@@ -55,6 +55,7 @@ Namunaviy atirlar kerak bo'lsa: `node prisma/seed.mjs --demo`
 | `npm run dev` | Ishlab chiqish serveri |
 | `npm run build` | Production build |
 | `npm run lint` | ESLint |
+| `npm test` | Birlik testlari (111 ta, Node o'z ishlatgichi) |
 | `npm run i18n` | Uch lug'atning kalitlari mos kelishini tekshiradi |
 | `npm run audit` | Brauzerda: scroll, 44px tugmalar, a11y (`-- --all`, `--shot`) |
 | `npm run miniapp` | Telegram Mini App integratsiyasi testi |

@@ -39,6 +39,9 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Testlar
+        run: npm test
+
       - name: Lug'atlar mos kelishi (uz / ru / en)
         run: npm run i18n
 
