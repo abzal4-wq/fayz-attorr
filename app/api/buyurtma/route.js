@@ -1,5 +1,5 @@
 import { fail, ok, readJson } from '@/lib/api'
-import { consumeAttempt, getClientIp } from '@/lib/auth/rate-limit'
+import { consumeAttempt, consumeAttemptPair, getClientIp } from '@/lib/auth/rate-limit'
 import { getCurrentUser } from '@/lib/auth/session'
 import { OrderError, createOrder } from '@/lib/orders'
 import { notifyNewOrder } from '@/lib/telegram'
@@ -11,7 +11,10 @@ export async function POST(request) {
   const ip = getClientIp(request)
   const t = await getT()
 
-  const limit = await consumeAttempt('order', ip)
+  // Buyurtmada ham IP yolg'iz yetarli emas (CGNAT) — foydalanuvchi
+  // bo'yicha ham hisoblanadi. Mehmon buyurtmasi joriy etilganda
+  // bu yerga telefon raqami beriladi.
+  const limit = await consumeAttempt('order-ip', ip)
   if (!limit.allowed) {
     return fail(
       t('errors.tooManyAttempts', {
