@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { Clock, MapPin, Phone } from 'lucide-react'
 import { InstagramIcon, TelegramIcon } from './brand-icons'
 import { getStoreSettings } from '@/lib/settings'
+import { currentShopYear } from '@/lib/format'
 import { getT } from '@/lib/i18n/server'
 
 export async function SiteFooter() {
@@ -126,7 +127,7 @@ export async function SiteFooter() {
 
       <div className="border-t border-border">
         <p className="mx-auto max-w-[1280px] px-4 py-5 text-sm text-muted-on-dark sm:px-6">
-          © {new Date().getFullYear()} Fayz Attor
+          © {currentShopYear()} Fayz Attor
         </p>
       </div>
     </footer>
