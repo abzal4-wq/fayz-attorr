@@ -112,6 +112,12 @@ izohda.
 
 ---
 
+## Ochiq masala
+
+`docs/AUDIT-002-token-version.md` — chiqib ketgandan keyin eski token
+30 kun amal qilaveradi. Tuzatish tayyor, baza migratsiyasini talab
+qiladi.
+
 ## Deploy
 
 `DEPLOY.md` — bosqichma-bosqich: GitHub, Vercel, environment,
