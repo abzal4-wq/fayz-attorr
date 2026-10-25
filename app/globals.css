@@ -226,7 +226,6 @@
 @utility glass {
   background: rgba(7, 43, 50, 0.82);
   backdrop-filter: blur(16px) saturate(140%);
-  -webkit-backdrop-filter: blur(16px) saturate(140%);
   border: 1px solid rgba(255, 255, 255, 0.14);
   box-shadow: 0 8px 32px rgba(7, 43, 50, 0.28);
 }
@@ -244,17 +243,6 @@
   .glass {
     background: rgba(7, 43, 50, 0.96);
   }
-  .glass-light {
-    background: rgba(245, 242, 234, 0.96);
-  }
-}
-
-@utility glass-light {
-  background: rgba(13, 69, 78, 0.06);
-  backdrop-filter: blur(14px) saturate(130%);
-  -webkit-backdrop-filter: blur(14px) saturate(130%);
-  border: 1px solid rgba(13, 69, 78, 0.12);
-  box-shadow: 0 8px 24px rgba(7, 43, 50, 0.1);
 }
 
 /* Shisha orqasidagi matn o'qilishi uchun qattiq to'q qatlam */

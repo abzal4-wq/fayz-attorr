@@ -277,7 +277,18 @@ export function CatalogFilters({ filters, options, total }) {
             className="absolute inset-0 bg-brand-darker/50"
           />
 
-          <div className="glass-light relative max-h-[85vh] w-full overflow-y-auto rounded-t-2xl bg-background p-5 pb-safe">
+          {/*
+            Fon ATAYLAB qattiq (bg-background), shisha emas.
+
+            Avval bu yerda `glass-light` turardi — u 6% shaffoflik
+            beradi va orqadagi mahsulotlar ro'yxati filtr matni ostidan
+            ko'rinib, panelni o'qib bo'lmas holga keltirardi. Ustiga
+            blur ham qo'llanmasdi: minifikator standart
+            `backdrop-filter` ni tashlab, faqat -webkit- variantini
+            qoldirgan edi (endi tuzatilgan). Filtr paneli — ish
+            quroli, uning ostidagi narsa ko'rinishi shart emas.
+          */}
+          <div className="relative max-h-[85vh] w-full overflow-y-auto rounded-t-2xl border-t border-border bg-background p-5 pb-safe shadow-2xl">
             <div className="mb-4 flex items-center justify-between">
               <h2 className="font-serif text-xl text-foreground">
                 {t('catalog.filter')}
