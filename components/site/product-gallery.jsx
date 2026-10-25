@@ -117,8 +117,12 @@ export function ProductGallery({ images, alt }) {
                   <Image
                     src={image.url}
                     alt=""
-                    width={80}
-                    height={80}
+                    // Joyi 80px, lekin DPR 3 da 240px kerak. srcset
+                    // `width` va `width*2` dan yasalgani uchun shu
+                    // qiymat 2 baravar oshirildi — CSS o'lchami
+                    // o'zgarmaydi (`w-full`).
+                    width={160}
+                    height={160}
                     className="aspect-square w-full bg-muted object-cover"
                   />
                 </button>

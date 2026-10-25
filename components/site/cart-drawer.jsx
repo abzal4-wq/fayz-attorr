@@ -123,8 +123,9 @@ function CartDrawer({ open, onClose }) {
                       <Image
                         src={item.imageUrl}
                         alt=""
-                        width={64}
-                        height={64}
+                        // size-16 (64px) joy uchun DPR 3 da 192px kerak
+                        width={128}
+                        height={128}
                         className="size-16 object-cover"
                       />
                     ) : null}

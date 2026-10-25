@@ -197,8 +197,9 @@ export default async function HomePage() {
                     <Image
                       src={brand.logoUrl}
                       alt=""
-                      width={32}
-                      height={32}
+                      // size-8 (32px) joy uchun DPR 3 da 96px kerak
+                      width={64}
+                      height={64}
                       className="size-8 object-contain"
                     />
                   ) : null}
