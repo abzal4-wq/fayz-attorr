@@ -188,7 +188,10 @@ export default async function HomePage() {
               <li key={brand.slug}>
                 <Link
                   href={`/katalog?brend=${brand.slug}`}
-                  className="flex min-h-14 items-center gap-2.5 rounded-xl border border-border bg-card px-4 transition-colors duration-200 hover:border-gold"
+                  // min-w-14: nomi juda qisqa brend (1-2 harf) chipni
+                  // 44px dan tor qilib yuborardi — bosish maydoni
+                  // mazmunga bog'liq bo'lib qolmasligi kerak
+                  className="flex min-h-14 min-w-14 items-center justify-center gap-2.5 rounded-xl border border-border bg-card px-4 transition-colors duration-200 hover:border-gold"
                 >
                   {brand.logoUrl ? (
                     <Image
