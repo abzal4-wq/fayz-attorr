@@ -183,37 +183,71 @@ Agar domen kelgunicha saytni odamlarga ko'rsatmoqchi bo'lsangiz:
 **Vercel → loyiha → Settings → Deployment Protection → Vercel
 Authentication → Disabled**.
 
-## 6. Telegram webhook
+### NEXT_PUBLIC_SITE_URL hozir vaqtinchalik qiymatda
 
-Faqat HTTPS domen ishlagandan keyin:
+Domen tayyor bo'lmagani uchun u `https://fayz-attor.vercel.app` ga
+qo'yilgan. Bu o'zgaruvchi `sitemap.xml`, `robots.txt` va Open Graph
+havolalarida ishlatiladi — `fayzattor.uz` da qolsa, qidiruv robotlari
+mavjud bo'lmagan manzilga yo'naltirilardi.
+
+**Domen ishga tushgach** uni albatta qaytaring:
 
 ```bash
-npm run tg set https://fayzattor.uz
-npm run tg info
+npx vercel env rm NEXT_PUBLIC_SITE_URL production --yes
+echo -n "https://fayzattor.uz" | npx vercel env add NEXT_PUBLIC_SITE_URL production
+npx vercel --prod
 ```
 
-`info` quyidagilarni ko'rsatishi kerak:
+> `NEXT_PUBLIC_` o'zgaruvchilari build paytida kodga yoziladi,
+> shuning uchun o'zgartirgandan keyin **qayta deploy shart**.
 
-- `url: https://fayzattor.uz/api/telegram/webhook`
-- `pending_update_count: 0`
-- `last_error_message` — bo'sh
+## 6. Telegram webhook
 
-### Ikkala admin botga `/start` bosishi SHART
+> **Tartib muhim.** `chats` buyrug'i webhook o'rnatilgandan keyin
+> ishlamaydi: Telegram bir vaqtda yo webhook, yo `getUpdates` beradi,
+> ikkalasini emas. Shuning uchun avval chat ID lar, keyin webhook.
 
-Telegram botga hech qachon yozmagan odamga xabar yubora olmaydi. Hozir
-hech kim `/start` bosmagan — ya'ni buyurtma kelganda **xabar hech kimga
-bormaydi**.
+### 1-qadam: ikkala admin botga `/start` bossin
+
+Telegram botga hech qachon yozmagan odamga xabar yubora olmaydi.
+`/start` bosilmasa, buyurtma kelganda **xabar hech kimga bormaydi** —
+bu eng ko'p uchraydigan nosozlik.
 
 Har ikkala admin [@fayzattor_bot](https://t.me/fayzattor_bot) ga kirib
-`/start` bossin, so'ng:
+`/start` bossin.
+
+### 2-qadam: haqiqiy chat ID larni oling
 
 ```bash
 npm run tg chats
 ```
 
-Bu haqiqiy chat ID larni ko'rsatadi. Agar ular `.env` dagi
-`TELEGRAM_ADMIN_CHAT_IDS` (`5580646720,726130790`) bilan mos kelmasa —
-Vercel'dagi qiymatni to'g'rilang va qayta deploy qiling.
+Chiqqan raqamlarni `.env` dagi `TELEGRAM_ADMIN_CHAT_IDS`
+(`5580646720,726130790`) bilan solishtiring. Mos kelmasa — Vercel'dagi
+qiymatni to'g'rilab, qayta deploy qiling.
+
+### 3-qadam: webhook
+
+```bash
+npm run tg set https://fayz-attor.vercel.app
+npm run tg info
+```
+
+Domen ishga tushgach `set` ni yangi manzil bilan qayta bajaring.
+
+`info` quyidagilarni ko'rsatishi kerak:
+
+- `url: .../api/telegram/webhook`
+- `pending_update_count: 0`
+- `last_error_message` — bo'sh
+
+### Webhook'ni vaqtincha o'chirish kerak bo'lsa
+
+```bash
+npm run tg delete
+```
+
+(masalan `chats` ni qayta ishlatish uchun)
 
 ---
 
