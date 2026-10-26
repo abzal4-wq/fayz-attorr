@@ -162,7 +162,16 @@
     "noOrders": "Hali buyurtma yo'q",
     "noOrdersHint": "Birinchi buyurtmangizdan keyin u shu yerda ko'rinadi.",
     "orderNumber": "Buyurtma #{number}",
-    "logout": "Chiqish"
+    "logout": "Chiqish",
+    "security": "Xavfsizlik",
+    "changePassword": "Parolni o'zgartirish",
+    "changePasswordHint": "Parol almashgandan keyin boshqa qurilmalardagi sessiyalar uziladi.",
+    "currentPassword": "Joriy parol",
+    "newPassword": "Yangi parol",
+    "savePassword": "Parolni saqlash",
+    "savingPassword": "Saqlanmoqda...",
+    "passwordChanged": "Parol o'zgartirildi",
+    "changePasswordFailed": "Parolni o'zgartirishda xatolik. Qayta urinib ko'ring."
   },
   "auth": {
     "loginTitle": "Kirish",
@@ -229,7 +238,8 @@
     "quantityMin": "Soni 1 dan kam bo'lmaydi",
     "quantityMax": "Bitta mahsulotdan 50 donadan ko'p buyurtma qilib bo'lmaydi",
     "cartEmpty": "Savat bo'sh",
-    "codeInvalid": "Kod {n} xonali bo'lishi kerak"
+    "codeInvalid": "Kod {n} xonali bo'lishi kerak",
+    "passwordSame": "Yangi parol eskisidan farq qilishi kerak"
   },
   "errors": {
     "badRequest": "So'rov formati noto'g'ri",
@@ -249,7 +259,9 @@
     "resetExpired": "Tiklash so'rovining muddati o'tgan. Boshidan boshlang.",
     "resetNotVerified": "Raqam hali tasdiqlanmagan. Telegram'da “Raqamni yuborish” tugmasini bosing.",
     "resetTooManyCodes": "Kod juda ko'p marta xato kiritildi. Boshidan boshlang.",
-    "resetWrongCode": "Kod to'g'ri kelmadi. Yana {n} marta urinib ko'rishingiz mumkin."
+    "resetWrongCode": "Kod to'g'ri kelmadi. Yana {n} marta urinib ko'rishingiz mumkin.",
+    "loginRequired": "Avval tizimga kiring.",
+    "wrongCurrentPassword": "Joriy parol to'g'ri kelmadi."
   },
   "meta": {
     "homeTitle": "Fayz Attor — original atirlar",

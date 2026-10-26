@@ -174,7 +174,16 @@
     "noOrders": "Заказов пока нет",
     "noOrdersHint": "После первого заказа он появится здесь.",
     "orderNumber": "Заказ #{number}",
-    "logout": "Выйти"
+    "logout": "Выйти",
+    "security": "Безопасность",
+    "changePassword": "Сменить пароль",
+    "changePasswordHint": "После смены пароля сеансы на других устройствах будут завершены.",
+    "currentPassword": "Текущий пароль",
+    "newPassword": "Новый пароль",
+    "savePassword": "Сохранить пароль",
+    "savingPassword": "Сохраняется...",
+    "passwordChanged": "Пароль изменён",
+    "changePasswordFailed": "Не удалось изменить пароль. Попробуйте снова."
   },
   "auth": {
     "loginTitle": "Вход",
@@ -241,7 +250,8 @@
     "quantityMin": "Количество не может быть меньше 1",
     "quantityMax": "Нельзя заказать больше 50 штук одного товара",
     "cartEmpty": "Корзина пуста",
-    "codeInvalid": "Код должен содержать {n} цифр"
+    "codeInvalid": "Код должен содержать {n} цифр",
+    "passwordSame": "Новый пароль должен отличаться от старого"
   },
   "errors": {
     "badRequest": "Неверный формат запроса",
@@ -261,7 +271,9 @@
     "resetExpired": "Срок запроса истёк. Начните заново.",
     "resetNotVerified": "Номер ещё не подтверждён. Нажмите «Отправить номер» в Telegram.",
     "resetTooManyCodes": "Код введён неверно слишком много раз. Начните заново.",
-    "resetWrongCode": "Код не подошёл. Осталось попыток: {n}."
+    "resetWrongCode": "Код не подошёл. Осталось попыток: {n}.",
+    "loginRequired": "Сначала войдите в аккаунт.",
+    "wrongCurrentPassword": "Текущий пароль неверен."
   },
   "meta": {
     "homeTitle": "Fayz Attor — оригинальные духи",

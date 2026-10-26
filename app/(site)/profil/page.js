@@ -1,8 +1,9 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import { Package } from 'lucide-react'
+import { ChevronDown, Package } from 'lucide-react'
 import { LogoutButton } from '@/components/auth/logout-button'
+import { PasswordChangeForm } from '@/components/auth/password-change-form'
 import { getCurrentUser } from '@/lib/auth/session'
 import { formatPhone } from '@/lib/auth/phone'
 import { formatDateTime } from '@/lib/format'
@@ -58,6 +59,21 @@ export default async function ProfilePage() {
           <dd className="text-card-foreground">{formatPhone(user.phone)}</dd>
         </div>
       </dl>
+
+      <h2 className="mt-10 font-serif text-xl text-foreground md:text-2xl">
+        {t('profile.security')}
+      </h2>
+
+      <details className="group mt-4 overflow-hidden rounded-xl border border-border bg-card">
+        <summary className="flex min-h-12 cursor-pointer items-center justify-between gap-4 p-4 text-card-foreground">
+          {t('profile.changePassword')}
+          <ChevronDown
+            className="size-5 shrink-0 text-muted-deep transition-transform duration-200 group-open:rotate-180"
+            aria-hidden="true"
+          />
+        </summary>
+        <PasswordChangeForm />
+      </details>
 
       <h2 className="mt-10 font-serif text-xl text-foreground md:text-2xl">
         {t('profile.myOrders')}

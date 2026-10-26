@@ -171,7 +171,16 @@
     "noOrders": "No orders yet",
     "noOrdersHint": "Your first order will show up here.",
     "orderNumber": "Order #{number}",
-    "logout": "Sign out"
+    "logout": "Sign out",
+    "security": "Security",
+    "changePassword": "Change password",
+    "changePasswordHint": "Changing your password signs you out on all other devices.",
+    "currentPassword": "Current password",
+    "newPassword": "New password",
+    "savePassword": "Save password",
+    "savingPassword": "Saving...",
+    "passwordChanged": "Password changed",
+    "changePasswordFailed": "Could not change the password. Please try again."
   },
   "auth": {
     "loginTitle": "Sign in",
@@ -238,7 +247,8 @@
     "quantityMin": "Quantity cannot be less than 1",
     "quantityMax": "You cannot order more than 50 of one item",
     "cartEmpty": "Your cart is empty",
-    "codeInvalid": "The code must be {n} digits"
+    "codeInvalid": "The code must be {n} digits",
+    "passwordSame": "The new password must differ from the old one"
   },
   "errors": {
     "badRequest": "The request format is not valid",
@@ -261,7 +271,9 @@
     "resetExpired": "This reset request has expired. Please start again.",
     "resetNotVerified": "The number is not verified yet. Tap “Share phone number” in Telegram.",
     "resetTooManyCodes": "The code was entered incorrectly too many times. Please start again.",
-    "resetWrongCode": "That code is not right. You have {n} attempts left."
+    "resetWrongCode": "That code is not right. You have {n} attempts left.",
+    "loginRequired": "Please sign in first.",
+    "wrongCurrentPassword": "That current password is not right."
   },
   "meta": {
     "homeTitle": "Fayz Attor — original perfumes",
