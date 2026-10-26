@@ -180,7 +180,15 @@
     "savePassword": "Save password",
     "savingPassword": "Saving...",
     "passwordChanged": "Password changed",
-    "changePasswordFailed": "Could not change the password. Please try again."
+    "changePasswordFailed": "Could not change the password. Please try again.",
+    "deleteAccount": "Delete account",
+    "deleteAccountWarning": "Your account will be deleted permanently and this cannot be undone.",
+    "deleteAccountOrders": "Your order history stays with the shop for accounting and delivery. If an order has not arrived yet, the shop can still reach you about it.",
+    "passwordToConfirm": "Password to confirm",
+    "deleteConfirm": "I understand, delete my account permanently",
+    "deleteSubmit": "Delete account",
+    "deleting": "Deleting...",
+    "deleteFailed": "Could not delete the account. Please try again."
   },
   "auth": {
     "loginTitle": "Sign in",
@@ -248,7 +256,8 @@
     "quantityMax": "You cannot order more than 50 of one item",
     "cartEmpty": "Your cart is empty",
     "codeInvalid": "The code must be {n} digits",
-    "passwordSame": "The new password must differ from the old one"
+    "passwordSame": "The new password must differ from the old one",
+    "deleteConfirmRequired": "Please confirm to continue"
   },
   "errors": {
     "badRequest": "The request format is not valid",

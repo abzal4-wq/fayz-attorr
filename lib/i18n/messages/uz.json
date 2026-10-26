@@ -171,7 +171,15 @@
     "savePassword": "Parolni saqlash",
     "savingPassword": "Saqlanmoqda...",
     "passwordChanged": "Parol o'zgartirildi",
-    "changePasswordFailed": "Parolni o'zgartirishda xatolik. Qayta urinib ko'ring."
+    "changePasswordFailed": "Parolni o'zgartirishda xatolik. Qayta urinib ko'ring.",
+    "deleteAccount": "Hisobni o'chirish",
+    "deleteAccountWarning": "Hisob butunlay o'chadi va buni qaytarib bo'lmaydi.",
+    "deleteAccountOrders": "Buyurtmalar tarixi do'konda saqlanib qoladi — hisob-kitob va yetkazib berish uchun. Yetkazilmagan buyurtmangiz bo'lsa, do'kon u bilan bog'lana oladi.",
+    "passwordToConfirm": "Tasdiqlash uchun parol",
+    "deleteConfirm": "Tushundim, hisobim butunlay o'chsin",
+    "deleteSubmit": "Hisobni o'chirish",
+    "deleting": "O'chirilmoqda...",
+    "deleteFailed": "Hisobni o'chirishda xatolik. Qayta urinib ko'ring."
   },
   "auth": {
     "loginTitle": "Kirish",
@@ -239,7 +247,8 @@
     "quantityMax": "Bitta mahsulotdan 50 donadan ko'p buyurtma qilib bo'lmaydi",
     "cartEmpty": "Savat bo'sh",
     "codeInvalid": "Kod {n} xonali bo'lishi kerak",
-    "passwordSame": "Yangi parol eskisidan farq qilishi kerak"
+    "passwordSame": "Yangi parol eskisidan farq qilishi kerak",
+    "deleteConfirmRequired": "Davom etish uchun tasdiqlang"
   },
   "errors": {
     "badRequest": "So'rov formati noto'g'ri",

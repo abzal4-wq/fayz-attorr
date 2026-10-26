@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import { ChevronDown, Package } from 'lucide-react'
 import { LogoutButton } from '@/components/auth/logout-button'
 import { PasswordChangeForm } from '@/components/auth/password-change-form'
+import { AccountDeleteForm } from '@/components/auth/account-delete-form'
 import { getCurrentUser } from '@/lib/auth/session'
 import { formatPhone } from '@/lib/auth/phone'
 import { formatDateTime } from '@/lib/format'
@@ -73,6 +74,17 @@ export default async function ProfilePage() {
           />
         </summary>
         <PasswordChangeForm />
+      </details>
+
+      <details className="group mt-3 overflow-hidden rounded-xl border border-destructive/40 bg-card">
+        <summary className="flex min-h-12 cursor-pointer items-center justify-between gap-4 p-4 text-danger-deep">
+          {t('profile.deleteAccount')}
+          <ChevronDown
+            className="size-5 shrink-0 transition-transform duration-200 group-open:rotate-180"
+            aria-hidden="true"
+          />
+        </summary>
+        <AccountDeleteForm />
       </details>
 
       <h2 className="mt-10 font-serif text-xl text-foreground md:text-2xl">
