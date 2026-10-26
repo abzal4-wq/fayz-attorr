@@ -1,6 +1,7 @@
 import { Suspense } from 'react'
 import { CatalogFilters, CatalogSort } from '@/components/site/catalog-filters'
 import { CatalogGrid } from '@/components/site/catalog-grid'
+import { CatalogSearch } from '@/components/site/catalog-search'
 import { ProductCardSkeleton } from '@/components/site/product-card'
 import { getCatalogProducts, getFilterOptions } from '@/lib/catalog'
 import { parseCatalogParams } from '@/lib/catalog-params'
@@ -56,12 +57,31 @@ async function CatalogContent({ filters }) {
                 ? t(`genderFor.${filters.gender}`)
                 : t('catalog.title')}
             </h1>
+            {/*
+              Qidirganda ikkala ma'lumot ham kerak: nima izlangani va
+              nechta topilgani. Faqat biri ko'rsatilsa, foydalanuvchi
+              yo so'rovini, yo natija hajmini bilmay qoladi.
+            */}
+            {filters.query ? (
+              <p className="mt-1 text-sm text-muted-deep">
+                {t('catalog.searchFor', { q: filters.query })}
+              </p>
+            ) : null}
             <p className="mt-1 text-sm text-muted-deep">
               {t('catalog.count', { n: total })}
             </p>
           </div>
 
           <CatalogSort filters={filters} />
+        </div>
+
+        {/*
+          Qidiruv maydoni saralash bilan bir qatorda emas, alohida:
+          telefonda ikkisi bir qatorga sig'masdi va maydon 44px dan
+          tor bo'lib qolardi.
+        */}
+        <div className="mb-5">
+          <CatalogSearch filters={filters} />
         </div>
 
         {/*

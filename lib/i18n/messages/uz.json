@@ -35,7 +35,8 @@
     "all": "Barchasi",
     "profile": "Profil",
     "language": "Til",
-    "chooseLanguage": "Tilni tanlash"
+    "chooseLanguage": "Tilni tanlash",
+    "search": "Qidirish"
   },
   "bottomNav": {
     "label": "Asosiy navigatsiya",
@@ -96,7 +97,11 @@
     "emptyAction": "Filtrni tozalash",
     "resultsHeading": "Topilgan atirlar",
     "loadMore": "Yana ko'rsatish",
-    "loadError": "Keyingi atirlarni yuklab bo'lmadi. Internetni tekshiring."
+    "loadError": "Keyingi atirlarni yuklab bo'lmadi. Internetni tekshiring.",
+    "searchLabel": "Atir yoki brend bo'yicha qidirish",
+    "searchPlaceholder": "Atir yoki brend nomi...",
+    "searchClear": "Qidiruvni tozalash",
+    "searchFor": "“{q}” bo'yicha natijalar"
   },
   "product": {
     "breadcrumb": "Yo'l",

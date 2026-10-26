@@ -38,7 +38,8 @@
     "all": "All",
     "profile": "Profile",
     "language": "Language",
-    "chooseLanguage": "Choose language"
+    "chooseLanguage": "Choose language",
+    "search": "Search"
   },
   "bottomNav": {
     "label": "Main navigation",
@@ -102,7 +103,11 @@
     "emptyAction": "Clear filters",
     "resultsHeading": "Perfumes found",
     "loadMore": "Show more",
-    "loadError": "Could not load more perfumes. Check your connection."
+    "loadError": "Could not load more perfumes. Check your connection.",
+    "searchLabel": "Search by perfume or brand",
+    "searchPlaceholder": "Perfume or brand name...",
+    "searchClear": "Clear search",
+    "searchFor": "Results for “{q}”"
   },
   "product": {
     "breadcrumb": "Breadcrumb",

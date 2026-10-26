@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { User } from 'lucide-react'
+import { Search, User } from 'lucide-react'
 import { CartButton } from './cart-drawer'
 import { LanguageSwitcher } from './language-switcher'
 import { useT } from '@/lib/i18n/client'
@@ -68,6 +68,19 @@ export function SiteHeader() {
         </nav>
 
         <div className="ml-auto flex items-center gap-1">
+          {/*
+            Qidiruv maydonining o'zi katalog sahifasida — sarlavhaga
+            sig'maydi va u yerda filtrlar bilan bir URL'da ishlashi
+            kerak. Bu tugma faqat yo'l ko'rsatadi.
+          */}
+          <Link
+            href="/katalog"
+            aria-label={t('header.search')}
+            className="flex size-11 items-center justify-center rounded-lg text-muted-on-dark transition-colors duration-200 hover:text-ivory"
+          >
+            <Search className="size-5" aria-hidden="true" />
+          </Link>
+
           <LanguageSwitcher />
 
           <Link
