@@ -5,7 +5,16 @@ import {
   answerCallback,
   editMessageText,
   isAdminChat,
+  sendMessage,
+  REMOVE_KEYBOARD,
+  REQUEST_CONTACT_KEYBOARD,
 } from '@/lib/telegram'
+import {
+  RESET_START_PREFIX,
+  RESET_TTL_SECONDS,
+  attachChatToRequest,
+  issueCode,
+} from '@/lib/auth/reset'
 import { ORDER_STATUS_LABELS } from '@/lib/validation/admin'
 import { formatDateTime, formatSom } from '@/lib/format'
 import { formatPhone } from '@/lib/auth/phone'
@@ -61,6 +70,127 @@ function buildMessage(order, statusLabel, actorName) {
   )
 }
 
+/* ------------------- Parolni tiklash (oddiy xabarlar) ------------------- */
+
+/**
+ * `/start tiklash_<token>` — saytdagi havoladan kelgan foydalanuvchi.
+ *
+ * Bu yerda token FAQAT urinishni shu chatga bog'laydi. Kod hali
+ * berilmaydi: avval Telegram raqamni tasdiqlashi kerak, aks holda
+ * havolani qo'lga kiritgan har kim kodni olib qo'yardi.
+ */
+async function handleResetStart(chatId, token) {
+  const attached = await attachChatToRequest(token, chatId)
+
+  if (!attached.ok) {
+    await sendMessage(
+      chatId,
+      attached.reason === 'expired'
+        ? "⏳ Havolaning muddati o'tgan. Saytda qaytadan urinib ko'ring."
+        : "❌ Havola yaroqsiz. Saytda qaytadan urinib ko'ring.",
+      { reply_markup: REMOVE_KEYBOARD }
+    )
+    return
+  }
+
+  await sendMessage(
+    chatId,
+    '🔐 <b>Parolni tiklash</b>\n\n' +
+      "Hisobingiz haqiqatan sizga tegishli ekanini tekshirishimiz kerak.\n\n" +
+      'Pastdagi <b>"📱 Raqamni yuborish"</b> tugmasini bosing — ' +
+      'Telegram raqamingizni o\'zi yuboradi.',
+    { reply_markup: REQUEST_CONTACT_KEYBOARD }
+  )
+}
+
+/**
+ * Telegram tasdiqlagan raqam keldi.
+ *
+ * ENG MUHIM TEKSHIRUV: `contact.user_id === from.id`.
+ *
+ * "Raqamni yuborish" tugmasi foydalanuvchining o'z raqamini yuboradi,
+ * lekin odam QO'LDA istalgan kontakt kartasini ham yuborishi mumkin.
+ * Busiz hujumchi qurbonning kontaktini yuborib, uning hisobiga kod
+ * oldirib olardi.
+ */
+async function handleContact(message, chatId) {
+  const contact = message.contact
+
+  if (!contact?.user_id || contact.user_id !== message.from?.id) {
+    await sendMessage(
+      chatId,
+      "❌ Faqat o'zingizning raqamingizni yuborishingiz mumkin. " +
+        'Tugmani bosib yuboring.',
+      { reply_markup: REQUEST_CONTACT_KEYBOARD }
+    )
+    return
+  }
+
+  const issued = await issueCode(chatId, contact.phone_number)
+
+  if (!issued.ok) {
+    /*
+     * "Raqam mos kelmadi" deb aytiladi, lekin hisobdagi raqam
+     * KO'RSATILMAYDI — aks holda bot orqali birovning raqamini
+     * bilib olish mumkin bo'lardi.
+     */
+    const text =
+      issued.reason === 'phone-mismatch'
+        ? '❌ Bu raqam hisobda ko\'rsatilgan raqam bilan mos kelmadi.\n\n' +
+          "Parolni tiklash faqat hisobdagi raqam egasi uchun ishlaydi."
+        : "⏳ Ochiq so'rov topilmadi yoki muddati o'tgan. " +
+          "Saytda qaytadan urinib ko'ring."
+
+    await sendMessage(chatId, text, { reply_markup: REMOVE_KEYBOARD })
+    return
+  }
+
+  const minutes = Math.round(RESET_TTL_SECONDS / 60)
+
+  await sendMessage(
+    chatId,
+    '✅ Raqam tasdiqlandi.\n\n' +
+      `Tasdiqlash kodi: <b><code>${issued.code}</code></b>\n\n` +
+      `Kodni saytdagi maydonga kiriting. Kod ${minutes} daqiqa amal qiladi.\n\n` +
+      '⚠️ Bu kodni hech kimga bermang.',
+    { reply_markup: REMOVE_KEYBOARD }
+  )
+}
+
+/**
+ * Oddiy xabarlar.
+ *
+ * Diqqat: bu yerda admin tekshiruvi YO'Q va bo'lmasligi kerak —
+ * parolni tiklayotgan mijoz admin emas. Shuning uchun har bir
+ * tarmoq alohida qat'iy tekshiriladi.
+ */
+async function handleMessage(message) {
+  const chatId = message.chat?.id
+  if (!chatId) return
+
+  if (message.contact) {
+    await handleContact(message, chatId)
+    return
+  }
+
+  const text = String(message.text ?? '').trim()
+  if (!text.startsWith('/start')) return
+
+  const payload = text.slice('/start'.length).trim()
+
+  if (payload.startsWith(RESET_START_PREFIX)) {
+    await handleResetStart(chatId, payload.slice(RESET_START_PREFIX.length))
+    return
+  }
+
+  // Parametrsiz /start — bot jim turmasligi uchun qisqa javob
+  await sendMessage(
+    chatId,
+    '👋 <b>FAYZ ATTOR</b>\n\nBu bot buyurtmalar va parolni tiklash uchun ishlatiladi.',
+    { reply_markup: REMOVE_KEYBOARD }
+  )
+}
+
 export async function POST(request) {
   // 1-qatlam: maxfiy sarlavha
   const secret = process.env.TELEGRAM_WEBHOOK_SECRET
@@ -73,6 +203,22 @@ export async function POST(request) {
   }
 
   const update = await request.json().catch(() => null)
+
+  /*
+   * Oddiy xabarlar — parolni tiklash jarayoni.
+   *
+   * Xato bo'lsa ham 200 qaytariladi: aks holda Telegram shu
+   * xabarni qayta-qayta yuboraveradi va bot halqaga tushadi.
+   */
+  if (update?.message) {
+    try {
+      await handleMessage(update.message)
+    } catch (error) {
+      console.error('Telegram xabar xatosi:', error?.message)
+    }
+    return okResponse()
+  }
+
   const callback = update?.callback_query
   if (!callback) return okResponse()
 

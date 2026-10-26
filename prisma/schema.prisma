@@ -103,6 +103,52 @@ model User {
   fullName     String?
   orders       Order[]
   createdAt    DateTime @default(now())
+
+  passwordResets PasswordResetToken[]
+}
+
+/**
+ * Parolni telefon raqami orqali tiklash.
+ *
+ * Email ham, SMS shlyuzi ham yo'q. Shuning uchun raqam egasi
+ * Telegram orqali tasdiqlanadi: foydalanuvchi botga "Raqamni
+ * yuborish" tugmasini bosadi, Telegram esa O'ZI tekshirgan raqamni
+ * yuboradi. Ya'ni raqamga egalik haqiqatan isbotlanadi — oddiy
+ * havola yuborish bunchalik ishonchli emas.
+ *
+ * Jarayon ikki bosqichli, shuning uchun ikkita sir bor:
+ *  - requestHash: havoladagi token (brauzerni urinishga bog'laydi)
+ *  - codeHash: raqam tasdiqlangandan KEYIN beriladigan 6 xonali kod
+ *
+ * Ikkalasi ham faqat hash ko'rinishida saqlanadi: baza sizib chiqsa
+ * ham ular bilan hech kimning hisobiga kirib bo'lmasin.
+ */
+model PasswordResetToken {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Telegram havolasidagi token (sha256). Noyob — bir havola bir urinish.
+  requestHash String @unique
+
+  // 6 xonali kod. Telegram raqamni tasdiqlagunga qadar bo'sh turadi.
+  codeHash   String?
+  verifiedAt DateTime?
+
+  // Kodni kim so'raganini bilish uchun — kod shu chatga yuboriladi
+  chatId String?
+
+  expiresAt DateTime
+  usedAt    DateTime?
+
+  // 5 marta xato kiritilsa token bekor bo'ladi — 6 xonali kodni
+  // cheksiz sinab ko'rishning oldi olinadi.
+  attempts Int @default(0)
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
 }
 
 enum OrderStatus {

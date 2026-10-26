@@ -9,7 +9,7 @@ import { LIMITS } from '@/lib/auth/rate-limit'
  */
 
 describe('rate limit sozlamalari', () => {
-  const ACTIONS = ['login', 'register', 'order']
+  const ACTIONS = ['login', 'register', 'order', 'reset']
 
   for (const action of ACTIONS) {
     test(`${action} uchun hisob bo'yicha cheklov bor`, () => {

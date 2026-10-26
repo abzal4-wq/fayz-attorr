@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -90,6 +91,17 @@ export function LoginForm({ redirectTo = '/' }) {
         </div>
         <FieldError error={errors.password} />
       </div>
+
+      {/*
+        Havola parol maydonidan keyin turadi: odam avval parolni
+        kiritib ko'radi, esiga tushmasa shu yerda topadi
+      */}
+      <Link
+        href="/parolni-tiklash"
+        className="inline-block py-2.5 text-sm text-muted-on-dark underline-offset-4 hover:text-ivory hover:underline"
+      >
+        {t('auth.forgotPassword')}
+      </Link>
 
       <FormError error={errors.root} />
 

@@ -183,7 +183,26 @@
     "loggingIn": "Kirilmoqda...",
     "registering": "Yuborilmoqda...",
     "loginFailed": "Kirishda xatolik yuz berdi. Qayta urinib ko'ring.",
-    "registerFailed": "Ro'yxatdan o'tishda xatolik yuz berdi. Qayta urinib ko'ring."
+    "registerFailed": "Ro'yxatdan o'tishda xatolik yuz berdi. Qayta urinib ko'ring.",
+    "forgotPassword": "Parolni esdan chiqardingizmi?",
+    "resetTitle": "Parolni tiklash",
+    "resetSubtitle": "Telefon raqamingizni kiriting — raqamni Telegram orqali tasdiqlaymiz.",
+    "resetPhoneStep": "1-qadam: telefon raqami",
+    "resetTelegramStep": "2-qadam: Telegram orqali tasdiqlash",
+    "resetCodeStep": "3-qadam: kod va yangi parol",
+    "resetContinue": "Davom etish",
+    "resetSending": "Yuborilmoqda...",
+    "resetOpenTelegram": "Telegram'da ochish",
+    "resetTelegramHelp": "Telegram ochiladi. “Boshlash”, keyin “Raqamni yuborish” tugmasini bosing — bot sizga 6 xonali kod yuboradi.",
+    "resetNoTelegram": "Telegram ochilmadimi? Havolani qo‘lda oching:",
+    "resetCode": "Telegram'dan kelgan kod",
+    "resetCodePlaceholder": "123456",
+    "resetNewPassword": "Yangi parol",
+    "resetSubmit": "Parolni saqlash",
+    "resetSaving": "Saqlanmoqda...",
+    "resetDone": "Parol yangilandi",
+    "resetBackToPhone": "Boshqa raqam kiritish",
+    "resetFailed": "Xatolik yuz berdi. Qayta urinib ko‘ring."
   },
   "notFound": {
     "title": "Sahifa topilmadi",
@@ -209,7 +228,8 @@
     "commentMax": "Izoh juda uzun",
     "quantityMin": "Soni 1 dan kam bo'lmaydi",
     "quantityMax": "Bitta mahsulotdan 50 donadan ko'p buyurtma qilib bo'lmaydi",
-    "cartEmpty": "Savat bo'sh"
+    "cartEmpty": "Savat bo'sh",
+    "codeInvalid": "Kod {n} xonali bo'lishi kerak"
   },
   "errors": {
     "badRequest": "So'rov formati noto'g'ri",
@@ -224,7 +244,12 @@
     "justSoldOut": "Kechirasiz, mahsulot hozirgina tugab qoldi. Savatni yangilang.",
     "productGone": "Bu mahsulot endi mavjud emas",
     "variantSoldOut": "{label} — tugagan",
-    "variantLowStock": "{label} — omborda faqat {qty} dona qoldi"
+    "variantLowStock": "{label} — omborda faqat {qty} dona qoldi",
+    "resetUnavailable": "Parolni tiklash hozir ishlamayapti. Do'konga qo'ng'iroq qiling.",
+    "resetExpired": "Tiklash so'rovining muddati o'tgan. Boshidan boshlang.",
+    "resetNotVerified": "Raqam hali tasdiqlanmagan. Telegram'da “Raqamni yuborish” tugmasini bosing.",
+    "resetTooManyCodes": "Kod juda ko'p marta xato kiritildi. Boshidan boshlang.",
+    "resetWrongCode": "Kod to'g'ri kelmadi. Yana {n} marta urinib ko'rishingiz mumkin."
   },
   "meta": {
     "homeTitle": "Fayz Attor — original atirlar",
@@ -240,6 +265,7 @@
     "profileTitle": "Profil",
     "loginTitle": "Kirish",
     "registerTitle": "Ro'yxatdan o'tish",
-    "notFoundTitle": "Sahifa topilmadi"
+    "notFoundTitle": "Sahifa topilmadi",
+    "resetTitle": "Parolni tiklash"
   }
 }

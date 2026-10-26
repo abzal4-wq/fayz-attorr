@@ -192,7 +192,26 @@
     "loggingIn": "Signing in...",
     "registering": "Sending...",
     "loginFailed": "Something went wrong while signing in. Please try again.",
-    "registerFailed": "Something went wrong while creating the account. Please try again."
+    "registerFailed": "Something went wrong while creating the account. Please try again.",
+    "forgotPassword": "Forgot your password?",
+    "resetTitle": "Reset password",
+    "resetSubtitle": "Enter your phone number — we will verify it through Telegram.",
+    "resetPhoneStep": "Step 1: phone number",
+    "resetTelegramStep": "Step 2: verify in Telegram",
+    "resetCodeStep": "Step 3: code and new password",
+    "resetContinue": "Continue",
+    "resetSending": "Sending...",
+    "resetOpenTelegram": "Open in Telegram",
+    "resetTelegramHelp": "Telegram will open. Tap “Start”, then “Share phone number” — the bot will send you a 6-digit code.",
+    "resetNoTelegram": "Telegram did not open? Open the link manually:",
+    "resetCode": "Code from Telegram",
+    "resetCodePlaceholder": "123456",
+    "resetNewPassword": "New password",
+    "resetSubmit": "Save password",
+    "resetSaving": "Saving...",
+    "resetDone": "Password updated",
+    "resetBackToPhone": "Use a different number",
+    "resetFailed": "Something went wrong. Please try again."
   },
   "notFound": {
     "title": "Page not found",
@@ -218,7 +237,8 @@
     "commentMax": "That note is too long",
     "quantityMin": "Quantity cannot be less than 1",
     "quantityMax": "You cannot order more than 50 of one item",
-    "cartEmpty": "Your cart is empty"
+    "cartEmpty": "Your cart is empty",
+    "codeInvalid": "The code must be {n} digits"
   },
   "errors": {
     "badRequest": "The request format is not valid",
@@ -236,7 +256,12 @@
     "variantLowStock": {
       "one": "{label} — only {qty} left in stock",
       "other": "{label} — only {qty} left in stock"
-    }
+    },
+    "resetUnavailable": "Password reset is unavailable right now. Please call the shop.",
+    "resetExpired": "This reset request has expired. Please start again.",
+    "resetNotVerified": "The number is not verified yet. Tap “Share phone number” in Telegram.",
+    "resetTooManyCodes": "The code was entered incorrectly too many times. Please start again.",
+    "resetWrongCode": "That code is not right. You have {n} attempts left."
   },
   "meta": {
     "homeTitle": "Fayz Attor — original perfumes",
@@ -252,6 +277,7 @@
     "profileTitle": "Profile",
     "loginTitle": "Sign in",
     "registerTitle": "Create account",
-    "notFoundTitle": "Page not found"
+    "notFoundTitle": "Page not found",
+    "resetTitle": "Reset password"
   }
 }

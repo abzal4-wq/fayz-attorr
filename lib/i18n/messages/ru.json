@@ -195,7 +195,26 @@
     "loggingIn": "Вход...",
     "registering": "Отправляется...",
     "loginFailed": "При входе произошла ошибка. Попробуйте снова.",
-    "registerFailed": "При регистрации произошла ошибка. Попробуйте снова."
+    "registerFailed": "При регистрации произошла ошибка. Попробуйте снова.",
+    "forgotPassword": "Забыли пароль?",
+    "resetTitle": "Восстановление пароля",
+    "resetSubtitle": "Введите номер телефона — мы подтвердим его через Telegram.",
+    "resetPhoneStep": "Шаг 1: номер телефона",
+    "resetTelegramStep": "Шаг 2: подтверждение в Telegram",
+    "resetCodeStep": "Шаг 3: код и новый пароль",
+    "resetContinue": "Продолжить",
+    "resetSending": "Отправляется...",
+    "resetOpenTelegram": "Открыть в Telegram",
+    "resetTelegramHelp": "Откроется Telegram. Нажмите «Старт», затем «Отправить номер» — бот пришлёт вам 6-значный код.",
+    "resetNoTelegram": "Telegram не открылся? Откройте ссылку вручную:",
+    "resetCode": "Код из Telegram",
+    "resetCodePlaceholder": "123456",
+    "resetNewPassword": "Новый пароль",
+    "resetSubmit": "Сохранить пароль",
+    "resetSaving": "Сохраняется...",
+    "resetDone": "Пароль обновлён",
+    "resetBackToPhone": "Ввести другой номер",
+    "resetFailed": "Произошла ошибка. Попробуйте снова."
   },
   "notFound": {
     "title": "Страница не найдена",
@@ -221,7 +240,8 @@
     "commentMax": "Комментарий слишком длинный",
     "quantityMin": "Количество не может быть меньше 1",
     "quantityMax": "Нельзя заказать больше 50 штук одного товара",
-    "cartEmpty": "Корзина пуста"
+    "cartEmpty": "Корзина пуста",
+    "codeInvalid": "Код должен содержать {n} цифр"
   },
   "errors": {
     "badRequest": "Неверный формат запроса",
@@ -236,7 +256,12 @@
     "justSoldOut": "Извините, товар только что закончился. Обновите корзину.",
     "productGone": "Этого товара больше нет",
     "variantSoldOut": "{label} — нет в наличии",
-    "variantLowStock": "{label} — на складе осталось только {qty} шт."
+    "variantLowStock": "{label} — на складе осталось только {qty} шт.",
+    "resetUnavailable": "Восстановление пароля сейчас недоступно. Позвоните в магазин.",
+    "resetExpired": "Срок запроса истёк. Начните заново.",
+    "resetNotVerified": "Номер ещё не подтверждён. Нажмите «Отправить номер» в Telegram.",
+    "resetTooManyCodes": "Код введён неверно слишком много раз. Начните заново.",
+    "resetWrongCode": "Код не подошёл. Осталось попыток: {n}."
   },
   "meta": {
     "homeTitle": "Fayz Attor — оригинальные духи",
@@ -252,6 +277,7 @@
     "profileTitle": "Профиль",
     "loginTitle": "Вход",
     "registerTitle": "Регистрация",
-    "notFoundTitle": "Страница не найдена"
+    "notFoundTitle": "Страница не найдена",
+    "resetTitle": "Восстановление пароля"
   }
 }
