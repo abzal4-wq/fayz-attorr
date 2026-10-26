@@ -17,6 +17,20 @@ function isAdminPublic(pathname) {
   )
 }
 
+/*
+ * DIQQAT: middleware Edge runtime'da ishlaydi va bazaga murojaat
+ * qila olmaydi, ya'ni tokenning `tv` (tokenVersion) qiymatini
+ * TEKSHIRMAYDI — faqat imzo va muddat tekshiriladi.
+ *
+ * Shuning uchun bu yer tez old-filtr: bekor qilingan token bu
+ * yerdan o'tib ketishi mumkin. Haqiqiy to'siq keyingi qatlamda:
+ *  - sahifalar: `getCurrentUser()` / `getCurrentAdmin()` null
+ *    qaytaradi va sahifa o'zi qayta yo'naltiradi
+ *  - admin API: `guardAdmin()` 404 beradi
+ *
+ * Bu qatlamlarni olib tashlab, tekshiruvni faqat shu yerga
+ * tayanmaslik kerak.
+ */
 export async function middleware(request) {
   const { pathname, search } = request.nextUrl
 

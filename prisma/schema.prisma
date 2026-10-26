@@ -104,6 +104,17 @@ model User {
   orders       Order[]
   createdAt    DateTime @default(now())
 
+  /*
+   * Chiqishda va parol almashganda bittaga oshadi. Shu raqam tokenga
+   * ham yoziladi va har tekshiruvda solishtiriladi.
+   *
+   * NEGA KERAK: JWT holatsiz. Chiqish faqat brauzerdagi cookie'ni
+   * o'chiradi, tokenning o'zi esa 30 kun amal qilaveradi. Kimdir
+   * tokenni nusxalab olgan bo'lsa (umumiy kompyuter, qarzga berilgan
+   * telefon), chiqish uni to'xtatmasdi — sinab tasdiqlangan.
+   */
+  tokenVersion Int      @default(0)
+
   passwordResets PasswordResetToken[]
 }
 
@@ -228,6 +239,9 @@ model AdminUser {
   passwordHash String
   role         String   @default("admin")
   createdAt    DateTime @default(now())
+
+  // User.tokenVersion bilan bir xil maqsad — izohni o'sha yerda ko'ring
+  tokenVersion Int      @default(0)
 }
 
 // Do'kon sozlamalari — admin paneldan tahrirlanadi.
