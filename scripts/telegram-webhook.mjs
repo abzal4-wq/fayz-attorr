@@ -58,7 +58,14 @@ switch (command) {
     const res = await api('setWebhook', {
       url,
       secret_token: SECRET || undefined,
-      allowed_updates: ['callback_query'],
+      /*
+       * `message` SHART: parolni tiklash botga `/start tiklash_...`
+       * va keyin kontakt yuborish orqali ishlaydi. Ro'yxatda faqat
+       * `callback_query` qolsa, Telegram xabarlarni umuman
+       * yetkazmaydi va tiklash jim ishlamay turadi — hech qanday
+       * xato ham ko'rinmaydi.
+       */
+      allowed_updates: ['callback_query', 'message'],
       drop_pending_updates: true,
     })
     console.log(res.ok ? `Webhook o'rnatildi: ${url}` : `Xato: ${res.description}`)
