@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma'
 import {
   assertSizesExist,
   purgeImages,
+  prepareProductImages,
   syncProductImages,
   syncProductVariants,
 } from '@/lib/products-admin'
@@ -93,15 +94,13 @@ export async function PATCH(request, { params }) {
   try {
     let orphanedImages = []
 
+    // Cloudinary tasdig'i tranzaksiyadan OLDIN — nega, prepareProductImages izohida
+    const imageRows = await prepareProductImages(data.images, existing.images)
+
     const product = await prisma.$transaction(async (tx) => {
       const updated = await tx.product.update({ where: { id }, data: updateData })
 
-      orphanedImages = await syncProductImages(
-        tx,
-        id,
-        data.images,
-        existing.images
-      )
+      orphanedImages = await syncProductImages(tx, id, imageRows, existing.images)
       await syncProductVariants(tx, id, data.variants)
 
       return updated

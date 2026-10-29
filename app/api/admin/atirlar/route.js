@@ -3,6 +3,7 @@ import { guardAdmin, uniqueSlug } from '@/lib/admin-api'
 import { prisma } from '@/lib/prisma'
 import {
   assertSizesExist,
+  prepareProductImages,
   syncProductImages,
   syncProductVariants,
 } from '@/lib/products-admin'
@@ -49,6 +50,9 @@ export async function POST(request) {
   )
 
   try {
+    // Cloudinary tasdig'i tranzaksiyadan OLDIN — nega, prepareProductImages izohida
+    const imageRows = await prepareProductImages(data.images)
+
     const product = await prisma.$transaction(async (tx) => {
       const created = await tx.product.create({
         data: {
@@ -63,7 +67,7 @@ export async function POST(request) {
         },
       })
 
-      await syncProductImages(tx, created.id, data.images, [])
+      await syncProductImages(tx, created.id, imageRows, [])
       await syncProductVariants(tx, created.id, data.variants)
 
       return created

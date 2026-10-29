@@ -3,11 +3,19 @@
 import Image from 'next/image'
 import { useRef, useState } from 'react'
 import { ArrowLeft, ArrowRight, ImagePlus, LoaderCircle, Trash2 } from 'lucide-react'
-import { ACCEPT_ATTR, useCloudinaryUpload, validateImageFile } from '@/lib/use-upload'
+import {
+  ACCEPT_ATTR,
+  useCloudinaryUpload,
+  validateImageDimensions,
+  validateImageFile,
+} from '@/lib/use-upload'
+import { MAX_PRODUCT_IMAGES } from '@/lib/validation/admin'
+import { MIN_IMAGE_SIDE } from '@/lib/image-rules'
 import { cn } from '@/lib/utils'
 
 /**
- * Atir rasmlari: cheksiz son, tartibi o'zgartiriladi, birinchisi asosiy.
+ * Atir rasmlari: ko'pi bilan MAX_PRODUCT_IMAGES ta, tartibi
+ * o'zgartiriladi, birinchisi asosiy.
  *
  * Tartibni o'zgartirish ikki yo'l bilan: desktopda sudrab (drag),
  * mobil va klaviatura uchun o'q tugmalari. Faqat drag qoldirish mobilda
@@ -22,17 +30,49 @@ export function ProductImages({ images, onChange, error }) {
   const [dragIndex, setDragIndex] = useState(null)
   const [queue, setQueue] = useState({ done: 0, total: 0 })
 
+  const remaining = MAX_PRODUCT_IMAGES - images.length
+
   async function handleFiles(event) {
-    const files = Array.from(event.target.files ?? [])
+    let files = Array.from(event.target.files ?? [])
     event.target.value = ''
     if (files.length === 0) return
 
     setUploadError(null)
 
+    /*
+     * Chegaradan oshganlari YUKLANMAYDI. Avval chegara yo'q edi; endi
+     * server ham uni tekshiradi — oshgan rasmlar yuklansa, saqlashda rad
+     * etilib, Cloudinary'ga yuklangani bekorga ketardi.
+     */
+    let notice = null
+    if (files.length > remaining) {
+      notice =
+        `Ko'pi bilan ${MAX_PRODUCT_IMAGES} ta rasm. ` +
+        `Tanlangan ${files.length} tadan faqat ${Math.max(remaining, 0)} tasi qo'shildi.`
+      files = files.slice(0, Math.max(remaining, 0))
+      if (files.length === 0) {
+        setUploadError(notice)
+        return
+      }
+    }
+
     const invalid = files.map(validateImageFile).find(Boolean)
     if (invalid) {
       setUploadError(invalid)
       return
+    }
+
+    /*
+     * O'lcham HAMMA fayl uchun OLDINDAN tekshiriladi. Ketma-ket
+     * yuklashda bitta kichik rasm qolganlarini ham to'xtatib qo'yardi;
+     * fayl nomi esa qaysi biri kichik ekanini aniq ko'rsatadi.
+     */
+    for (const file of files) {
+      const tooSmall = await validateImageDimensions(file, 'atirlar')
+      if (tooSmall) {
+        setUploadError(`${file.name}: ${tooSmall}`)
+        return
+      }
     }
 
     setQueue({ done: 0, total: files.length })
@@ -45,6 +85,7 @@ export function ProductImages({ images, onChange, error }) {
         setQueue({ done: index + 1, total: files.length })
       }
       onChange([...images, ...uploaded])
+      if (notice) setUploadError(notice)
     } catch (err) {
       // Muvaffaqiyatli yuklanganlarni saqlab qolamiz
       if (uploaded.length > 0) onChange([...images, ...uploaded])
@@ -75,7 +116,11 @@ export function ProductImages({ images, onChange, error }) {
         </span>
       </div>
 
-      <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-6">
+      {/*
+        Telefonda 2 ustun: 3 ustunda har kafel ~100px bo'lib, 44px li
+        boshqaruv tugmalari rasmni butunlay yopib qo'yardi.
+      */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
         {images.map((image, index) => (
           <div
             key={image.publicId}
@@ -104,7 +149,7 @@ export function ProductImages({ images, onChange, error }) {
             />
 
             {index === 0 ? (
-              <span className="absolute left-1 top-1 rounded-full bg-primary px-2 py-0.5 text-[11px] font-semibold text-primary-foreground">
+              <span className="absolute left-1.5 top-1.5 rounded-full bg-primary px-2 py-0.5 text-xs font-semibold text-primary-foreground">
                 Asosiy
               </span>
             ) : null}
@@ -113,34 +158,37 @@ export function ProductImages({ images, onChange, error }) {
               type="button"
               onClick={() => remove(index)}
               aria-label={`${index + 1}-rasmni o'chirish`}
-              className="absolute right-1 top-1 flex size-7 items-center justify-center rounded-md bg-foreground/70 text-white transition-colors hover:bg-destructive"
+              // size-11 (44px): avval 28px edi — telefonda "o'chirish" va
+              // "surish" tugmalari yonma-yon, noto'g'ri bosish oson edi
+              className="absolute right-1 top-1 flex size-11 items-center justify-center rounded-md bg-foreground/70 text-white transition-colors hover:bg-destructive"
             >
-              <Trash2 className="size-3.5" aria-hidden="true" />
+              <Trash2 className="size-4" aria-hidden="true" />
             </button>
 
-            <div className="absolute inset-x-0 bottom-0 flex justify-between bg-foreground/60 p-0.5">
+            <div className="absolute inset-x-0 bottom-0 flex justify-between bg-foreground/60">
               <button
                 type="button"
                 onClick={() => move(index, index - 1)}
                 disabled={index === 0}
                 aria-label={`${index + 1}-rasmni oldinga surish`}
-                className="flex size-7 items-center justify-center rounded text-white disabled:opacity-30"
+                className="flex size-11 items-center justify-center rounded text-white disabled:opacity-30"
               >
-                <ArrowLeft className="size-3.5" aria-hidden="true" />
+                <ArrowLeft className="size-4" aria-hidden="true" />
               </button>
               <button
                 type="button"
                 onClick={() => move(index, index + 1)}
                 disabled={index === images.length - 1}
                 aria-label={`${index + 1}-rasmni orqaga surish`}
-                className="flex size-7 items-center justify-center rounded text-white disabled:opacity-30"
+                className="flex size-11 items-center justify-center rounded text-white disabled:opacity-30"
               >
-                <ArrowRight className="size-3.5" aria-hidden="true" />
+                <ArrowRight className="size-4" aria-hidden="true" />
               </button>
             </div>
           </div>
         ))}
 
+        {remaining > 0 || uploading ? (
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
@@ -163,6 +211,7 @@ export function ProductImages({ images, onChange, error }) {
             </>
           )}
         </button>
+        ) : null}
       </div>
 
       <input
@@ -175,7 +224,9 @@ export function ProductImages({ images, onChange, error }) {
       />
 
       <p className="mt-2 text-sm text-muted-foreground">
-        JPG, PNG yoki WEBP. Har biri eng ko'pi 5MB. Bir vaqtda bir nechta
+        JPG, PNG yoki WEBP. Har biri eng ko'pi 5MB, kamida{' '}
+        {MIN_IMAGE_SIDE.atirlar}×{MIN_IMAGE_SIDE.atirlar}px.
+        Ko'pi bilan {MAX_PRODUCT_IMAGES} ta, bir vaqtda bir nechtasini
         tanlashingiz mumkin.
       </p>
 
