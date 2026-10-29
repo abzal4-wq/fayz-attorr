@@ -53,6 +53,7 @@ coverage/
 
 # audit natijalari (npm run audit / lh qayta yaratadi)
 audit-shots/
+site-check/
 audit-findings.json
 lighthouse-results.json
 
