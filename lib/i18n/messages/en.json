@@ -272,7 +272,7 @@
     "tooManyAttempts": "Too many attempts. Try again in {minutes} min.",
     "wrongCredentials": "Wrong phone number or password",
     "phoneTaken": "That number is already registered",
-    "phoneTakenField": "That number is taken. Try signing in.",
+    "phoneTakenField": "An account with this number already exists. Sign in or reset your password:",
     "orderFailed": "Could not accept the order. Please try again shortly.",
     "cartChanged": "Some items in your cart have changed. Please review your cart.",
     "justSoldOut": "Sorry, that item just sold out. Please refresh your cart.",

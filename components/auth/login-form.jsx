@@ -57,6 +57,15 @@ export function LoginForm({ redirectTo = '/' }) {
         <PhoneInput
           id="phone"
           autoFocus
+          /*
+           * `username`, `tel` EMAS. `tel` brauzerga "manzillar
+           * kitobidagi telefonni qo'y" deydi: Chrome kirish formasiga
+           * egasining profil raqamini yozardi (hisobdagi raqam bo'lmasa
+           * ham), parol menejeri esa boshqa hisobning parolini qo'yardi
+           * — natija "Telefon raqami yoki parol noto'g'ri". `username`
+           * bilan telefon va parol JUFT saqlanib, birga to'ldiriladi.
+           */
+          autoComplete="username"
           aria-invalid={errors.phone ? 'true' : undefined}
           {...register('phone')}
         />

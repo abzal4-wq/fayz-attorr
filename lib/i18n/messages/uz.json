@@ -263,7 +263,7 @@
     "tooManyAttempts": "Juda ko'p urinish. {minutes} daqiqadan keyin qayta urinib ko'ring.",
     "wrongCredentials": "Telefon raqami yoki parol noto'g'ri",
     "phoneTaken": "Bu raqam allaqachon ro'yxatdan o'tgan",
-    "phoneTakenField": "Bu raqam band. Kirishni sinab ko'ring.",
+    "phoneTakenField": "Bu raqam bilan hisob allaqachon bor. Kiring yoki parolni tiklang:",
     "orderFailed": "Buyurtmani qabul qilib bo'lmadi. Birozdan keyin qayta urinib ko'ring.",
     "cartChanged": "Savatdagi ba'zi mahsulotlar o'zgargan. Iltimos, savatni tekshiring.",
     "justSoldOut": "Kechirasiz, mahsulot hozirgina tugab qoldi. Savatni yangilang.",

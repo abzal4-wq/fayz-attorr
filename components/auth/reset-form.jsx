@@ -95,6 +95,8 @@ function PhoneStep({ t, onReady }) {
         <PhoneInput
           id="phone"
           autoFocus
+          // Hisobni aniqlaydi — login bilan bir xil (login-form.jsx izohi)
+          autoComplete="username"
           aria-invalid={errors.phone ? 'true' : undefined}
           {...register('phone')}
         />

@@ -9,6 +9,10 @@ import { cn } from '@/lib/utils'
  *
  * Mobilda raqamli klaviatura chiqishi uchun inputMode="tel".
  * Shrift 16px — aks holda iOS fokusda sahifani zoom qiladi.
+ *
+ * Standart `autoComplete="tel"` — buyurtma formasi uchun to'g'ri
+ * (aloqa raqami). Kirish/ro'yxat/tiklash formalari uni `username`
+ * bilan almashtiradi: u yerda telefon hisob identifikatori.
  */
 export const PhoneInput = forwardRef(function PhoneInput(
   { className, onChange, value, ...props },

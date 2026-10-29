@@ -45,7 +45,10 @@ export async function POST(request) {
     select: { id: true },
   })
   if (existing) {
+    // 409 Conflict: forma shu status bo'yicha "Kirish" va "Parolni
+    // tiklash" havolalarini ko'rsatadi (register-form.jsx)
     return fail(t('errors.phoneTaken'), {
+      status: 409,
       fieldErrors: { phone: t('errors.phoneTakenField') },
     })
   }

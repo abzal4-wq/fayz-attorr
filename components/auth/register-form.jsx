@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -15,6 +16,7 @@ export function RegisterForm({ redirectTo = '/' }) {
   const t = useT()
   const router = useRouter()
   const [showPassword, setShowPassword] = useState(false)
+  const [phoneTaken, setPhoneTaken] = useState(false)
 
   const schema = useMemo(() => makeRegisterSchema(t), [t])
 
@@ -33,15 +35,22 @@ export function RegisterForm({ redirectTo = '/' }) {
     })
     const data = await res.json().catch(() => null)
 
+    // 409 — raqam band (route'da shu status ataylab beriladi)
+    setPhoneTaken(res.status === 409)
+
     if (!res.ok) {
       if (data?.fieldErrors) {
         for (const [field, message] of Object.entries(data.fieldErrors)) {
           setError(field, { message })
         }
       }
-      setError('root', {
-        message: data?.message || t('auth.registerFailed'),
-      })
+      // Raqam band bo'lsa hammasi maydon ostida aytilgan (havolalar
+      // bilan) — umumiy blokda xuddi shu gapni takrorlamaymiz
+      if (res.status !== 409) {
+        setError('root', {
+          message: data?.message || t('auth.registerFailed'),
+        })
+      }
       return
     }
 
@@ -68,10 +77,37 @@ export function RegisterForm({ redirectTo = '/' }) {
         <Label htmlFor="phone">{t('auth.phone')}</Label>
         <PhoneInput
           id="phone"
+          // username: brauzer telefon+parolni JUFT qilib saqlasin
+          // (nega `tel` emas — login-form.jsx dagi izohga qarang)
+          autoComplete="username"
           aria-invalid={errors.phone ? 'true' : undefined}
           {...register('phone')}
         />
         <FieldError error={errors.phone} />
+
+        {/*
+          Raqam band bo'lsa — yo'l ko'rsatamiz. Avval faqat "Kirishni
+          sinab ko'ring" deyilardi: parolni unutgan odam uchun bu boshi
+          berk ko'cha edi — kira olmaydi, qayta ro'yxatdan ham o'ta
+          olmaydi. Tiklash hisobni (va buyurtmalar tarixini) saqlab
+          qoladi; kerak bo'lsa keyin profildan o'chirsa bo'ladi.
+        */}
+        {phoneTaken ? (
+          <div className="mt-3 flex flex-wrap gap-x-4 text-sm">
+            <Link
+              href="/kirish"
+              className="inline-block py-2.5 font-medium text-gold underline-offset-4 hover:underline"
+            >
+              {t('auth.goLogin')}
+            </Link>
+            <Link
+              href="/parolni-tiklash"
+              className="inline-block py-2.5 font-medium text-gold underline-offset-4 hover:underline"
+            >
+              {t('auth.forgotPassword')}
+            </Link>
+          </div>
+        ) : null}
       </div>
 
       <div>
