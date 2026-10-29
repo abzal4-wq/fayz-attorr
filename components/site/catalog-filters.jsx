@@ -206,10 +206,60 @@ export function CatalogFilters({ filters, options, total }) {
       maxPrice: null,
       onlyDiscount: false,
       sort: filters.sort,
+      /*
+       * Qidiruv SAQLANADI. U filtr emas: alohida maydonda ko'rinib
+       * turadi va badge'da sanalmaydi (countActiveFilters izohi).
+       * Avval bu yerda yo'q edi — "chanel" deb qidirib, filtrni
+       * tozalasa, qidiruv ham jimgina yo'qolardi.
+       */
+      query: filters.query,
     }
     setDraft(empty)
     apply(empty)
   }
+
+  /*
+   * "Ko'rsatish (N)" tugmasidagi son QORALAMA tanlovga mos bo'lishi
+   * kerak. Avval u joriy natijadan (`total`) olinardi va tanlov
+   * o'zgarganda yangilanmasdi: "Erkaklar"ni belgilasangiz ham
+   * "Ko'rsatish (2)" deb turardi, bosganda esa 0 chiqishi mumkin edi —
+   * tugma yolg'on va'da berardi.
+   *
+   * Endi qoralama qo'llangan filtrdan farq qilsa, son serverdan
+   * so'raladi; javob kelguncha tugmada son ko'rsatilmaydi.
+   */
+  const [draftTotal, setDraftTotal] = useState(total)
+
+  useEffect(() => {
+    if (!sheetOpen) return
+
+    const appliedKey = buildCatalogQuery({ ...filters, page: 1 })
+    const draftKey = buildCatalogQuery({ ...draft, page: 1 })
+
+    if (draftKey === appliedKey) {
+      setDraftTotal(total)
+      return
+    }
+
+    setDraftTotal(null)
+    const controller = new AbortController()
+    const timer = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/katalog?${draftKey}`, {
+          signal: controller.signal,
+        })
+        const data = await res.json()
+        if (data?.ok) setDraftTotal(data.total)
+      } catch {
+        // Bekor qilindi yoki tarmoq xatosi — tugma sonsiz qoladi
+      }
+    }, 300)
+
+    return () => {
+      clearTimeout(timer)
+      controller.abort()
+    }
+  }, [draft, filters, total, sheetOpen])
 
   const activeCount = countActiveFilters(filters)
 
@@ -321,8 +371,8 @@ export function CatalogFilters({ filters, options, total }) {
                 disabled={isPending}
                 className="flex min-h-12 flex-1 items-center justify-center rounded-lg bg-primary px-4 font-semibold text-primary-foreground disabled:opacity-70"
               >
-                {total != null
-                  ? t('catalog.showCount', { n: total })
+                {draftTotal != null
+                  ? t('catalog.showCount', { n: draftTotal })
                   : t('catalog.show')}
               </button>
             </div>
