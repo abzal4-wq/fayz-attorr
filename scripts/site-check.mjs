@@ -386,7 +386,9 @@ async function checkAdmin() {
     return
   }
 
-  const page = await newPage({ width: 1280 })
+  // Kenglik muhit orqali: do'kon egasi panelni ko'pincha telefondan
+  // ochadi, shuning uchun 375 da ham alohida yuritiladi
+  const page = await newPage({ width: Number(process.env.ADMIN_WIDTH) || 1280 })
 
   // Kirmagan holda admin sahifasi 404 bo'lishi kerak (401 emas)
   page.expected = ['/admin']
@@ -450,7 +452,9 @@ async function checkAdmin() {
   if (cookieBefore) {
     await page.setCookie(cookieBefore)
     page.expected = ['/api/admin']
-    const after = await page.evaluate(async () => (await fetch('/api/admin/atirlar')).status)
+    // GET qo'llaydigan admin endpoint kerak — /api/admin/atirlar faqat
+    // POST qabul qiladi va 405 qaytarib, tekshiruvni chalg'itardi
+    const after = await page.evaluate(async () => (await fetch('/api/admin/brendlar')).status)
     note(after === 404, 'admin: chiqishdan keyin eski token rad etiladi', `status ${after}`)
   }
 

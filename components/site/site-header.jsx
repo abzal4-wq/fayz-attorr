@@ -72,11 +72,16 @@ export function SiteHeader() {
             Qidiruv maydonining o'zi katalog sahifasida — sarlavhaga
             sig'maydi va u yerda filtrlar bilan bir URL'da ishlashi
             kerak. Bu tugma faqat yo'l ko'rsatadi.
+
+            Telefonda YASHIRIN (`hidden sm:flex`): pastki menyuda xuddi
+            shu qidiruv belgisi bilan katalog bor. Bundan tashqari
+            375px da bu tugma o'ng guruhni 2px ga chiqarib yuborib,
+            savat belgisining chetini qirqardi (mobil audit topgan).
           */}
           <Link
             href="/katalog"
             aria-label={t('header.search')}
-            className="flex size-11 items-center justify-center rounded-lg text-muted-on-dark transition-colors duration-200 hover:text-ivory"
+            className="hidden size-11 items-center justify-center rounded-lg text-muted-on-dark transition-colors duration-200 hover:text-ivory sm:flex"
           >
             <Search className="size-5" aria-hidden="true" />
           </Link>
