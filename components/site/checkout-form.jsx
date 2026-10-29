@@ -9,7 +9,7 @@ import { PhoneInput } from '@/components/phone-input'
 import { TelegramMainButton } from './telegram-controls'
 import { cartTotal, useCart } from '@/lib/cart-store'
 import { useHydrated } from '@/lib/use-hydrated'
-import { formatPhone } from '@/lib/auth/phone'
+import { maskPhoneInput } from '@/lib/auth/phone'
 import { useMoney, useT } from '@/lib/i18n/client'
 
 function Field({ label, htmlFor, error, hint, children }) {
@@ -44,7 +44,8 @@ export function CheckoutForm({ user, deliveryPrice, deliveryInfo }) {
   // `user` null bo'lishi mumkin — mehmon buyurtmasi
   const [form, setForm] = useState({
     customerName: user?.fullName ?? '',
-    customerPhone: user?.phone ? formatPhone(user.phone) : '',
+    // Maydonda faqat milliy qism turadi, "+998" tashqarida (phone-input.jsx)
+    customerPhone: user?.phone ? maskPhoneInput(user.phone) : '',
     address: '',
     comment: '',
   })
