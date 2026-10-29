@@ -5,6 +5,7 @@ import {
   answerCallback,
   editMessageText,
   isAdminChat,
+  isWebhookAuthorized,
   sendMessage,
   REMOVE_KEYBOARD,
   REQUEST_CONTACT_KEYBOARD,
@@ -192,14 +193,18 @@ async function handleMessage(message) {
 }
 
 export async function POST(request) {
-  // 1-qatlam: maxfiy sarlavha
-  const secret = process.env.TELEGRAM_WEBHOOK_SECRET
-  if (secret) {
-    const header = request.headers.get('x-telegram-bot-api-secret-token')
-    if (header !== secret) {
-      // Telegram emas — javob bermaymiz
-      return NextResponse.json({ ok: false }, { status: 401 })
+  // 1-qatlam: maxfiy sarlavha (nega production'da shart — funksiya izohida)
+  const authorized = isWebhookAuthorized(
+    request.headers.get('x-telegram-bot-api-secret-token'),
+    process.env.TELEGRAM_WEBHOOK_SECRET,
+    process.env.NODE_ENV
+  )
+  if (!authorized) {
+    if (!process.env.TELEGRAM_WEBHOOK_SECRET) {
+      console.error("TELEGRAM_WEBHOOK_SECRET o'rnatilmagan — webhook so'rovi rad etildi")
     }
+    // Telegram emas — javob bermaymiz
+    return NextResponse.json({ ok: false }, { status: 401 })
   }
 
   const update = await request.json().catch(() => null)
