@@ -14,10 +14,17 @@ const baseHeaders = [
   { key: 'X-Content-Type-Options', value: 'nosniff' },
   // Boshqa saytga o'tganda to'liq manzil yuborilmasin
   { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-  // Ishlatmaydigan qurilma imkoniyatlari o'chirilsin
+  /*
+   * Ishlatmaydigan qurilma imkoniyatlari o'chirilsin.
+   *
+   * geolocation=(self): checkout'dagi "Joylashuvim" tugmasi uchun. Avval
+   * `geolocation=()` edi — bu GPS'ni butun saytda o'chirib qo'yadi va
+   * tugma hech qanday xatosiz jimgina ishlamay qolardi. `self` faqat
+   * o'z sahifalarimizga ruxsat beradi, begona iframe'larga emas.
+   */
   {
     key: 'Permissions-Policy',
-    value: 'camera=(), microphone=(), geolocation=(), payment=(), usb=()',
+    value: 'camera=(), microphone=(), geolocation=(self), payment=(), usb=()',
   },
   {
     key: 'Content-Security-Policy',
@@ -31,7 +38,14 @@ const baseHeaders = [
  * solishga umuman hojat yo'q. Bu yerda eng qattiq himoya qo'yiladi.
  */
 const adminHeaders = [
-  ...baseHeaders.filter((h) => h.key !== 'Content-Security-Policy'),
+  ...baseHeaders.filter(
+    (h) => h.key !== 'Content-Security-Policy' && h.key !== 'Permissions-Policy'
+  ),
+  // Panelda joylashuv kerak emas — u yerda yopiq qoladi
+  {
+    key: 'Permissions-Policy',
+    value: 'camera=(), microphone=(), geolocation=(), payment=(), usb=()',
+  },
   { key: 'X-Frame-Options', value: 'DENY' },
   { key: 'Content-Security-Policy', value: "frame-ancestors 'none'" },
   // Panel qidiruv natijalarida chiqmasin (meta teg bilan birga ikkinchi qatlam)

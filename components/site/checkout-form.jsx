@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { LoaderCircle, ShoppingBag, TriangleAlert } from 'lucide-react'
 import { PhoneInput } from '@/components/phone-input'
+import { AddressPicker } from '@/components/site/address-picker'
 import { CartSyncNotice } from '@/components/site/cart-sync-notice'
 import { CartThumb } from '@/components/site/cart-thumb'
 import { TelegramMainButton } from './telegram-controls'
@@ -63,6 +64,30 @@ export function CheckoutForm({ user, deliveryPrice, deliveryInfo }) {
   const [problems, setProblems] = useState([])
   const [pending, setPending] = useState(false)
   const formRef = useRef(null)
+
+  // Xaritada belgilangan nuqta (ixtiyoriy) — kuryer uchun, lib/geo.js
+  const [point, setPoint] = useState(null)
+  // Xarita oxirgi marta yozgan manzil: mijoz uni o'zgartirganmi bilish uchun
+  const mapAddress = useRef('')
+
+  /*
+   * Xaritadan topilgan manzil.
+   *
+   * ASINXRON keladi (Nominatim), shuning uchun FUNKSIONAL yangilash:
+   * `{ ...form }` eski nusxani ishlatib, shu orada yozilgan ism yoki
+   * telefonni o'chirib yuborardi.
+   *
+   * Mijoz manzilni o'zi tahrirlagan bo'lsa (xonadon, qavat, mo'ljal
+   * qo'shgan) — ustidan yozilmaydi.
+   */
+  const handleAddressDetected = useCallback((text) => {
+    setForm((prev) => {
+      const untouched = prev.address.trim() === '' || prev.address === mapAddress.current
+      if (!untouched) return prev
+      mapAddress.current = text
+      return { ...prev, address: text }
+    })
+  }, [])
 
   // Savat bo'shab qolsa (masalan boshqa tabda tozalangan) — savatga qaytaramiz
   useEffect(() => {
@@ -125,6 +150,9 @@ export function CheckoutForm({ user, deliveryPrice, deliveryInfo }) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         ...form,
+        // Ixtiyoriy; undefined bo'lsa JSON'ga umuman tushmaydi
+        latitude: point?.lat,
+        longitude: point?.lon,
         // Serverga faqat nima va nechta kerakligini yuboramiz —
         // narxni u bazadan o'zi oladi
         items: items.map((i) => ({
@@ -229,6 +257,16 @@ export function CheckoutForm({ user, deliveryPrice, deliveryInfo }) {
               onChange={(e) => set('customerPhone', e.target.value)}
             />
           </Field>
+
+          {/*
+            Xarita manzil maydonidan OLDIN: belgilangan joy maydonni o'zi
+            to'ldiradi, mijoz esa ostiga xonadon va qavatni qo'shadi.
+          */}
+          <AddressPicker
+            point={point}
+            onPointChange={setPoint}
+            onAddressDetected={handleAddressDetected}
+          />
 
           <Field
             label={t('checkout.address')}

@@ -8,6 +8,7 @@ import { prisma } from '@/lib/prisma'
 import { toNumber } from '@/lib/admin-api'
 import { formatDateTime, formatSom } from '@/lib/format'
 import { formatPhone } from '@/lib/auth/phone'
+import { mapLinks } from '@/lib/geo'
 
 export const metadata = { title: 'Buyurtma' }
 
@@ -20,6 +21,9 @@ export default async function OrderDetailPage({ params }) {
   })
 
   if (!order) notFound()
+
+  // Mijoz xaritada belgilamagan bo'lsa null
+  const links = mapLinks(order.latitude, order.longitude)
 
   const total = toNumber(order.totalAmount)
 
@@ -148,6 +152,30 @@ export default async function OrderDetailPage({ params }) {
                   <dd className="whitespace-pre-wrap text-card-foreground">
                     {order.address}
                   </dd>
+                  {/*
+                    Mijoz xaritada belgilagan bo'lsa — kuryerga yuborish
+                    uchun havola. Yangi oynada: panel yopilib qolmasin.
+                  */}
+                  {links ? (
+                    <dd className="mt-1 flex flex-wrap gap-x-4">
+                      <a
+                        href={links.yandex}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-block py-2 font-medium text-secondary underline-offset-4 hover:underline"
+                      >
+                        Yandex xaritada ochish
+                      </a>
+                      <a
+                        href={links.google}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-block py-2 font-medium text-secondary underline-offset-4 hover:underline"
+                      >
+                        Google
+                      </a>
+                    </dd>
+                  ) : null}
                 </div>
               </div>
 

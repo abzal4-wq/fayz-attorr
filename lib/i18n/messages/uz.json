@@ -156,7 +156,18 @@
     "submitting": "Yuborilmoqda...",
     "failed": "Buyurtmani yuborib bo'lmadi",
     "guestNotice": "Siz mehmon sifatida buyurtma berasiz. Buyurtmalaringiz profilda saqlanib qolishini xohlasangiz:",
-    "guestLogin": "kirish yoki ro'yxatdan o'tish"
+    "guestLogin": "kirish yoki ro'yxatdan o'tish",
+    "mapLocate": "Joylashuvimni aniqlash",
+    "mapOpen": "Xaritada belgilash",
+    "mapClose": "Xaritani yopish",
+    "mapHint": "Xaritani surib, nuqtani uyingizga to‘g‘rilang. Xonadon va qavatni pastdagi maydonga yozing.",
+    "mapLabel": "Yetkazib berish manzili xaritasi",
+    "mapLocating": "Manzil aniqlanmoqda...",
+    "mapNoAddress": "Manzilni aniqlab bo‘lmadi — nuqta saqlandi, manzilni qo‘lda yozing.",
+    "mapOutside": "Bu nuqta O‘zbekistondan tashqarida. Yetkazib berish joyini belgilang.",
+    "mapGeoUnsupported": "Qurilmangiz joylashuvni aniqlay olmaydi. Xaritada qo‘lda belgilang.",
+    "mapGeoDenied": "Joylashuvga ruxsat berilmadi. Xaritada qo‘lda belgilang.",
+    "mapGeoFailed": "Joylashuvni aniqlab bo‘lmadi. Xaritada qo‘lda belgilang."
   },
   "success": {
     "title": "Buyurtmangiz qabul qilindi",

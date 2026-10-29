@@ -165,7 +165,18 @@
     "submitting": "Sending...",
     "failed": "Could not send the order",
     "guestNotice": "You are ordering as a guest. To keep your orders in your profile:",
-    "guestLogin": "sign in or register"
+    "guestLogin": "sign in or register",
+    "mapLocate": "Use my location",
+    "mapOpen": "Pick on the map",
+    "mapClose": "Close the map",
+    "mapHint": "Move the map so the pin sits on your building. Add the apartment and floor in the field below.",
+    "mapLabel": "Delivery address map",
+    "mapLocating": "Finding the address...",
+    "mapNoAddress": "Could not find the address — the pin is saved, please type the address.",
+    "mapOutside": "This point is outside Uzbekistan. Please pick the delivery location.",
+    "mapGeoUnsupported": "Your device cannot detect location. Please pick it on the map.",
+    "mapGeoDenied": "Location access was not allowed. Please pick it on the map.",
+    "mapGeoFailed": "Could not detect your location. Please pick it on the map."
   },
   "success": {
     "title": "Your order has been received",

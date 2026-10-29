@@ -195,6 +195,16 @@ model Order {
   customerName  String
   customerPhone String
   address       String
+
+  /*
+   * Xaritada belgilangan nuqta (ixtiyoriy). Matnli manzil baribir
+   * SHART — xonadon, qavat, mo'ljal faqat matnda bo'ladi. Koordinata
+   * esa kuryerga aniq joyni beradi: Telegram xabari va admin panelda
+   * "Xaritada ochish" havolasi shundan yasaladi.
+   */
+  latitude      Float?
+  longitude     Float?
+
   comment       String?
   status        OrderStatus   @default(NEW)
   totalAmount   Decimal       @db.Decimal(12, 2)

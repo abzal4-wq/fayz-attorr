@@ -4,6 +4,7 @@ import { adjustStockForStatusChange } from '@/lib/orders'
 import {
   answerCallback,
   editMessageText,
+  formatOrderMessage,
   isAdminChat,
   isWebhookAuthorized,
   sendMessage,
@@ -17,9 +18,6 @@ import {
   issueCode,
 } from '@/lib/auth/reset'
 import { ORDER_STATUS_LABELS } from '@/lib/validation/admin'
-import { formatDateTime, formatSom } from '@/lib/format'
-import { formatPhone } from '@/lib/auth/phone'
-import { toNumber } from '@/lib/admin-api'
 
 /**
  * Telegram webhook — inline tugmalar bosilganda chaqiriladi.
@@ -39,36 +37,14 @@ function okResponse() {
   return NextResponse.json({ ok: true })
 }
 
-function escapeHtml(text) {
-  return String(text ?? '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-}
-
 /** Status o'zgargandan keyingi xabar matni. */
+/**
+ * Status o'zgargandan keyingi xabar matni — yangi buyurtma xabari bilan
+ * BIR XIL funksiyadan (lib/telegram.js, formatOrderMessage), aks holda
+ * tasdiqlangandan keyin xarita havolasi kabi qismlar yo'qolardi.
+ */
 function buildMessage(order, statusLabel, actorName) {
-  const lines = order.items
-    .map(
-      (item) =>
-        `• ${escapeHtml(item.productName)} (${escapeHtml(item.brandName)}) — ` +
-        `${escapeHtml(item.sizeLabel)} × ${item.quantity} = ` +
-        `${escapeHtml(formatSom(toNumber(item.unitPrice) * item.quantity))}`
-    )
-    .join('\n')
-
-  return (
-    `🆕 <b>BUYURTMA #${order.orderNumber}</b>\n\n` +
-    `👤 ${escapeHtml(order.customerName)}\n` +
-    `📞 ${escapeHtml(formatPhone(order.customerPhone))}\n` +
-    `📍 ${escapeHtml(order.address)}\n` +
-    (order.comment ? `💬 ${escapeHtml(order.comment)}\n` : '') +
-    `\n🛍 <b>Mahsulotlar:</b>\n${lines}\n\n` +
-    `💰 <b>Jami: ${escapeHtml(formatSom(toNumber(order.totalAmount)))}</b>\n` +
-    `🕐 ${escapeHtml(formatDateTime(order.createdAt))}\n\n` +
-    `📌 <b>Holat: ${escapeHtml(statusLabel)}</b>` +
-    (actorName ? ` — ${escapeHtml(actorName)}` : '')
-  )
+  return formatOrderMessage(order, { title: 'BUYURTMA', statusLabel, actorName })
 }
 
 /* ------------------- Parolni tiklash (oddiy xabarlar) ------------------- */
