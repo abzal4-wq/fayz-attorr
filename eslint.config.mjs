@@ -10,6 +10,20 @@ const compat = new FlatCompat({
 })
 
 const eslintConfig = [
+  /*
+   * .jsx fayllar ANIQ ko'rsatilishi shart.
+   *
+   * ESLint 9 (flat config) standart holatda faqat .js/.mjs/.cjs ni
+   * tekshiradi. Bu qator bo'lmaganida barcha React komponentlari
+   * (`components/**` dagi .jsx) "no matching configuration" deb
+   * jimgina o'tkazib yuborilardi — `npm run lint` toza chiqardi, lekin
+   * komponentlar umuman tekshirilmasdi.
+   *
+   * Natijada `rules-of-hooks` buzilishi (checkout-form.jsx da hook erta
+   * `return` dan keyin turgan) ikki hafta jonli saytda turdi va
+   * savatda mahsulot bo'lsa /buyurtma sahifasi har safar qulardi.
+   */
+  { files: ['**/*.{js,jsx,mjs}'] },
   ...compat.extends('next/core-web-vitals'),
   {
     rules: {

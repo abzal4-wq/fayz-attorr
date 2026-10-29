@@ -61,6 +61,19 @@ export function CheckoutForm({ user, deliveryPrice, deliveryInfo }) {
     }
   }, [hydrated, items.length, pending, router])
 
+  /*
+   * Telegram MainButton ham, sahifadagi tugma ham shu yo'lni chaqiradi.
+   *
+   * HOOK ERTA `return` LARDAN OLDIN TURISHI SHART. Avval u pastda,
+   * `if (!hydrated) return` dan keyin edi: birinchi renderda chaqirilmay,
+   * ikkinchisida chaqirilardi va React #310 ("hook'lar soni o'zgardi")
+   * bilan butun sahifa qulardi. Savatda mahsulot bo'lsa /buyurtma HAR
+   * SAFAR ochilmasdi — ya'ni saytdan buyurtma berib bo'lmasdi.
+   */
+  const submitFromTelegram = useCallback(() => {
+    formRef.current?.requestSubmit()
+  }, [])
+
   if (!hydrated) {
     return <div className="skeleton h-96 rounded-xl" />
   }
@@ -87,11 +100,6 @@ export function CheckoutForm({ user, deliveryPrice, deliveryInfo }) {
   function set(key, value) {
     setForm({ ...form, [key]: value })
   }
-
-  // Telegram MainButton ham, sahifadagi tugma ham shu yo'lni chaqiradi
-  const submitFromTelegram = useCallback(() => {
-    formRef.current?.requestSubmit()
-  }, [])
 
   async function handleSubmit(event) {
     event.preventDefault()
