@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { LoaderCircle, ShoppingBag, TriangleAlert } from 'lucide-react'
+import { ImageOff, LoaderCircle, ShoppingBag, TriangleAlert } from 'lucide-react'
 import { PhoneInput } from '@/components/phone-input'
 import { TelegramMainButton } from './telegram-controls'
 import { cartTotal, useCart } from '@/lib/cart-store'
@@ -251,19 +251,30 @@ export function CheckoutForm({ user, deliveryPrice, deliveryInfo }) {
           <ul className="divide-y divide-border">
             {items.map((item) => (
               <li key={item.variantId} className="flex items-center gap-3 p-4">
-                <div className="size-14 shrink-0 overflow-hidden rounded-lg bg-muted">
+                <div className="flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-muted">
                   {item.imageUrl ? (
                     <Image
                       src={item.imageUrl}
                       alt=""
-                      width={56}
-                      height={56}
+                      // 56px joy, DPR 2-3 uchun
+                      width={112}
+                      height={112}
                       className="size-full object-cover"
                     />
-                  ) : null}
+                  ) : (
+                    // Bo'sh kulrang kvadrat "rasm yuklanmadi" deb
+                    // o'qilardi — belgi bu ataylab ekanini ko'rsatadi
+                    <ImageOff className="size-5 text-muted-deep" aria-hidden="true" />
+                  )}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="line-clamp-1 font-medium text-card-foreground">
+                  {/*
+                    line-clamp-2, 1 emas: atir nomlari ko'pincha brend bilan
+                    boshlanadi ("Chanel Chance...", "Chanel Blue...").
+                    Bir qatorda faqat "Chanel..." qolib, mijoz qaysi atirni
+                    olayotganini ko'rmasdi — aynan farqlovchi qism kesilardi.
+                  */}
+                  <p className="line-clamp-2 font-medium text-card-foreground">
                     {item.name}
                   </p>
                   <p className="text-sm text-muted-deep">

@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import { Minus, Plus, ShoppingBag, Trash2, X } from 'lucide-react'
+import { ImageOff, Minus, Plus, ShoppingBag, Trash2, X } from 'lucide-react'
 import { cartCount, cartTotal, useCart } from '@/lib/cart-store'
 import { useHydrated } from '@/lib/use-hydrated'
 import { useMoney, useT } from '@/lib/i18n/client'
@@ -117,7 +117,7 @@ function CartDrawer({ open, onClose }) {
                   <Link
                     href={`/atir/${item.slug}`}
                     onClick={onClose}
-                    className="size-16 shrink-0 overflow-hidden rounded-lg bg-brand-darker"
+                    className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-brand-darker"
                   >
                     {item.imageUrl ? (
                       <Image
@@ -128,7 +128,9 @@ function CartDrawer({ open, onClose }) {
                         height={128}
                         className="size-16 object-cover"
                       />
-                    ) : null}
+                    ) : (
+                      <ImageOff className="size-5 text-muted-on-dark" aria-hidden="true" />
+                    )}
                   </Link>
 
                   <div className="min-w-0 flex-1">
@@ -136,7 +138,8 @@ function CartDrawer({ open, onClose }) {
                     <Link
                       href={`/atir/${item.slug}`}
                       onClick={onClose}
-                      className="line-clamp-1 font-medium text-ivory underline-offset-4 hover:underline"
+                      // line-clamp-2: checkout-form.jsx dagi izohga qarang
+                      className="line-clamp-2 font-medium text-ivory underline-offset-4 hover:underline"
                     >
                       {item.name}
                     </Link>

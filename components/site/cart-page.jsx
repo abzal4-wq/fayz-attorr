@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react'
+import { ImageOff, Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react'
 import { cartTotal, useCart } from '@/lib/cart-store'
 import { useHydrated } from '@/lib/use-hydrated'
 import { useMoney, useT } from '@/lib/i18n/client'
@@ -58,17 +58,20 @@ export function CartPage({ deliveryPrice, deliveryInfo }) {
           >
             <Link
               href={`/atir/${item.slug}`}
-              className="size-20 shrink-0 overflow-hidden rounded-lg bg-muted sm:size-24"
+              className="flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-muted sm:size-24"
             >
               {item.imageUrl ? (
                 <Image
                   src={item.imageUrl}
                   alt=""
-                  width={96}
-                  height={96}
+                  // 96px joy, DPR 2 uchun
+                  width={192}
+                  height={192}
                   className="size-full object-cover"
                 />
-              ) : null}
+              ) : (
+                <ImageOff className="size-6 text-muted-deep" aria-hidden="true" />
+              )}
             </Link>
 
             <div className="flex min-w-0 flex-1 flex-col">
