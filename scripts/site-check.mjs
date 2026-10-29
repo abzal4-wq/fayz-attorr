@@ -562,6 +562,66 @@ async function checkUserJourney() {
   const password1 = 'SinovParol1'
   const password2 = 'SinovParol2'
 
+  /*
+   * Bu JONLI bazada ishlaydi. Avval UI bosqichi yiqilsa sinov hisobi
+   * bazada qolib ketardi (shunday ikki marta bo'ldi). Endi qayerda
+   * to'xtashidan qat'i nazar, oxirida hisob API orqali o'chiriladi.
+   */
+  try {
+    await runUserJourney(page, { phone, password1, password2 })
+  } catch (error) {
+    note(false, "foydalanuvchi yo'li to'xtadi", error.message.split('\n')[0].slice(0, 160))
+    await page.screenshot({ path: `${SHOT_DIR}/u-xato.png`, fullPage: true }).catch(() => {})
+  } finally {
+    const leftover = await deleteTestAccount(phone, [password2, password1])
+    if (leftover) console.log(`  --    ${leftover}`)
+    await page.close()
+  }
+}
+
+/**
+ * Sinov hisobi qolgan bo'lsa, API orqali o'chiradi.
+ * @returns {Promise<string|null>} nima qilingani haqida izoh
+ */
+async function deleteTestAccount(phone, passwords) {
+  const page = await browser.newPage()
+  try {
+    await page.goto(BASE + '/', { waitUntil: 'domcontentloaded' })
+    for (const password of passwords) {
+      const result = await page.evaluate(
+        async (p, pw) => {
+          const login = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ phone: p, password: pw }),
+          })
+          if (login.status !== 200) return null
+          const del = await fetch('/api/auth/hisobni-ochirish', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password: pw, confirm: true }),
+          })
+          return del.status
+        },
+        phone,
+        password
+      )
+      if (result === 200) return `sinov hisobi qolgan edi — API orqali o'chirildi (+${phone})`
+      if (result !== null) return `DIQQAT: sinov hisobini o'chirib bo'lmadi (+${phone}), status ${result}`
+    }
+    return null // allaqachon o'chirilgan
+  } finally {
+    await page.close()
+  }
+}
+
+/** Elementni ekran markaziga surib bosadi — odam shunday qiladi. */
+async function clickCentered(page, selector) {
+  await page.$eval(selector, (el) => el.scrollIntoView({ block: 'center' }))
+  await page.click(selector)
+}
+
+async function runUserJourney(page, { phone, password1, password2 }) {
   // 1. Ro'yxatdan o'tish
   await visit(page, '/royxatdan-otish', 'u1-royxat')
   await typeInto(page, '#fullName', 'Sinov Foydalanuvchi')
@@ -571,7 +631,6 @@ async function checkUserJourney() {
   note(reg.status === 201 || reg.status === 200, "ro'yxatdan o'tish", `status ${reg.status} ${JSON.stringify(reg.body)?.slice(0, 160)}`)
   if (reg.status >= 400) {
     await page.screenshot({ path: `${SHOT_DIR}/u1-royxat-xato.png`, fullPage: true })
-    await page.close()
     return
   }
   await page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 15000 }).catch(() => {})
@@ -610,8 +669,13 @@ async function checkUserJourney() {
   // Eski token chiqishdan keyin ishlamasligi kerak (AUDIT-002)
   if (cookieBefore) {
     await page.setCookie(cookieBefore)
-    const me = await page.evaluate(async () => (await fetch('/api/auth/me')).status)
-    note(me === 401, 'chiqishdan keyin eski token rad etiladi', `status ${me}`)
+    // /api/auth/me kirmagan foydalanuvchiga 401 emas, `200 + user: null`
+    // qaytaradi (dizayni shunday) — shuning uchun user tekshiriladi
+    const me = await page.evaluate(async () => {
+      const res = await fetch('/api/auth/me')
+      return { status: res.status, user: (await res.json().catch(() => null))?.user ?? null }
+    })
+    note(me.user === null, 'chiqishdan keyin eski token rad etiladi', `status ${me.status}, user ${me.user ? 'BOR' : 'null'}`)
     await page.deleteCookie({ name: 'fa_session' })
   }
 
@@ -635,16 +699,43 @@ async function checkUserJourney() {
     summary?.click()
   })
   await typeInto(page, '#delete-password', password2)
-  await page.click('#delete-confirm')
+
+  /*
+   * Fokus pastki menyu OSTIDA qolmasligi kerak (WCAG 2.4.11). Avval
+   * brauzer elementni ekranning eng pastiga surardi va uning ustida
+   * menyu turardi — bosish menyuga ketardi. `scroll-padding` bilan
+   * tuzatilgan; fokus orqali tekshiramiz (klaviaturadagi "Keyingi"
+   * aynan shunday ishlaydi).
+   */
+  await page.evaluate(() => {
+    window.scrollTo(0, 0)
+    document.querySelector('#delete-confirm').focus()
+  })
+  await new Promise((r) => setTimeout(r, 300))
+  const covered = await page.evaluate(() => {
+    const r = document.querySelector('#delete-confirm').getBoundingClientRect()
+    const top = document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2)
+    return top?.closest('nav, header') ? top.closest('nav, header').tagName.toLowerCase() : null
+  })
+  note(!covered, "fokuslangan belgi menyu ostida qolmaydi", covered ? `${covered} yopib turibdi` : '')
+
+  await clickCentered(page, '#delete-confirm')
+  const checked = await page.$eval('#delete-confirm', (el) => el.checked)
+  note(checked, 'tasdiq belgisi qo‘yiladi')
+
+  await page.$eval('form:has(#delete-password) button[type="submit"]', (el) =>
+    el.scrollIntoView({ block: 'center' })
+  )
   const del = await submitAndWait(page, '/api/auth/hisobni-ochirish', {
     button: 'form:has(#delete-password) button[type="submit"]',
   })
-  note(del.status === 200, "hisobni o'chirish (sinov hisobi tozalandi)", `status ${del.status} ${JSON.stringify(del.body)?.slice(0, 160)}`)
+  note(del.status === 200, "hisobni o'chirish (formadan)", `status ${del.status} ${JSON.stringify(del.body)?.slice(0, 160)}`)
+
+  await page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 15000 }).catch(() => {})
+  note(!page.url().includes('/profil'), "o'chirgandan keyin bosh sahifaga o'tadi", page.url().replace(BASE, ''))
 
   const problems = page.problems.filter(Boolean)
   note(problems.length === 0, "foydalanuvchi yo'li: konsol toza", problems.join(' | '))
-
-  await page.close()
 }
 
 /* ----------------------------- admin panel ----------------------------- */
