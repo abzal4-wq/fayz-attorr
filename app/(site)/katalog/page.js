@@ -76,15 +76,6 @@ async function CatalogContent({ filters }) {
         </div>
 
         {/*
-          Qidiruv maydoni saralash bilan bir qatorda emas, alohida:
-          telefonda ikkisi bir qatorga sig'masdi va maydon 44px dan
-          tor bo'lib qolardi.
-        */}
-        <div className="mb-5">
-          <CatalogSearch filters={filters} />
-        </div>
-
-        {/*
           Ko'rinmas sarlavha, lekin kerak: kartochka nomlari <h3>, sahifa
           sarlavhasi <h1> — oradagi <h2> bo'lmasa daraja sakrab ketadi va
           ekran o'quvchi tuzilmani noto'g'ri o'qiydi.
@@ -113,6 +104,20 @@ export default async function CatalogPage({ searchParams }) {
 
   return (
     <main className="pb-16">
+      {/*
+        Qidiruv maydoni Suspense'dan TASHQARIDA. Ichida bo'lganida har
+        qidiruvda `key` o'zgarib, maydon ham skeleton bilan almashtirilardi:
+        fokus yo'qolib, odam yozishda davom etsa harflar hech qayerga
+        tushmasdi (brauzer tekshiruvi topgan). Endi faqat natijalar
+        qayta yuklanadi, maydon joyida qoladi.
+
+        Saralash bilan bir qatorda emas, alohida: telefonda ikkisi
+        sig'masdi va maydon 44px dan tor bo'lib qolardi.
+      */}
+      <div className="mx-auto max-w-[1280px] px-4 pt-6 sm:px-6">
+        <CatalogSearch filters={filters} />
+      </div>
+
       <Suspense
         key={key}
         fallback={

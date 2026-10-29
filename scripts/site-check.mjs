@@ -191,6 +191,54 @@ async function checkPublic() {
   await visit(page, '/katalog?gender=WOMEN', 'katalog-ayollar')
   await visit(page, '/katalog?q=%25', 'katalog-joker')
 
+  // Qidiruv maydoniga YOZISH: URL yangilanadi va natija o'zgaradi
+  await visit(page, '/katalog', 'katalog-qidiruv-yozish')
+  const before = await page.$$eval('a[href^="/atir/"]', (els) => new Set(els.map((e) => e.getAttribute('href'))).size)
+  await page.type('#catalog-search', 'blue', { delay: 40 })
+  await page
+    .waitForFunction(() => location.search.includes('q=blue'), { timeout: 8000 })
+    .catch(() => {})
+
+  /*
+   * Natija yuklanayotgan PAYTDA yozishni davom ettiramiz. Avval maydon
+   * Suspense ichida edi va shu payt skeleton bilan almashtirilardi:
+   * fokus yo'qolib, keyingi harflar hech qayerga tushmasdi.
+   */
+  await page.keyboard.type(' de', { delay: 40 })
+  const typing = await page.evaluate(() => ({
+    value: document.querySelector('#catalog-search')?.value,
+    focused: document.activeElement?.id === 'catalog-search',
+  }))
+  note(
+    typing.value === 'blue de' && typing.focused,
+    'qidiruv: yuklanish paytida yozish davom etadi',
+    `qiymat "${typing.value}", fokus ${typing.focused ? 'joyida' : "YO'QOLDI"}`
+  )
+
+  await page
+    .waitForFunction(() => location.search.includes('q=blue+de') || location.search.includes('q=blue%20de'), { timeout: 8000 })
+    .catch(() => {})
+  // Skeleton yo'qolib, haqiqiy natija chiqguncha kutamiz
+  await page
+    .waitForFunction(() => !document.querySelector('main .skeleton'), { timeout: 15000 })
+    .catch(() => {})
+  const after = await page.$$eval('a[href^="/atir/"]', (els) => new Set(els.map((e) => e.getAttribute('href'))).size)
+  const urlOk = /q=blue(\+|%20)de/.test(page.url())
+  note(urlOk && after <= before && after > 0, "qidiruv: yozilganda natija filtrlanadi", `URL ${urlOk ? 'yangilandi' : 'YANGILANMADI'}, ${before} -> ${after} ta`)
+
+  // Server javobi kelgandan keyin ham maydon odam yozganicha qoladi
+  const settled = await page.$eval('#catalog-search', (el) => el.value)
+  note(settled === 'blue de', "qidiruv: server javobi maydonni orqaga qaytarmaydi", `"${settled}"`)
+
+  // Tozalash tugmasi
+  await page.evaluate(() => {
+    document.querySelector('form[role="search"] button[type="button"]')?.click()
+  })
+  await page
+    .waitForFunction(() => !location.search.includes('q='), { timeout: 8000 })
+    .catch(() => {})
+  note(!page.url().includes('q='), "qidiruv: tozalash tugmasi ishlaydi", page.url().replace(BASE, ''))
+
   // Birinchi atirning sahifasi — slug'ni katalogdan olamiz
   await page.goto(BASE + '/katalog', { waitUntil: 'networkidle2' })
   const productPath = await page.evaluate(
@@ -216,6 +264,38 @@ async function checkPublic() {
   }
 
   await visit(page, '/savat', 'savat')
+
+  // Savat: miqdorni oshirish va kamaytirish haqiqatan ishlaydimi
+  const readQty = () =>
+    page.evaluate(() => {
+      const el = [...document.querySelectorAll('main *')].find(
+        (node) => node.children.length === 0 && /^\d+$/.test(node.textContent.trim())
+          && node.closest('li')
+      )
+      return el ? Number(el.textContent.trim()) : null
+    })
+  const clickByLabel = (pattern) =>
+    page.evaluate((source) => {
+      const re = new RegExp(source, 'i')
+      const button = [...document.querySelectorAll('main button')].find((b) =>
+        re.test(b.getAttribute('aria-label') ?? '')
+      )
+      if (!button || button.disabled) return false
+      button.click()
+      return true
+    }, pattern.source)
+
+  const qty0 = await readQty()
+  const plus = await clickByLabel(/^(ko.paytirish|increase|увеличить)$/)
+  await new Promise((r) => setTimeout(r, 400))
+  const qty1 = await readQty()
+  note(plus && qty1 === qty0 + 1, 'savat: miqdorni oshirish', `${qty0} -> ${qty1}`)
+
+  const minus = await clickByLabel(/^(kamaytirish|decrease|уменьшить)$/)
+  await new Promise((r) => setTimeout(r, 400))
+  const qty2 = await readQty()
+  note(minus && qty2 === qty0, 'savat: miqdorni kamaytirish', `${qty1} -> ${qty2}`)
+
   await visit(page, '/buyurtma', 'buyurtma-mehmon')
 
   const guestNotice = await page.evaluate(() =>

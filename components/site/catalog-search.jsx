@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { Search, X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
-import { MAX_QUERY_LENGTH, buildCatalogQuery } from '@/lib/catalog-params'
+import { MAX_QUERY_LENGTH, buildCatalogQuery, parseQuery } from '@/lib/catalog-params'
 import { useT } from '@/lib/i18n/client'
 
 /**
@@ -12,6 +12,12 @@ import { useT } from '@/lib/i18n/client'
  * Qidiruv URL'da (`?q=`) yashaydi — xuddi filtrlar kabi. Shuning
  * uchun natijani ulashsa bo'ladi, "orqaga" tugmasi ishlaydi va
  * sahifa serverda to'liq render bo'ladi.
+ *
+ * DIQQAT: bu komponent katalogdagi `<Suspense key=...>` TASHQARISIDA
+ * turishi shart (app/(site)/katalog/page.js). Ichida bo'lganida har
+ * qidiruvda kalit o'zgarib, maydon skeleton bilan almashtirilardi:
+ * fokus yo'qolardi va odam yozishda davom etsa harflar hech qayerga
+ * tushmasdi.
  */
 export function CatalogSearch({ filters }) {
   const t = useT()
@@ -20,39 +26,72 @@ export function CatalogSearch({ filters }) {
   const timer = useRef(null)
 
   /*
-   * URL tashqi sabab bilan o'zgarsa (orqaga tugmasi, filtr tozalash)
-   * maydon ham yangilanadi. Busiz brauzer "orqaga" qilganda ro'yxat
-   * o'zgarib, maydonda eski so'z qolib ketardi.
+   * Oxirgi marta O'ZIMIZ URL'ga yozgan qiymat.
+   *
+   * Maydon endi qayta yaratilmaydi, ya'ni server javobi kelganda
+   * `filters.query` o'zgaradi va uni maydonga yozish kerakmi, degan
+   * savol tug'iladi. Agar har doim yozilsa — POYGA: odam "dior"
+   * yozadi, so'rov ketadi, u "dior s" gacha yozib ulguradi, keyin
+   * "dior" javobi kelib maydonni orqaga qaytarib yuboradi.
+   *
+   * Shuning uchun faqat TASHQI o'zgarish (orqaga tugmasi, filtrni
+   * tozalash, havola) maydonga yoziladi; o'z so'rovimizning aks-sadosi
+   * e'tiborsiz qoldiriladi.
    */
+  const lastPushed = useRef(filters.query ?? '')
+
   useEffect(() => {
-    setValue(filters.query ?? '')
+    const incoming = filters.query ?? ''
+    if (incoming === lastPushed.current) return
+    lastPushed.current = incoming
+    setValue(incoming)
   }, [filters.query])
 
   // Komponent yo'q bo'lsa kutib turgan o'tish bekor qilinadi
   useEffect(() => () => clearTimeout(timer.current), [])
 
-  function go(next) {
+  /**
+   * @param raw maydondagi qiymat
+   * @param mode 'replace' — yozish paytida, 'push' — Enter va tozalash
+   */
+  function go(raw, mode) {
+    /*
+     * Server ham aynan shu funksiya bilan tozalaydi. Bu yerda ham
+     * qo'llanmasa, "dior  s" (ikki bo'sh joy) yuborilib, "dior s"
+     * qaytardi — `lastPushed` bilan mos kelmay, maydon yozish
+     * paytida o'zgarib ketardi.
+     */
+    const next = parseQuery(raw)
+    if (next === lastPushed.current) return
+    lastPushed.current = next
+
     const query = buildCatalogQuery({ ...filters, query: next, page: 1 })
-    router.push(query ? `/katalog?${query}` : '/katalog')
+    const url = query ? `/katalog?${query}` : '/katalog'
+
+    /*
+     * Yozish paytida `replace`: aks holda har 400ms lik to'xtash
+     * tarixga yozilib, "orqaga" tugmasi "d", "di", "dio" bo'ylab
+     * yurardi. `scroll: false` — yozayotganda sahifa tepaga sakramasin.
+     */
+    if (mode === 'push') router.push(url, { scroll: false })
+    else router.replace(url, { scroll: false })
   }
 
   /*
-   * Har harfdan keyin emas, 400ms jimlikdan keyin yuboriladi.
-   *
-   * Nega: har bosilgan tugma serverda yangi so'rov va yangi render
-   * bo'lardi. Telefon tarmog'ida bu ro'yxatni sakratib,
-   * yozayotgan odamni chalg'itadi.
+   * Har harfdan keyin emas, 400ms jimlikdan keyin yuboriladi —
+   * har bosilgan tugma yangi server renderi bo'lardi va telefon
+   * tarmog'ida ro'yxatni sakratardi.
    */
   function onChange(next) {
     setValue(next)
     clearTimeout(timer.current)
-    timer.current = setTimeout(() => go(next.trim()), 400)
+    timer.current = setTimeout(() => go(next, 'replace'), 400)
   }
 
   function clear() {
     clearTimeout(timer.current)
     setValue('')
-    go('')
+    go('', 'push')
   }
 
   return (
@@ -62,7 +101,7 @@ export function CatalogSearch({ filters }) {
         e.preventDefault()
         // Enter bosilsa kutmaymiz
         clearTimeout(timer.current)
-        go(value.trim())
+        go(value, 'push')
       }}
       className="relative"
     >
