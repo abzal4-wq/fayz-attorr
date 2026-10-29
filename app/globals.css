@@ -167,6 +167,27 @@
     /* Mobilda gorizontal scroll sababini yashirmaymiz, lekin iOS'da
        rubber-band paytida gorizontal siljishni to'xtatamiz */
     -webkit-text-size-adjust: 100%;
+
+    /*
+     * Fokus va scrollIntoView yopishqoq sarlavha (64px) va pastki menyu
+     * OSTIGA tushmasin.
+     *
+     * Brauzer fokuslangan elementni ko'rinishga eng kam surish bilan
+     * keltiradi — ya'ni uni ekranning aynan chetiga qo'yadi, u yerda esa
+     * fixed menyu turadi. O'lchab topilgan: profildagi "hisobni o'chirish"
+     * tasdiq belgisi y=764/800 da bo'lib, ustida pastki menyu yozuvi
+     * turardi — bosish menyuga ketardi. Telefon klaviaturasidagi
+     * "Keyingi" ham fokusni shu joyga olib borardi (WCAG 2.4.11).
+     */
+    scroll-padding-top: calc(64px + 0.5rem);
+    scroll-padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px) + 0.5rem);
+  }
+
+  /* Kompyuterda pastki menyu yo'q (lg:hidden) */
+  @media (min-width: 1024px) {
+    html {
+      scroll-padding-bottom: 0.5rem;
+    }
   }
 
   body {
