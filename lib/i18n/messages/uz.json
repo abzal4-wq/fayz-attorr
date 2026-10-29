@@ -149,7 +149,9 @@
     "paymentNote": "To'lov yetkazib berishda — naqd yoki karta orqali. Operator qo'ng'iroq qilib tasdiqlaydi.",
     "submit": "Buyurtmani tasdiqlash",
     "submitting": "Yuborilmoqda...",
-    "failed": "Buyurtmani yuborib bo'lmadi"
+    "failed": "Buyurtmani yuborib bo'lmadi",
+    "guestNotice": "Siz mehmon sifatida buyurtma berasiz. Buyurtmalaringiz profilda saqlanib qolishini xohlasangiz:",
+    "guestLogin": "kirish yoki ro'yxatdan o'tish"
   },
   "success": {
     "title": "Buyurtmangiz qabul qilindi",
@@ -262,7 +264,6 @@
     "wrongCredentials": "Telefon raqami yoki parol noto'g'ri",
     "phoneTaken": "Bu raqam allaqachon ro'yxatdan o'tgan",
     "phoneTakenField": "Bu raqam band. Kirishni sinab ko'ring.",
-    "orderLoginRequired": "Buyurtma berish uchun avval tizimga kiring",
     "orderFailed": "Buyurtmani qabul qilib bo'lmadi. Birozdan keyin qayta urinib ko'ring.",
     "cartChanged": "Savatdagi ba'zi mahsulotlar o'zgargan. Iltimos, savatni tekshiring.",
     "justSoldOut": "Kechirasiz, mahsulot hozirgina tugab qoldi. Savatni yangilang.",

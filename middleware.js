@@ -8,8 +8,14 @@ const ADMIN_COOKIE = 'fa_admin'
 // Qolgan barcha /admin va /api/admin manzillari admin bo'lmaganlar uchun 404.
 const ADMIN_PUBLIC_PATHS = ['/admin/kirish', '/api/admin/auth/login', '/api/admin/auth/logout']
 
-// Tizimga kirgan foydalanuvchi talab qilinadigan yo'llar.
-const USER_PROTECTED_PREFIXES = ['/profil', '/buyurtma']
+/*
+ * Tizimga kirgan foydalanuvchi talab qilinadigan yo'llar.
+ *
+ * `/buyurtma` ATAYLAB yo'q: buyurtma mehmon sifatida ham beriladi.
+ * Ro'yxatdan o'tishni talab qilish savdoni yo'qotadi — odam savatni
+ * to'ldirib, kirish sahifasini ko'rib chiqib ketadi.
+ */
+const USER_PROTECTED_PREFIXES = ['/profil']
 
 function isAdminPublic(pathname) {
   return ADMIN_PUBLIC_PATHS.some(
@@ -75,5 +81,5 @@ export async function middleware(request) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/api/admin/:path*', '/profil/:path*', '/buyurtma/:path*'],
+  matcher: ['/admin/:path*', '/api/admin/:path*', '/profil/:path*'],
 }

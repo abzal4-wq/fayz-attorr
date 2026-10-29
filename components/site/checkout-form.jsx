@@ -41,9 +41,10 @@ export function CheckoutForm({ user, deliveryPrice, deliveryInfo }) {
   const clear = useCart((state) => state.clear)
   const hydrated = useHydrated()
 
+  // `user` null bo'lishi mumkin — mehmon buyurtmasi
   const [form, setForm] = useState({
-    customerName: user.fullName ?? '',
-    customerPhone: formatPhone(user.phone),
+    customerName: user?.fullName ?? '',
+    customerPhone: user?.phone ? formatPhone(user.phone) : '',
     address: '',
     comment: '',
   })
@@ -122,6 +123,12 @@ export function CheckoutForm({ user, deliveryPrice, deliveryInfo }) {
 
       if (Array.isArray(data?.details)) setProblems(data.details)
 
+      /*
+       * 401 endi oddiy holatda kelmaydi (mehmon ham buyurtma bera
+       * oladi), lekin sessiya buyurtma berayotgan paytda bekor
+       * bo'lib qolishi mumkin — masalan boshqa qurilmada parol
+       * almashtirilsa. Shu holda kirish sahifasiga yuboramiz.
+       */
       if (res.status === 401) {
         router.push('/kirish?keyin=%2Fbuyurtma')
       }
@@ -148,6 +155,23 @@ export function CheckoutForm({ user, deliveryPrice, deliveryInfo }) {
       />
 
       <div className="space-y-4 lg:col-span-2">
+        {/*
+          Mehmonga kirishni TAKLIF qilamiz, lekin to'smaymiz: buyurtma
+          baribir o'tadi. Foyda aniq aytiladi (tarix saqlanadi), aks
+          holda havola shunchaki yana bir to'siqdek tuyuladi.
+        */}
+        {user ? null : (
+          <p className="rounded-xl border border-border bg-muted/50 p-4 text-sm text-muted-deep">
+            {t('checkout.guestNotice')}{' '}
+            <Link
+              href="/kirish?keyin=%2Fbuyurtma"
+              className="inline-block py-1 font-medium text-brand-deep underline underline-offset-4"
+            >
+              {t('checkout.guestLogin')}
+            </Link>
+          </p>
+        )}
+
         <section className="space-y-4 rounded-xl border border-border bg-card p-4 sm:p-5">
           <h2 className="font-serif text-xl text-card-foreground">
             {t('checkout.deliveryHeading')}

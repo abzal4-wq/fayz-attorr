@@ -1,5 +1,6 @@
 import { fail, ok, readJson } from '@/lib/api'
 import { consumeAttempt, consumeAttemptPair, getClientIp } from '@/lib/auth/rate-limit'
+import { normalizePhone } from '@/lib/auth/phone'
 import { getCurrentUser } from '@/lib/auth/session'
 import { OrderError, createOrder } from '@/lib/orders'
 import { notifyNewOrder } from '@/lib/telegram'
@@ -11,33 +12,53 @@ export async function POST(request) {
   const ip = getClientIp(request)
   const t = await getT()
 
-  // Buyurtmada ham IP yolg'iz yetarli emas (CGNAT) — foydalanuvchi
-  // bo'yicha ham hisoblanadi. Mehmon buyurtmasi joriy etilganda
-  // bu yerga telefon raqami beriladi.
-  const limit = await consumeAttempt('order-ip', ip)
-  if (!limit.allowed) {
-    return fail(
+  const tooMany = (limit) =>
+    fail(
       t('errors.tooManyAttempts', {
         minutes: Math.ceil(limit.retryAfterSeconds / 60),
       }),
       { status: 429, headers: { 'Retry-After': String(limit.retryAfterSeconds) } }
     )
-  }
 
-  // Buyurtma berish uchun ro'yxatdan o'tish shart
-  const user = await getCurrentUser()
-  if (!user) {
-    return fail(t('errors.orderLoginRequired'), { status: 401 })
-  }
-
+  /*
+   * Tana cheklovdan OLDIN o'qiladi — telefon raqami kerak.
+   *
+   * Buyurtma endi ro'yxatdan o'tmasdan ham beriladi, ya'ni
+   * foydalanuvchi ID'si bo'lmasligi mumkin. Cheklovning ikkinchi
+   * o'lchovi shuning uchun telefon raqami bo'ladi: IP yolg'iz
+   * yetarli emas, O'zbekistonda operatorlar CGNAT ishlatadi va
+   * bitta tashqi IP ortida minglab abonent turadi.
+   */
   const body = await readJson(request)
-  if (!body) return fail(t('errors.badRequest'))
+  if (!body) {
+    // Buzuq so'rov ham hisoblansin
+    const limit = await consumeAttempt('order-ip', ip)
+    if (!limit.allowed) return tooMany(limit)
+    return fail(t('errors.badRequest'))
+  }
 
   const parsed = makeOrderSchema(t).safeParse(body)
+
+  // Telefon xato formatda bo'lsa ham IP hisoblanadi
+  const phone = parsed.success
+    ? parsed.data.customerPhone
+    : normalizePhone(body?.customerPhone)
+
+  const limit = await consumeAttemptPair('order', phone, ip)
+  if (!limit.allowed) return tooMany(limit)
+
   if (!parsed.success) {
     const { fieldErrors, formErrors } = formatZodError(parsed.error)
     return fail(formErrors[0] ?? t('errors.checkData'), { fieldErrors })
   }
+
+  /*
+   * Kirgan bo'lsa buyurtma hisobiga bog'lanadi va profilidagi
+   * tarixda ko'rinadi. Mehmon buyurtmasida `userId` null bo'ladi,
+   * lekin buyurtmaning o'zi to'liq: ism, telefon va manzil
+   * nusxasi har holda saqlanadi.
+   */
+  const user = await getCurrentUser()
 
   const { items, ...customer } = parsed.data
 
@@ -46,7 +67,7 @@ export async function POST(request) {
     // `t` ham beriladi: "mahsulot tugab qoldi" kabi xabarlar mijoz
     // tilida bo'lishi kerak. Telegram xabari esa baribir o'zbekcha —
     // uni admin o'qiydi, mijoz emas.
-    order = await createOrder({ items, customer, userId: user.id, t })
+    order = await createOrder({ items, customer, userId: user?.id ?? null, t })
   } catch (error) {
     if (error instanceof OrderError) {
       // Qaysi mahsulot muammoli ekanini ham yuboramiz — forma ularni

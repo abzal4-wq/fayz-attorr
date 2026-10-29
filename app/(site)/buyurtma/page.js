@@ -1,4 +1,3 @@
-import { redirect } from 'next/navigation'
 import { CheckoutForm } from '@/components/site/checkout-form'
 import { getCurrentUser } from '@/lib/auth/session'
 import { getStoreSettings } from '@/lib/settings'
@@ -10,13 +9,16 @@ export async function generateMetadata() {
 }
 
 export default async function CheckoutPage() {
-  const user = await getCurrentUser()
-
-  // Middleware ham tekshiradi; bu ikkinchi qatlam — token haqiqiy, lekin
-  // foydalanuvchi bazadan o'chirilgan bo'lishi mumkin.
-  if (!user) redirect('/kirish?keyin=%2Fbuyurtma')
-
-  const [settings, t] = await Promise.all([getStoreSettings(), getT()])
+  /*
+   * Kirish TALAB QILINMAYDI — buyurtma mehmon sifatida ham beriladi.
+   * Kirgan bo'lsa ismi va telefoni formaga oldindan to'ldiriladi va
+   * buyurtma hisobiga bog'lanadi (profilda tarixda ko'rinadi).
+   */
+  const [user, settings, t] = await Promise.all([
+    getCurrentUser(),
+    getStoreSettings(),
+    getT(),
+  ])
 
   return (
     <main className="mx-auto max-w-[1280px] px-4 py-6 pb-16 sm:px-6">
@@ -24,7 +26,7 @@ export default async function CheckoutPage() {
         {t('checkout.title')}
       </h1>
       <CheckoutForm
-        user={{ fullName: user.fullName, phone: user.phone }}
+        user={user ? { fullName: user.fullName, phone: user.phone } : null}
         deliveryPrice={settings.deliveryPrice}
         deliveryInfo={settings.deliveryInfo}
       />

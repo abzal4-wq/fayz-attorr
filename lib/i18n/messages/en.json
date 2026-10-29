@@ -158,7 +158,9 @@
     "paymentNote": "Payment on delivery — cash or card. An operator will call to confirm.",
     "submit": "Confirm order",
     "submitting": "Sending...",
-    "failed": "Could not send the order"
+    "failed": "Could not send the order",
+    "guestNotice": "You are ordering as a guest. To keep your orders in your profile:",
+    "guestLogin": "sign in or register"
   },
   "success": {
     "title": "Your order has been received",
@@ -271,7 +273,6 @@
     "wrongCredentials": "Wrong phone number or password",
     "phoneTaken": "That number is already registered",
     "phoneTakenField": "That number is taken. Try signing in.",
-    "orderLoginRequired": "Please sign in before placing an order",
     "orderFailed": "Could not accept the order. Please try again shortly.",
     "cartChanged": "Some items in your cart have changed. Please review your cart.",
     "justSoldOut": "Sorry, that item just sold out. Please refresh your cart.",
