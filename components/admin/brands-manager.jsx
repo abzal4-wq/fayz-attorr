@@ -8,6 +8,7 @@ import { ConfirmModal, Modal } from './modal'
 import { ImageField } from './image-field'
 import { Button, Field, Input, Toggle } from './ui'
 import { Alert, Badge, EmptyState, PageHeader } from './display'
+import { brandLogoUrl } from '@/lib/cloudinary-url'
 
 const emptyForm = { name: '', sortOrder: 0, isActive: true }
 
@@ -160,10 +161,13 @@ export function BrandsManager({ brands }) {
                       <div className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-md border border-border bg-muted">
                         {brand.logoUrl ? (
                           <Image
-                            src={brand.logoUrl}
+                            // Saytdagi bilan BIR XIL ko'rinish: admin
+                            // logotipni qanday ko'rsa, mijoz ham shunday
+                            // ko'rishi kerak
+                            src={brandLogoUrl(brand.logoUrl)}
                             alt=""
-                            width={40}
-                            height={40}
+                            width={80}
+                            height={80}
                             className="size-10 object-contain"
                           />
                         ) : (

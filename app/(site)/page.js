@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { ArrowRight, ShieldCheck, Sparkles, Truck } from 'lucide-react'
 import { ProductCard } from '@/components/site/product-card'
 import { getFeaturedProducts, getHomeBrands } from '@/lib/catalog'
+import { brandLogoUrl } from '@/lib/cloudinary-url'
 import { getStoreSettings } from '@/lib/settings'
 import { getT } from '@/lib/i18n/server'
 
@@ -195,12 +196,16 @@ export default async function HomePage() {
                 >
                   {brand.logoUrl ? (
                     <Image
-                      src={brand.logoUrl}
+                      // Chetidagi bo'sh joy kesilgan, kvadratga
+                      // keltirilgan ko'rinish — `lib/cloudinary-url.js`
+                      src={brandLogoUrl(brand.logoUrl)}
                       alt=""
                       // size-8 (32px) joy uchun DPR 3 da 96px kerak
                       width={64}
                       height={64}
-                      className="size-8 object-contain"
+                      // rounded-md: qora fonli logotipning o'tkir
+                      // burchaklari dumaloq kartochkaga urilib turardi
+                      className="size-8 rounded-md object-contain"
                     />
                   ) : null}
                   <span className="text-sm font-medium text-card-foreground">
