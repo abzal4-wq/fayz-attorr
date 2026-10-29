@@ -314,6 +314,190 @@ async function checkPublic() {
   await page.close()
 }
 
+/* --------------------------- interaktiv qismlar --------------------------- */
+
+async function checkInteractions() {
+  console.log('\n== Interaktiv qismlar')
+  const page = await newPage()
+  const wait = (ms) => new Promise((r) => setTimeout(r, ms))
+
+  /* --- Til almashtirish --- */
+  await visit(page, '/', 'i-til-oldin')
+  // Sarlavha "Fayz Attor" har tilda bir xil — shuning uchun <html lang>
+  // va pastki menyu matni tekshiriladi
+  const navText = () =>
+    page.evaluate(() => document.querySelector('nav.fixed, nav[class*="bottom"]')?.innerText ?? document.body.innerText.slice(0, 400))
+  const before = await navText()
+  await page.click('button[aria-haspopup="menu"]')
+  await page.waitForSelector('button[lang="ru"]', { timeout: 5000 })
+  await page.click('button[lang="ru"]')
+  await page
+    .waitForFunction(() => document.documentElement.lang === 'ru', { timeout: 15000 })
+    .catch(() => {})
+  await page.waitForNetworkIdle({ idleTime: 400, timeout: 10000 }).catch(() => {})
+  const lang = await page.evaluate(() => document.documentElement.lang)
+  const after = await navText()
+  const cyrillic = /[Ѐ-ӿ]/.test(after)
+  note(lang === 'ru' && cyrillic, "til: rus tiliga o‘tadi", `lang="${lang}", matn: "${after.replace(/\s+/g, ' ').slice(0, 50)}"`)
+  void before
+  await page.screenshot({ path: `${SHOT_DIR}/i-til-ru.png`, fullPage: false })
+
+  // Keyingi tekshiruvlar o'zbekcha matnga tayanadi — qaytaramiz
+  await page.click('button[aria-haspopup="menu"]')
+  await page.waitForSelector('button[lang="uz"]', { timeout: 5000 })
+  await page.click('button[lang="uz"]')
+  await page
+    .waitForFunction(() => document.documentElement.lang === 'uz', { timeout: 15000 })
+    .catch(() => {})
+
+  /* --- Mobil filtr paneli --- */
+  await visit(page, '/katalog', 'i-filtr-oldin')
+  const opened = await page.evaluate(() => {
+    const button = [...document.querySelectorAll('button')].find(
+      (b) => getComputedStyle(b).position === 'fixed' && /filtr/i.test(b.textContent)
+    )
+    button?.click()
+    return Boolean(button)
+  })
+  await wait(400)
+  const dialog = await page.$('[role="dialog"]')
+  note(opened && Boolean(dialog), 'filtr: panel ochiladi')
+
+  if (dialog) {
+    await page.screenshot({ path: `${SHOT_DIR}/i-filtr-panel.png`, fullPage: false })
+
+    // Jins tanlanganda tugmadagi son QORALAMAGA moslashishi kerak
+    const labelOf = () =>
+      page.evaluate(() =>
+        [...document.querySelectorAll('[role="dialog"] button')]
+          .find((b) => b.classList.contains('flex-1'))?.textContent.trim() ?? null
+      )
+    const labelBefore = await labelOf()
+    await page.evaluate(() => {
+      const men = [...document.querySelectorAll('[role="dialog"] button[aria-pressed]')]
+        .find((b) => /erkak/i.test(b.textContent))
+      men?.click()
+    })
+    await page
+      .waitForFunction(
+        (old) => [...document.querySelectorAll('[role="dialog"] button')]
+          .find((b) => b.classList.contains('flex-1'))?.textContent.trim() !== old,
+        { timeout: 8000 },
+        labelBefore
+      )
+      .catch(() => {})
+    await wait(800)
+    const labelDraft = await labelOf()
+    const draftCount = Number(labelDraft?.match(/\d+/)?.[0] ?? NaN)
+    const realMen = await page.evaluate(async () => {
+      const res = await fetch('/api/katalog?gender=MEN')
+      return (await res.json()).total
+    })
+    note(draftCount === realMen, "filtr: tugmadagi son qoralama tanlovga mos", `"${labelBefore}" -> "${labelDraft}", haqiqatda erkaklar uchun ${realMen} ta`)
+
+    // Jinsni qaytarib olib tashlaymiz
+    await page.evaluate(() => {
+      const men = [...document.querySelectorAll('[role="dialog"] button[aria-pressed="true"]')]
+        .find((b) => /erkak/i.test(b.textContent))
+      men?.click()
+    })
+    await wait(600)
+
+    // Birinchi brendni tanlab, qo'llaymiz
+    const brand = await page.evaluate(() => {
+      const box = document.querySelector('[role="dialog"] input[type="checkbox"]')
+      box?.click()
+      return box ? box.closest('label')?.textContent.trim() : null
+    })
+    await wait(200)
+    const applyLabel = await page.evaluate(() => {
+      const buttons = [...document.querySelectorAll('[role="dialog"] button')]
+      const apply = buttons.find((b) => b.classList.contains('flex-1'))
+      apply?.click()
+      return apply?.textContent.trim() ?? null
+    })
+    await page.waitForFunction(() => location.search.includes('brend='), { timeout: 10000 }).catch(() => {})
+    await page.waitForFunction(() => !document.querySelector('main .skeleton'), { timeout: 15000 }).catch(() => {})
+
+    const applied = page.url().includes('brend=')
+    const closed = !(await page.$('[role="dialog"]'))
+    note(applied && closed, "filtr: tanlov qo'llanadi va panel yopiladi", `brend "${brand}", tugma "${applyLabel}", URL ${page.url().replace(BASE, '')}`)
+
+    // Tugmadagi son haqiqiy natijaga mos kelishi kerak
+    const promised = Number((applyLabel ?? '').match(/\d+/)?.[0] ?? NaN)
+    const shown = await page.$$eval('a[href^="/atir/"]', (els) => new Set(els.map((e) => e.getAttribute('href'))).size)
+    if (!Number.isNaN(promised)) {
+      note(promised === shown, "filtr: tugmadagi son natijaga mos", `tugma ${promised} ta dedi, ko'rsatildi ${shown} ta`)
+    }
+  }
+
+  /* --- Filtrni tozalash qidiruvni o'chirmasligi kerak --- */
+  await visit(page, '/katalog?q=chanel&gender=WOMEN', 'i-filtr-qidiruv')
+  await page.evaluate(() => {
+    const button = [...document.querySelectorAll('button')].find(
+      (b) => getComputedStyle(b).position === 'fixed' && /filtr/i.test(b.textContent)
+    )
+    button?.click()
+  })
+  await wait(400)
+  await page.evaluate(() => {
+    const clear = [...document.querySelectorAll('[role="dialog"] button')].find((b) =>
+      /tozalash/i.test(b.textContent)
+    )
+    clear?.click()
+  })
+  await page.waitForFunction(() => !location.search.includes('gender='), { timeout: 10000 }).catch(() => {})
+  const keptQuery = page.url().includes('q=chanel')
+  const droppedGender = !page.url().includes('gender=')
+  note(keptQuery && droppedGender, "filtr: tozalash qidiruvni saqlaydi", page.url().replace(BASE, ''))
+
+  /* --- Mahsulot sahifalari: HAR BIR atir, hajm tanlash va galereya --- */
+  await page.goto(BASE + '/katalog', { waitUntil: 'networkidle2' })
+  const productPaths = await page.evaluate(() => [
+    ...new Set([...document.querySelectorAll('a[href^="/atir/"]')].map((a) => a.getAttribute('href'))),
+  ])
+
+  let galleryTested = false
+  for (const [index, path] of productPaths.entries()) {
+    await visit(page, path, `i-atir-${index + 1}`)
+
+    const variants = await page.$$('button[aria-pressed]')
+    if (variants.length > 1) {
+      const prices = []
+      for (const button of variants) {
+        await button.click()
+        await wait(200)
+        prices.push(await page.evaluate(() => document.querySelector('main')?.innerText.match(/[\d\s]+so.m/)?.[0]?.trim()))
+      }
+      note(new Set(prices).size > 1, `${path}: hajm tanlanganda narx o‘zgaradi`, prices.join(' | '))
+    }
+
+    // Rasmi bor atirda galereya: kattalashtirish ochiladi, Escape yopadi
+    const zoom = await page.evaluateHandle(() =>
+      [...document.querySelectorAll('main button')].find(
+        (b) => b.offsetParent !== null && b.querySelector('img') && /kattalashtir|zoom|увелич/i.test(b.getAttribute('aria-label') ?? '')
+      ) ?? null
+    )
+    if (zoom && (await zoom.evaluate((el) => el !== null))) {
+      await zoom.click()
+      await wait(400)
+      const opened = await page.evaluate(() => Boolean(document.querySelector('[role="dialog"] img')))
+      await page.screenshot({ path: `${SHOT_DIR}/i-galereya-${index + 1}.png`, fullPage: false })
+      await page.keyboard.press('Escape')
+      await wait(400)
+      const closed = !(await page.$('[role="dialog"]'))
+      const scrollUnlocked = await page.evaluate(() => document.body.style.overflow !== 'hidden')
+      note(opened && closed && scrollUnlocked, `${path}: rasm kattalashadi, Escape yopadi, scroll qaytadi`)
+      galleryTested = true
+    }
+  }
+  if (!galleryTested) console.log("  --    rasmli atir topilmadi, galereya sinalmadi")
+
+  const problems = page.problems.filter(Boolean)
+  note(problems.length === 0, 'interaktiv qismlar: konsol toza', problems.join(' | '))
+  await page.close()
+}
+
 /* -------------------------- login formasi -------------------------- */
 
 async function checkLoginForm() {
@@ -546,8 +730,10 @@ async function checkAdmin() {
 try {
   if (MODE === 'public' || MODE === 'all') {
     await checkPublic()
+    await checkInteractions()
     await checkLoginForm()
   }
+  if (MODE === 'ui') await checkInteractions()
   if (MODE === 'login') await checkLoginForm()
   if (MODE === 'user' || MODE === 'all') await checkUserJourney()
   if (MODE === 'admin' || MODE === 'all') await checkAdmin()

@@ -171,6 +171,18 @@ export function ProductGallery({ images, alt }) {
             alt={alt}
             width={1200}
             height={1200}
+            /*
+             * `sizes` SHART. Busiz srcset `width` va `width*2` dan
+             * yasaladi: DPR 2 telefonda 2400 -> 3840 ga yaxlitlanib, eng
+             * katta variant so'ralardi. Server uni har rasm uchun
+             * birinchi bosishda noldan yasardi va odam bo'sh qorong'u
+             * oynaga qarab turardi (brauzer tekshiruvida ko'rindi).
+             *
+             * "100vw" galereyadagi asosiy rasm bilan BIR XIL — brauzer
+             * allaqachon yuklangan faylni keshdan oladi, rasm darhol
+             * chiqadi.
+             */
+            sizes="100vw"
             className="relative max-h-full w-auto max-w-full object-contain"
           />
           <button
