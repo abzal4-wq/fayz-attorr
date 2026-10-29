@@ -378,15 +378,22 @@ async function checkInteractions() {
         .find((b) => /erkak/i.test(b.textContent))
       men?.click()
     })
+    /*
+     * Son QAYTA paydo bo'lguncha kutamiz: avval tugma sonsiz "Ko'rsatish"
+     * (yuklanmoqda) holatiga o'tadi, keyin serverdan yangi son keladi.
+     * Qat'iy 800ms yetmasdi — mashina band bo'lsa testi yolg'on yiqilardi.
+     */
     await page
       .waitForFunction(
-        (old) => [...document.querySelectorAll('[role="dialog"] button')]
-          .find((b) => b.classList.contains('flex-1'))?.textContent.trim() !== old,
-        { timeout: 8000 },
+        (old) => {
+          const label = [...document.querySelectorAll('[role="dialog"] button')]
+            .find((b) => b.classList.contains('flex-1'))?.textContent.trim() ?? ''
+          return /\d/.test(label) && label !== old
+        },
+        { timeout: 15000 },
         labelBefore
       )
       .catch(() => {})
-    await wait(800)
     const labelDraft = await labelOf()
     const draftCount = Number(labelDraft?.match(/\d+/)?.[0] ?? NaN)
     const realMen = await page.evaluate(async () => {
