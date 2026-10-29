@@ -103,7 +103,16 @@ export default async function CatalogPage({ searchParams }) {
   const key = JSON.stringify(filters)
 
   return (
-    <main className="pb-16">
+    /*
+     * min-h-svh: footer har doim birinchi ekrandan PASTDA qolsin.
+     *
+     * Yuklanish paytida 8 ta kartochkali baland skeleton turadi. Natija
+     * kam bo'lsa (jonli katalogda 2 ta atir, "blue" qidiruvida 1 ta),
+     * sahifa birdan qisqarib, footer pastdan ekranga sakrab chiqardi —
+     * Lighthouse CLS 0.095, sekin tarmoqda 0.112 (chegara 0.1). Har
+     * qidiruvda takrorlanardi. Siljish o'lchab topilgan: aynan footer.
+     */
+    <main className="min-h-svh pb-16">
       {/*
         Qidiruv maydoni Suspense'dan TASHQARIDA. Ichida bo'lganida har
         qidiruvda `key` o'zgarib, maydon ham skeleton bilan almashtirilardi:
