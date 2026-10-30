@@ -34,7 +34,7 @@ export function AdminLoginForm({ redirectTo = '/admin' }) {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
+    <form method="post" onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
       <div>
         <label
           htmlFor="username"

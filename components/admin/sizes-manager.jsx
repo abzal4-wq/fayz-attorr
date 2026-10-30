@@ -210,7 +210,7 @@ export function SizesManager({ sizes }) {
         onClose={() => setFormOpen(false)}
         title={editing ? 'Hajmni tahrirlash' : 'Yangi hajm'}
       >
-        <form onSubmit={handleSubmit} noValidate className="space-y-4">
+        <form method="post" onSubmit={handleSubmit} noValidate className="space-y-4">
           <Field label="Hajm (ml)" htmlFor="size-ml" error={errors.valueMl}>
             <Input
               id="size-ml"

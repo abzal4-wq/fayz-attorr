@@ -44,7 +44,7 @@ export function SettingsForm({ settings, telegram }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="max-w-2xl pb-10">
+    <form method="post" onSubmit={handleSubmit} noValidate className="max-w-2xl pb-10">
       <PageHeader
         title="Sozlamalar"
         description="Saytning pastki qismida va buyurtma sahifasida ko'rinadi."

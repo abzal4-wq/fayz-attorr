@@ -59,7 +59,7 @@ export function RegisterForm({ redirectTo = '/' }) {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
+    <form method="post" onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
       <div>
         <Label htmlFor="fullName">{t('auth.yourName')}</Label>
         <TextInput

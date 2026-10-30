@@ -66,7 +66,7 @@ export function PasswordChangeForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4 p-4 pt-0">
+    <form method="post" onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4 p-4 pt-0">
       <p className="text-sm text-muted-deep">{t('profile.changePasswordHint')}</p>
 
       <PasswordField

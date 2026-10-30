@@ -85,7 +85,7 @@ function PhoneStep({ t, onReady }) {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
+    <form method="post" onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
       <p className="text-xs uppercase tracking-wider text-muted-on-dark">
         {t('auth.resetPhoneStep')}
       </p>
@@ -186,7 +186,7 @@ function CodeStep({ t, telegramUrl, onRestart, onDone }) {
         </details>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
+      <form method="post" onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
         <p className="text-xs uppercase tracking-wider text-muted-on-dark">
           {t('auth.resetCodeStep')}
         </p>

@@ -242,7 +242,7 @@ export function BrandsManager({ brands }) {
         onClose={() => setFormOpen(false)}
         title={editing ? 'Brendni tahrirlash' : 'Yangi brend'}
       >
-        <form onSubmit={handleSubmit} noValidate className="space-y-4">
+        <form method="post" onSubmit={handleSubmit} noValidate className="space-y-4">
           <Field label="Nomi" htmlFor="brand-name" error={errors.name}>
             <Input
               id="brand-name"

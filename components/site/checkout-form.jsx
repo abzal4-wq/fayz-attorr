@@ -151,6 +151,9 @@ export function CheckoutForm({ user, deliveryPrice, deliveryInfo }) {
   return (
     <form
       ref={formRef}
+      // method="post": JS hali ishlamayotgan paytda yuborilsa, ism,
+      // telefon va manzil URL'ga (GET) tushmasin — login-form.jsx izohi
+      method="post"
       onSubmit={handleSubmit}
       noValidate
       className="grid gap-6 lg:grid-cols-3"

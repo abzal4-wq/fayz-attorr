@@ -87,7 +87,7 @@ export function ProductForm({ product, brands, sizes }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="pb-10">
+    <form method="post" onSubmit={handleSubmit} noValidate className="pb-10">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <Link

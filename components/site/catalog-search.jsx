@@ -97,6 +97,15 @@ export function CatalogSearch({ filters }) {
   return (
     <form
       role="search"
+      /*
+       * JS'SIZ HAM ISHLAYDI: sahifa JavaScript'dan 1-2 soniya oldin
+       * ko'rinadi (sekin tarmoqda o'lchangan). Shu orada Enter bosilsa,
+       * brauzer oddiy GET /katalog?q=... yuboradi va server natijani
+       * o'zi chiqaradi. JS yuklangach onSubmit buni o'z qo'liga oladi
+       * (filtrlar ham saqlanadi).
+       */
+      action="/katalog"
+      method="get"
       onSubmit={(e) => {
         e.preventDefault()
         // Enter bosilsa kutmaymiz
@@ -116,6 +125,8 @@ export function CatalogSearch({ filters }) {
 
       <input
         id="catalog-search"
+        // name="q": JS'siz yuborishda URL parametri (form izohiga qarang)
+        name="q"
         type="search"
         value={value}
         onChange={(e) => onChange(e.target.value)}

@@ -51,7 +51,16 @@ export function LoginForm({ redirectTo = '/' }) {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
+    /*
+     * method="post" SHART. Sahifa JavaScript'dan oldin ko'rinadi (sekin
+     * tarmoqda 1-2 soniya). Shu orada Enter bosilsa, brauzer formani
+     * O'ZI yuboradi — standart usul GET, ya'ni:
+     *   /kirish?phone=901234567&password=MaxfiyParol123
+     * Parol URL'ga, brauzer tarixiga va server loglariga tushardi (jonli
+     * saytda JS o'chirilgan holda tasdiqlangan). POST bilan ma'lumot
+     * so'rov tanasida qoladi. Barcha formalarda shunday.
+     */
+    <form method="post" onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
       <div>
         <Label htmlFor="phone">{t('auth.phone')}</Label>
         <PhoneInput

@@ -58,7 +58,7 @@ export function AccountDeleteForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4 p-4 pt-0">
+    <form method="post" onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4 p-4 pt-0">
       <div className="flex items-start gap-2 rounded-lg border border-destructive/40 bg-destructive/10 p-3 text-sm text-foreground">
         <TriangleAlert
           className="mt-0.5 size-4 shrink-0 text-danger-deep"
