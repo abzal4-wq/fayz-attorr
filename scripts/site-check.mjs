@@ -523,7 +523,12 @@ async function checkLoginForm() {
   note(emptyErrors.length > 0, "bo'sh forma: xato ko'rsatiladi", emptyErrors.join(' / '))
 
   // 2. Noto'g'ri parol
-  await typeInto(page, '#phone', '901112233')
+  /*
+   * Har yugurishda boshqa (mavjud bo'lmagan) raqam. Bitta raqam bilan
+   * 15 daqiqada 5 martadan ko'p sinalsa, login cheklovi uni to'g'ri
+   * bloklaydi (429) va tekshiruv o'zini o'zi yiqitardi.
+   */
+  await typeInto(page, '#phone', `93${String(Date.now()).slice(-7)}`)
   await typeInto(page, '#password', 'notogriparol1')
   const { status, body } = await submitAndWait(page, '/api/auth/login')
   await new Promise((r) => setTimeout(r, 500))
