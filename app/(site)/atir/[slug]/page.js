@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { after } from 'next/server'
 import { ChevronRight } from 'lucide-react'
 import { ProductGallery } from '@/components/site/product-gallery'
 import { ProductPurchase } from '@/components/site/product-purchase'
@@ -41,8 +42,16 @@ export default async function ProductPage({ params }) {
 
   const similar = await getSimilarProducts(product, 8)
 
-  // Statistika; sahifa renderini kutib turmaydi
-  incrementViewCount(product.id)
+  /*
+   * Ko'rishlar soni javob YUBORILGANDAN KEYIN yoziladi (after).
+   *
+   * Avval chaqiruv shunchaki kutilmasdan qoldirilgan edi. Vercel'da
+   * serverless funksiya javobdan keyin "muzlatiladi", ya'ni kutilmagan
+   * so'rov yarim yo'lda to'xtab, son yo'qolishi mumkin edi. `after`
+   * uni kafolatlaydi va sahifa baribir bazani kutmaydi — uxlab yotgan
+   * bazani uyg'otish mijozning vaqtidan ketmaydi.
+   */
+  after(() => incrementViewCount(product.id))
 
   return (
     <main className="pb-16">
