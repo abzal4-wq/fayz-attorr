@@ -74,11 +74,39 @@ describe('mijoz va admin tokenlari ajratilgan', () => {
     assert.equal(await verifyUserToken(token), null)
   })
 
-  test('buzilgan token rad etiladi', async () => {
+  /*
+   * Avvalgi test imzoning OXIRGI belgisini almashtirardi va ~12 yugurishda
+   * bir marta yiqilardi. Sabab: HS256 imzosi 32 bayt = 43 base64url belgi,
+   * 43 x 6 = 258 bit, ya'ni oxirgi belgining pastki 2 biti hech narsani
+   * bildirmaydi. Almashtirish faqat shu bitlarga tushsa ("b" -> "a"),
+   * imzo baytlari O'ZGARMASDI — token aslida buzilmagan edi va to'g'ri
+   * qabul qilinardi. Imzo har soniyada boshqa (iat), shuning uchun
+   * tasodifiy. Xavfsizlik xatosi emas, test xatosi edi.
+   *
+   * Endi haqiqiy hujumlar sinaladi.
+   */
+  test('payload almashtirilsa (boshqa foydalanuvchi) rad etiladi', async () => {
+    const [header, , signature] = (await signUserToken('u1', 0)).split('.')
+    const forged = Buffer.from(
+      JSON.stringify({ sub: 'boshqa-foydalanuvchi', tv: 0, iss: 'fayz-attor', aud: 'user' })
+    ).toString('base64url')
+    assert.equal(await verifyUserToken(`${header}.${forged}.${signature}`), null)
+  })
+
+  test('imzo buzilsa rad etiladi', async () => {
     const token = await signUserToken('u1', 0)
-    // Oxirgi belgini o'zgartirish imzoni buzadi
-    const broken = token.slice(0, -1) + (token.endsWith('a') ? 'b' : 'a')
-    assert.equal(await verifyUserToken(broken), null)
+    const [header, payload, signature] = token.split('.')
+    // O'rtadagi belgi — uning 6 biti ham imzoning haqiqiy qismi
+    const mid = Math.floor(signature.length / 2)
+    const swapped = signature[mid] === 'A' ? 'B' : 'A'
+    const broken = signature.slice(0, mid) + swapped + signature.slice(mid + 1)
+    assert.equal(await verifyUserToken(`${header}.${payload}.${broken}`), null)
+  })
+
+  test('imzo umuman yo‘q bo‘lsa rad etiladi ("alg: none" hujumi)', async () => {
+    const [, payload] = (await signUserToken('u1', 0)).split('.')
+    const none = Buffer.from(JSON.stringify({ alg: 'none', typ: 'JWT' })).toString('base64url')
+    assert.equal(await verifyUserToken(`${none}.${payload}.`), null)
   })
 
   test('bo‘sh qiymatlar null qaytaradi', async () => {
