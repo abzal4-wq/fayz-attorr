@@ -2,8 +2,9 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { Check, Minus, Plus, ShoppingBag } from 'lucide-react'
+import { Check, LoaderCircle, Minus, Plus, ShoppingBag } from 'lucide-react'
 import { useCart } from '@/lib/cart-store'
+import { useHydrated } from '@/lib/use-hydrated'
 import { useMoney, useT } from '@/lib/i18n/client'
 import { cn } from '@/lib/utils'
 
@@ -16,6 +17,18 @@ export function ProductPurchase({ product }) {
   const t = useT()
   const money = useMoney()
   const addItem = useCart((state) => state.addItem)
+
+  /*
+   * JS yuklanguncha tugma "yuklanmoqda" holatida.
+   *
+   * Sahifa JavaScript'dan oldin ko'rinadi. Shu orada "Savatga" bosilsa,
+   * bosish YO'QOLARDI — tugma hali shunchaki rasm. Foydalanuvchi tarmog'ida
+   * jonli saytda qayta hosil qilingan: bosilgandan 10 soniya o'tib ham
+   * savat bo'sh edi. Sekin tarmoq taqlidida "o'lik" oraliq ~1 soniya.
+   * Endi tugma shu oraliqda o'chirilgan va aylanuvchi belgi ko'rsatadi:
+   * odam "buzuq" emas, "yuklanmoqda" ekanini ko'radi.
+   */
+  const hydrated = useHydrated()
 
   // Boshlang'ich tanlov: birinchi mavjud hajm, hammasi tugagan bo'lsa birinchisi
   const [selectedId, setSelectedId] = useState(
@@ -156,7 +169,8 @@ export function ProductPurchase({ product }) {
           <button
             type="button"
             onClick={handleAdd}
-            disabled={!selected?.available}
+            disabled={!hydrated || !selected?.available}
+            aria-busy={!hydrated || undefined}
             className="flex min-h-12 flex-1 items-center justify-center gap-2 rounded-lg bg-primary px-6 font-semibold text-primary-foreground transition-colors duration-200 hover:bg-gold-light disabled:cursor-not-allowed disabled:opacity-60"
           >
             {added ? (
@@ -166,7 +180,12 @@ export function ProductPurchase({ product }) {
               </>
             ) : (
               <>
-                <ShoppingBag className="size-5" aria-hidden="true" />
+                {/* Matn o'zgarmaydi — tugma kengligi sakramasin */}
+                {hydrated ? (
+                  <ShoppingBag className="size-5" aria-hidden="true" />
+                ) : (
+                  <LoaderCircle className="size-5 animate-spin" aria-hidden="true" />
+                )}
                 {t('product.addToCart')}
               </>
             )}
