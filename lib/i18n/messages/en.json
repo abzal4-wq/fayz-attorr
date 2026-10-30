@@ -139,7 +139,12 @@
     "notePage": "The final amount is confirmed by the server at checkout.",
     "checkout": "Place order",
     "viewFull": "View full cart",
-    "remove": "Remove {name} from cart"
+    "remove": "Remove {name} from cart",
+    "syncPriceChanged": "Some prices have changed — the cart shows current prices.",
+    "syncQuantityReduced": "Some items are low in stock — the quantity was reduced.",
+    "syncUnavailable": "Some items are no longer available.",
+    "unavailable": "Not available",
+    "removeUnavailable": "To place the order, remove unavailable items from the cart."
   },
   "checkout": {
     "title": "Checkout",

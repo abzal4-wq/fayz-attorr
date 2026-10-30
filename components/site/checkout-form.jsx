@@ -1,13 +1,15 @@
 'use client'
 
-import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { ImageOff, LoaderCircle, ShoppingBag, TriangleAlert } from 'lucide-react'
+import { LoaderCircle, ShoppingBag, TriangleAlert } from 'lucide-react'
 import { PhoneInput } from '@/components/phone-input'
+import { CartSyncNotice } from '@/components/site/cart-sync-notice'
+import { CartThumb } from '@/components/site/cart-thumb'
 import { TelegramMainButton } from './telegram-controls'
-import { cartTotal, useCart } from '@/lib/cart-store'
+import { cartTotal, hasUnavailable, useCart } from '@/lib/cart-store'
+import { useCartSync } from '@/lib/use-cart-sync'
 import { useHydrated } from '@/lib/use-hydrated'
 import { maskPhoneInput } from '@/lib/auth/phone'
 import { useMoney, useT } from '@/lib/i18n/client'
@@ -40,6 +42,13 @@ export function CheckoutForm({ user, deliveryPrice, deliveryInfo }) {
   const items = useCart((state) => state.items)
   const clear = useCart((state) => state.clear)
   const hydrated = useHydrated()
+  /*
+   * Narxlar serverdan yangilanadi. AYNAN shu yerda muhim: jami summa
+   * savatdagi narxlardan hisoblanadi. Narx eskirgan bo'lsa mijoz bir
+   * summani ko'rib, server hisoblagan boshqa summaga buyurtma berib
+   * qo'yardi.
+   */
+  const changes = useCartSync(hydrated)
 
   // `user` null bo'lishi mumkin — mehmon buyurtmasi
   const [form, setForm] = useState({
@@ -97,6 +106,8 @@ export function CheckoutForm({ user, deliveryPrice, deliveryInfo }) {
   }
 
   const subtotal = cartTotal(items)
+  // Sotuvda yo'q mahsulot bilan buyurtma berib bo'lmaydi — server rad etadi
+  const blocked = hasUnavailable(items)
 
   function set(key, value) {
     setForm({ ...form, [key]: value })
@@ -163,7 +174,7 @@ export function CheckoutForm({ user, deliveryPrice, deliveryInfo }) {
         label={t('checkout.submit')}
         onClick={submitFromTelegram}
         loading={pending}
-        disabled={pending}
+        disabled={pending || blocked}
       />
 
       <div className="space-y-4 lg:col-span-2">
@@ -256,20 +267,14 @@ export function CheckoutForm({ user, deliveryPrice, deliveryInfo }) {
             {items.map((item) => (
               <li key={item.variantId} className="flex items-center gap-3 p-4">
                 <div className="flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-muted">
-                  {item.imageUrl ? (
-                    <Image
-                      src={item.imageUrl}
-                      alt=""
-                      // 56px joy, DPR 2-3 uchun
-                      width={112}
-                      height={112}
-                      className="size-full object-cover"
-                    />
-                  ) : (
-                    // Bo'sh kulrang kvadrat "rasm yuklanmadi" deb
-                    // o'qilardi — belgi bu ataylab ekanini ko'rsatadi
-                    <ImageOff className="size-5 text-muted-deep" aria-hidden="true" />
-                  )}
+                  {/* Rasm yo'q yoki yuklanmasa — belgi (cart-thumb.jsx) */}
+                  <CartThumb
+                    src={item.imageUrl}
+                    // 56px joy, DPR 2-3 uchun
+                    size={112}
+                    className="size-full object-cover"
+                    iconClassName="size-5 text-muted-deep"
+                  />
                 </div>
                 <div className="min-w-0 flex-1">
                   {/*
@@ -327,6 +332,21 @@ export function CheckoutForm({ user, deliveryPrice, deliveryInfo }) {
             {t('checkout.paymentNote')}
           </p>
 
+          {changes ? (
+            <div className="mt-4">
+              <CartSyncNotice changes={changes} />
+            </div>
+          ) : null}
+
+          {blocked ? (
+            <p role="alert" className="mt-4 text-sm text-danger-deep">
+              {t('cart.removeUnavailable')}{' '}
+              <Link href="/savat" className="font-medium underline underline-offset-4">
+                {t('cart.title')}
+              </Link>
+            </p>
+          ) : null}
+
           {formError ? (
             <div
               role="alert"
@@ -348,7 +368,7 @@ export function CheckoutForm({ user, deliveryPrice, deliveryInfo }) {
 
           <button
             type="submit"
-            disabled={pending}
+            disabled={pending || blocked}
             className="mt-5 flex min-h-12 w-full items-center justify-center gap-2 rounded-lg bg-primary px-6 font-semibold text-primary-foreground transition-colors duration-200 hover:bg-gold-light disabled:cursor-not-allowed disabled:opacity-70"
           >
             {pending ? (

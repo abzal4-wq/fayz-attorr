@@ -130,7 +130,12 @@
     "notePage": "Yakuniy summa buyurtma berishda server tomonidan tasdiqlanadi.",
     "checkout": "Buyurtma berish",
     "viewFull": "Savatni to'liq ko'rish",
-    "remove": "{name} ni savatdan o'chirish"
+    "remove": "{name} ni savatdan o'chirish",
+    "syncPriceChanged": "Ba‘zi narxlar o‘zgargan — savatda joriy narxlar ko‘rsatilgan.",
+    "syncQuantityReduced": "Ba‘zi mahsulotlar qoldig‘i kam — miqdor kamaytirildi.",
+    "syncUnavailable": "Ba‘zi mahsulotlar endi sotuvda yo‘q.",
+    "unavailable": "Sotuvda yo‘q",
+    "removeUnavailable": "Buyurtma berish uchun sotuvda yo‘q mahsulotlarni savatdan olib tashlang."
   },
   "checkout": {
     "title": "Buyurtma berish",

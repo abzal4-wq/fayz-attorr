@@ -1,10 +1,12 @@
 'use client'
 
-import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import { ImageOff, Minus, Plus, ShoppingBag, Trash2, X } from 'lucide-react'
-import { cartCount, cartTotal, useCart } from '@/lib/cart-store'
+import { Minus, Plus, ShoppingBag, Trash2, X } from 'lucide-react'
+import { CartSyncNotice } from '@/components/site/cart-sync-notice'
+import { CartThumb } from '@/components/site/cart-thumb'
+import { cartCount, cartTotal, hasUnavailable, useCart } from '@/lib/cart-store'
+import { useCartSync } from '@/lib/use-cart-sync'
 import { useHydrated } from '@/lib/use-hydrated'
 import { useMoney, useT } from '@/lib/i18n/client'
 
@@ -60,9 +62,13 @@ function CartDrawer({ open, onClose }) {
     }
   }, [open, onClose])
 
+  // Faqat panel OCHIQ bo'lganda serverdan yangilanadi — har sahifada emas
+  const changes = useCartSync(open)
+
   if (!open) return null
 
   const total = cartTotal(items)
+  const blocked = hasUnavailable(items)
 
   return (
     <div
@@ -111,6 +117,11 @@ function CartDrawer({ open, onClose }) {
           </div>
         ) : (
           <>
+            {changes ? (
+              <div className="border-b border-border p-4">
+                <CartSyncNotice changes={changes} tone="dark" />
+              </div>
+            ) : null}
             <ul className="flex-1 divide-y divide-border overflow-y-auto">
               {items.map((item) => (
                 <li key={item.variantId} className="flex gap-3 p-4">
@@ -119,18 +130,13 @@ function CartDrawer({ open, onClose }) {
                     onClick={onClose}
                     className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-brand-darker"
                   >
-                    {item.imageUrl ? (
-                      <Image
-                        src={item.imageUrl}
-                        alt=""
-                        // size-16 (64px) joy uchun DPR 3 da 192px kerak
-                        width={128}
-                        height={128}
-                        className="size-16 object-cover"
-                      />
-                    ) : (
-                      <ImageOff className="size-5 text-muted-on-dark" aria-hidden="true" />
-                    )}
+                    <CartThumb
+                      src={item.imageUrl}
+                      // size-16 (64px) joy uchun DPR 3 da 192px kerak
+                      size={128}
+                      className="size-16 object-cover"
+                      iconClassName="size-5 text-muted-on-dark"
+                    />
                   </Link>
 
                   <div className="min-w-0 flex-1">
@@ -144,6 +150,11 @@ function CartDrawer({ open, onClose }) {
                       {item.name}
                     </Link>
                     <p className="text-sm text-muted-on-dark">{item.sizeLabel}</p>
+                    {item.available === false ? (
+                      <p className="mt-1 text-sm font-medium text-gold-light">
+                        {t('cart.unavailable')}
+                      </p>
+                    ) : null}
 
                     <div className="mt-2 flex items-center gap-2">
                       <div className="flex items-center rounded-lg border border-border">
@@ -153,9 +164,10 @@ function CartDrawer({ open, onClose }) {
                             setQuantity(item.variantId, item.quantity - 1)
                           }
                           aria-label={t('common.decrease')}
-                          className="flex size-9 items-center justify-center text-ivory"
+                          // size-11 (44px): avval 36px edi, talab >= 44px
+                          className="flex size-11 items-center justify-center text-ivory"
                         >
-                          <Minus className="size-3.5" aria-hidden="true" />
+                          <Minus className="size-4" aria-hidden="true" />
                         </button>
                         <span className="w-8 text-center text-sm text-ivory">
                           {item.quantity}
@@ -165,10 +177,16 @@ function CartDrawer({ open, onClose }) {
                           onClick={() =>
                             setQuantity(item.variantId, item.quantity + 1)
                           }
+                          // Qoldiqdan oshirib bo'lmaydi (cart-page.jsx izohi)
+                          disabled={
+                            item.available === false ||
+                            (typeof item.stockQty === 'number' &&
+                              item.quantity >= item.stockQty)
+                          }
                           aria-label={t('common.increase')}
-                          className="flex size-9 items-center justify-center text-ivory"
+                          className="flex size-11 items-center justify-center text-ivory disabled:opacity-40"
                         >
-                          <Plus className="size-3.5" aria-hidden="true" />
+                          <Plus className="size-4" aria-hidden="true" />
                         </button>
                       </div>
 
@@ -176,7 +194,7 @@ function CartDrawer({ open, onClose }) {
                         type="button"
                         onClick={() => removeItem(item.variantId)}
                         aria-label={t('cart.remove', { name: item.name })}
-                        className="flex size-9 items-center justify-center rounded-lg text-muted-on-dark transition-colors hover:text-destructive"
+                        className="flex size-11 items-center justify-center rounded-lg text-muted-on-dark transition-colors hover:text-destructive"
                       >
                         <Trash2 className="size-4" aria-hidden="true" />
                       </button>
@@ -201,13 +219,19 @@ function CartDrawer({ open, onClose }) {
                 {t('cart.noteDrawer')}
               </p>
 
-              <Link
-                href="/buyurtma"
-                onClick={onClose}
-                className="mt-4 flex min-h-12 items-center justify-center rounded-lg bg-primary px-6 font-semibold text-primary-foreground transition-colors duration-200 hover:bg-gold-light"
-              >
-                {t('cart.checkout')}
-              </Link>
+              {blocked ? (
+                <p role="alert" className="mt-4 text-sm text-gold-light">
+                  {t('cart.removeUnavailable')}
+                </p>
+              ) : (
+                <Link
+                  href="/buyurtma"
+                  onClick={onClose}
+                  className="mt-4 flex min-h-12 items-center justify-center rounded-lg bg-primary px-6 font-semibold text-primary-foreground transition-colors duration-200 hover:bg-gold-light"
+                >
+                  {t('cart.checkout')}
+                </Link>
+              )}
               <Link
                 href="/savat"
                 onClick={onClose}

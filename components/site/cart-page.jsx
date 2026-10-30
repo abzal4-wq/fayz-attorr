@@ -1,10 +1,13 @@
 'use client'
 
-import Image from 'next/image'
 import Link from 'next/link'
-import { ImageOff, Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react'
-import { cartTotal, useCart } from '@/lib/cart-store'
+import { Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react'
+import { CartSyncNotice } from '@/components/site/cart-sync-notice'
+import { CartThumb } from '@/components/site/cart-thumb'
+import { cartTotal, hasUnavailable, useCart } from '@/lib/cart-store'
+import { useCartSync } from '@/lib/use-cart-sync'
 import { useHydrated } from '@/lib/use-hydrated'
+import { cn } from '@/lib/utils'
 import { useMoney, useT } from '@/lib/i18n/client'
 
 export function CartPage({ deliveryPrice, deliveryInfo }) {
@@ -14,6 +17,8 @@ export function CartPage({ deliveryPrice, deliveryInfo }) {
   const setQuantity = useCart((state) => state.setQuantity)
   const removeItem = useCart((state) => state.removeItem)
   const hydrated = useHydrated()
+  // Rasm, narx va mavjudlik serverdan yangilanadi (lib/use-cart-sync.js)
+  const changes = useCartSync(hydrated)
 
   // Savat localStorage'dan o'qilguncha skeleton — hydration mismatch bo'lmasin
   if (!hydrated) {
@@ -47,31 +52,32 @@ export function CartPage({ deliveryPrice, deliveryInfo }) {
   }
 
   const subtotal = cartTotal(items)
+  const blocked = hasUnavailable(items)
 
   return (
     <div className="grid gap-6 lg:grid-cols-3">
-      <ul className="space-y-3 lg:col-span-2">
+      <div className="lg:col-span-2">
+      <CartSyncNotice changes={changes} />
+      <ul className={cn('space-y-3', changes ? 'mt-3' : '')}>
         {items.map((item) => (
           <li
             key={item.variantId}
-            className="flex gap-3 rounded-xl border border-border bg-card p-3 sm:p-4"
+            className={cn(
+              'flex gap-3 rounded-xl border bg-card p-3 sm:p-4',
+              item.available === false ? 'border-destructive/50' : 'border-border'
+            )}
           >
             <Link
               href={`/atir/${item.slug}`}
               className="flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-muted sm:size-24"
             >
-              {item.imageUrl ? (
-                <Image
-                  src={item.imageUrl}
-                  alt=""
-                  // 96px joy, DPR 2 uchun
-                  width={192}
-                  height={192}
-                  className="size-full object-cover"
-                />
-              ) : (
-                <ImageOff className="size-6 text-muted-deep" aria-hidden="true" />
-              )}
+              <CartThumb
+                src={item.imageUrl}
+                // 96px joy, DPR 2 uchun
+                size={192}
+                className="size-full object-cover"
+                iconClassName="size-6 text-muted-deep"
+              />
             </Link>
 
             <div className="flex min-w-0 flex-1 flex-col">
@@ -83,6 +89,11 @@ export function CartPage({ deliveryPrice, deliveryInfo }) {
                 {item.name}
               </Link>
               <p className="text-sm text-muted-deep">{item.sizeLabel}</p>
+              {item.available === false ? (
+                <p className="mt-1 text-sm font-medium text-danger-deep">
+                  {t('cart.unavailable')}
+                </p>
+              ) : null}
 
               <div className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-3">
                 <div className="flex items-center rounded-lg border border-border">
@@ -100,8 +111,14 @@ export function CartPage({ deliveryPrice, deliveryInfo }) {
                   <button
                     type="button"
                     onClick={() => setQuantity(item.variantId, item.quantity + 1)}
+                    // Qoldiqdan oshirib bo'lmaydi — avval cheksiz edi va
+                    // server buni faqat checkout'da rad etardi
+                    disabled={
+                      item.available === false ||
+                      (typeof item.stockQty === 'number' && item.quantity >= item.stockQty)
+                    }
                     aria-label={t('common.increase')}
-                    className="flex size-11 items-center justify-center text-foreground"
+                    className="flex size-11 items-center justify-center text-foreground disabled:opacity-40"
                   >
                     <Plus className="size-4" aria-hidden="true" />
                   </button>
@@ -124,6 +141,7 @@ export function CartPage({ deliveryPrice, deliveryInfo }) {
           </li>
         ))}
       </ul>
+      </div>
 
       <aside className="lg:sticky lg:top-24 lg:h-fit">
         <div className="rounded-xl border border-border bg-card p-4 sm:p-5">
@@ -155,12 +173,22 @@ export function CartPage({ deliveryPrice, deliveryInfo }) {
 
           <p className="mt-2 text-xs text-muted-deep">{t('cart.notePage')}</p>
 
-          <Link
-            href="/buyurtma"
-            className="mt-5 flex min-h-12 items-center justify-center rounded-lg bg-primary px-6 font-semibold text-primary-foreground transition-colors duration-200 hover:bg-gold-light"
-          >
-            {t('cart.checkout')}
-          </Link>
+          {/*
+            Sotuvda yo'q mahsulot bilan buyurtma berib bo'lmaydi — server
+            uni baribir rad etadi. Oldindan aytib qo'yamiz.
+          */}
+          {blocked ? (
+            <p role="alert" className="mt-5 text-sm text-danger-deep">
+              {t('cart.removeUnavailable')}
+            </p>
+          ) : (
+            <Link
+              href="/buyurtma"
+              className="mt-5 flex min-h-12 items-center justify-center rounded-lg bg-primary px-6 font-semibold text-primary-foreground transition-colors duration-200 hover:bg-gold-light"
+            >
+              {t('cart.checkout')}
+            </Link>
+          )}
 
           {deliveryInfo ? (
             <p className="mt-4 text-sm text-muted-deep">{deliveryInfo}</p>
