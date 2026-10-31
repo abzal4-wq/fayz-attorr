@@ -16,7 +16,11 @@
       "many": "{n} шт."
     },
     "outOfStock": "Нет в наличии",
-    "priceFrom": "от {price}"
+    "priceFrom": "от {price}",
+    "prev": "Назад",
+    "next": "Вперёд",
+    "slideNumber": "Слайд {number}",
+    "slideOf": "Слайд {number} из {total}"
   },
   "gender": {
     "WOMEN": "Женские",
@@ -67,7 +71,9 @@
     "advantageDeliveryFastTitle": "Быстрая доставка",
     "advantageDeliveryText": "По городу Ташкенту и области в течение 1-3 дней.",
     "advantageChoiceTitle": "Широкий выбор",
-    "advantageChoiceText": "Разные объёмы — у каждого своя цена. Выберите подходящий."
+    "advantageChoiceText": "Разные объёмы — у каждого своя цена. Выберите подходящий.",
+    "heroCarousel": "Баннер избранных ароматов",
+    "viewProduct": "Смотреть аромат"
   },
   "footer": {
     "tagline": "Оригинальная парфюмерия разных брендов",

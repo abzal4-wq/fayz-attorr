@@ -326,6 +326,25 @@
   padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px));
 }
 
+/* ---------- Karusel ---------- */
+/*
+ * Scroll paneli yashirin, scroll o'zi ishlaydi.
+ *
+ * Faqat karusel qatorlarida ishlatiladi: u yerda "qayerdasiz" degan
+ * savolga progress chizig'i yoki nuqtalar javob beradi, brauzerning
+ * kulrang paneli esa kartochkalar ostida ortiqcha qator bo'lib
+ * turardi (Windows'da u doimiy ko'rinadi va joy egallaydi).
+ * Sahifaning asosiy scroll'iga TEGMAYDI.
+ */
+@utility no-scrollbar {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* eski Edge */
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 /* ---------- Harakatni kamaytirish ---------- */
 @media (prefers-reduced-motion: reduce) {
   *,

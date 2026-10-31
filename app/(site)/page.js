@@ -1,7 +1,8 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowRight, ShieldCheck, Sparkles, Truck } from 'lucide-react'
-import { ProductCard } from '@/components/site/product-card'
+import { HeroCarousel } from '@/components/site/hero-carousel'
+import { ProductCarousel } from '@/components/site/product-carousel'
 import { getFeaturedProducts, getHomeBrands } from '@/lib/catalog'
 import { brandLogoUrl } from '@/lib/cloudinary-url'
 import { getStoreSettings } from '@/lib/settings'
@@ -79,50 +80,13 @@ export default async function HomePage() {
 
   return (
     <main>
-      {/* Hero */}
       {/*
-        Gradient ALOHIDA qatlam emas, bo'limning o'z foni. Avval u
-        `absolute inset-0 -z-10` div edi — vizual jihatdan bir xil
-        ko'rinadi, lekin fon rasman mavjud bo'lmaydi: a11y tekshiruvi
-        ivory matnni ochiq sahifa foniga nisbatan o'lchab 1.58:1 deb
-        hisoblardi, va qatlam bo'yalmasa (forced-colors, CSS yuklanmasa)
-        matn haqiqatan ko'rinmas qolardi.
+        Hero — endi karusel: birinchi slayd brend (h1 shu yerda),
+        keyingilari tanlangan atirlar. Gradient va boshqaruvlar
+        `hero-carousel.jsx` ichida, chunki aylanish uchun client
+        komponent kerak; bu sahifa server komponenti bo'lib qoladi.
       */}
-      <section
-        className="dark relative overflow-hidden text-foreground"
-        style={{
-          backgroundImage:
-            'linear-gradient(160deg, #0D454E 0%, #0A3942 55%, #072B32 100%)',
-        }}
-      >
-        <div className="mx-auto flex max-w-[1280px] flex-col items-center px-4 py-8 text-center sm:px-6 md:py-20">
-          <Image
-            src="/monogram.png"
-            alt=""
-            width={200}
-            height={200}
-            priority
-            className="h-14 w-14 rounded-xl md:h-20 md:w-20 md:rounded-2xl"
-          />
-          <h1 className="mt-4 font-serif text-3xl font-semibold text-ivory md:mt-6 md:text-5xl">
-            Fayz Attor
-          </h1>
-          <p className="mt-1.5 text-xs uppercase tracking-[0.18em] text-muted-on-dark md:text-sm">
-            {t('home.tagline')}
-          </p>
-          <p className="mt-3 max-w-xl text-pretty text-sm text-muted-on-dark md:mt-5 md:text-base">
-            {t('home.intro')}
-          </p>
-
-          <Link
-            href="/katalog"
-            className="mt-5 inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-primary px-6 font-semibold text-primary-foreground transition-colors duration-200 hover:bg-gold-light"
-          >
-            {t('home.viewCatalog')}
-            <ArrowRight className="size-4" aria-hidden="true" />
-          </Link>
-        </div>
-      </section>
+      <HeroCarousel products={featured} />
 
       {/* Kategoriyalar */}
       {/*
@@ -168,17 +132,8 @@ export default async function HomePage() {
             </Link>
           </div>
 
-          {/* Gorizontal slider: mobilda swipe, desktopda ham scroll */}
-          <ul className="-mx-4 mt-2 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 sm:mx-0 sm:gap-4 sm:px-0 md:mt-4">
-            {featured.map((product, index) => (
-              <li
-                key={product.id}
-                className="w-[45%] shrink-0 snap-start sm:w-[30%] lg:w-[23%]"
-              >
-                <ProductCard product={product} priority={index < 2} />
-              </li>
-            ))}
-          </ul>
+          {/* Avtomatik aylanadigan qator: mobilda swipe, desktopda o'qlar */}
+          <ProductCarousel products={featured} />
         </section>
       ) : null}
 

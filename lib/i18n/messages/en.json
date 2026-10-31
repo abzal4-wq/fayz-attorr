@@ -15,7 +15,11 @@
       "other": "{n} pcs"
     },
     "outOfStock": "Out of stock",
-    "priceFrom": "from {price}"
+    "priceFrom": "from {price}",
+    "prev": "Previous",
+    "next": "Next",
+    "slideNumber": "Slide {number}",
+    "slideOf": "Slide {number} of {total}"
   },
   "gender": {
     "WOMEN": "Women",
@@ -66,7 +70,9 @@
     "advantageDeliveryFastTitle": "Fast delivery",
     "advantageDeliveryText": "Across Tashkent city and region within 1-3 days.",
     "advantageChoiceTitle": "Wide selection",
-    "advantageChoiceText": "Different sizes, each with its own price. Pick the one that fits you."
+    "advantageChoiceText": "Different sizes, each with its own price. Pick the one that fits you.",
+    "heroCarousel": "Featured perfumes banner",
+    "viewProduct": "View perfume"
   },
   "footer": {
     "tagline": "Multi-brand original perfume shop",

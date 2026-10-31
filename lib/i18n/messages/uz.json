@@ -12,7 +12,11 @@
     "goToCatalog": "Katalogga o'tish",
     "pieces": "{n} dona",
     "outOfStock": "Tugagan",
-    "priceFrom": "{price}dan"
+    "priceFrom": "{price}dan",
+    "prev": "Oldingi",
+    "next": "Keyingi",
+    "slideNumber": "{number}-slayd",
+    "slideOf": "{total} tadan {number}-slayd"
   },
   "gender": {
     "WOMEN": "Ayollar",
@@ -63,7 +67,9 @@
     "advantageDeliveryFastTitle": "Tez yetkazib berish",
     "advantageDeliveryText": "Toshkent shahri va viloyati bo'ylab 1-3 kun ichida.",
     "advantageChoiceTitle": "Keng tanlov",
-    "advantageChoiceText": "Turli hajmlar — har biriga alohida narx. O'zingizga mosini tanlang."
+    "advantageChoiceText": "Turli hajmlar — har biriga alohida narx. O'zingizga mosini tanlang.",
+    "heroCarousel": "Tanlangan atirlar banneri",
+    "viewProduct": "Atirni ko'rish"
   },
   "footer": {
     "tagline": "Ko‘p brendli original atirlar do‘koni",
