@@ -25,8 +25,13 @@ export default function SiteLayout({ children }) {
       <div className="flex min-h-app flex-col bg-background">
         <SiteHeader />
 
-        {/* pb-bottom-nav: mobil pastki navigatsiya kontentni yopib qolmasligi uchun */}
-        <div className="flex-1 pb-bottom-nav lg:pb-0">{children}</div>
+        {/*
+          Bu yerda pastki menyu uchun zaxira YO'Q (avval pb-bottom-nav
+          bor edi): kontentdan keyin baribir footer keladi, menyu uchun
+          zaxira esa footer'dan keyingi bo'shliqda. Ikkalasi birga har
+          sahifada kontent va footer orasida 64px ortiqcha bo'shliq qilardi.
+        */}
+        <div className="flex-1">{children}</div>
 
         <SiteFooter />
 
