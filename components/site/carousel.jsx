@@ -4,32 +4,161 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useT } from '@/lib/i18n/client'
 
+/** Harakat kamaytirilganmi (tizim sozlamasi). */
+export function prefersReducedMotion() {
+  return (
+    typeof window !== 'undefined' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  )
+}
+
 /**
- * Karusel yadrosi — bitta joyda, ikkala karusel ham shuni ishlatadi
- * (bosh sahifadagi katta banner va "Tanlangan atirlar" qatori).
+ * "To'xtatib turish" mantiqi — ikkala karusel ham shuni ishlatadi.
  *
- * NEGA transform emas, NATIVE SCROLL:
- * mijozlarning 90%+ telefonda va Telegram Mini App ichida. Brauzerning
- * o'z scroll'i barmoq harakatini piksel-ba-piksel kuzatadi, inertsiya va
- * chetdagi "rezina" effekti bepul keladi. `translateX` bilan yozilgan
- * karusel buni JS'da qayta yasashga majbur qiladi va Mini App ichida
- * sahifaning vertikal scroll'i bilan urishib qoladi. Shuning uchun bu
- * yerda scroll-snap: avtomatik aylanish ham, o'q tugmalari ham faqat
- * `scrollTo` chaqiradi — qo'lda surish bilan bitta mexanizm.
- *
- * MUHIM: barcha slaydlar bir xil enda bo'lishi shart. Faol slayd raqami
- * `scrollLeft / slaydEni` dan hisoblanadi; en har xil bo'lsa raqam
- * adashadi.
+ * Sichqoncha ustida, klaviatura fokusida va barmoq tekkanida aylanish
+ * to'xtaydi. Teginishdan keyin darrov emas, 6 soniyadan so'ng davom
+ * etadi: odam atirni ko'rayotgan bo'lsa, qo'lini olishi bilan slayd
+ * o'zgarib ketishi jahlini chiqaradi.
  */
-export function useCarousel({ count, interval = 5000 }) {
+export function useHold() {
+  const pausedRef = useRef(false)
+  const timerRef = useRef(null)
+
+  useEffect(() => () => clearTimeout(timerRef.current), [])
+
+  const pause = useCallback(() => {
+    clearTimeout(timerRef.current)
+    pausedRef.current = true
+  }, [])
+
+  const resume = useCallback((delay = 0) => {
+    clearTimeout(timerRef.current)
+    if (delay === 0) {
+      pausedRef.current = false
+      return
+    }
+    timerRef.current = setTimeout(() => {
+      pausedRef.current = false
+    }, delay)
+  }, [])
+
+  const holdProps = {
+    onPointerEnter: pause,
+    onPointerLeave: () => resume(0),
+    onFocusCapture: pause,
+    onBlurCapture: () => resume(0),
+    onTouchStart: pause,
+    onTouchEnd: () => resume(6000),
+  }
+
+  return { pausedRef, pause, resume, holdProps }
+}
+
+/**
+ * Avtomatik aylanish taymeri.
+ *
+ * `document.hidden` tekshiriladi: boshqa tabda turganda aylantirish
+ * bekorga batareya yeydi va foydalanuvchi qaytganda slayd allaqachon
+ * o'nlab marta almashgan bo'ladi.
+ */
+export function useAutoplay(step, { interval, enabled, pausedRef }) {
+  useEffect(() => {
+    if (!enabled || interval <= 0) return
+    if (prefersReducedMotion()) return
+
+    const id = setInterval(() => {
+      if (pausedRef.current || document.hidden) return
+      step()
+    }, interval)
+
+    return () => clearInterval(id)
+  }, [step, interval, enabled, pausedRef])
+}
+
+/**
+ * Doira bo'ylab aylanadigan karusel (3D g'ildirak) uchun holat.
+ *
+ * Scroll yo'q — faqat faol element raqami. Raqam chetga chiqqanda
+ * aylanib boshiga qaytadi, shuning uchun g'ildirak hech qachon
+ * "tugamaydi".
+ */
+export function useWheel({ count, interval = 3600 }) {
+  const [index, setIndex] = useState(0)
+  const { pausedRef, pause, resume, holdProps } = useHold()
+
+  const goTo = useCallback(
+    (target) => {
+      if (count < 1) return
+      // Manfiy son uchun ham ishlaydigan modul
+      setIndex(((target % count) + count) % count)
+    },
+    [count]
+  )
+
+  const next = useCallback(() => goTo(index + 1), [goTo, index])
+  const prev = useCallback(() => goTo(index - 1), [goTo, index])
+
+  // `index` o'zgarganda taymer qaytadan boshlanadi — qo'lda o'tkazgandan
+  // keyin keyingi slaydgacha to'liq interval bo'ladi
+  const step = useCallback(() => setIndex((i) => (i + 1) % count), [count])
+  useAutoplay(step, { interval, enabled: count > 1, pausedRef })
+
+  /**
+   * Barmoq bilan surish. Pointer hodisalari — sichqoncha, barmoq va
+   * qalam uchun bitta kod.
+   */
+  const dragRef = useRef(null)
+
+  const dragProps = {
+    onPointerDown: (event) => {
+      // O'ng tugma yoki ko'p barmoq — e'tiborsiz
+      if (event.button !== 0) return
+      dragRef.current = { x: event.clientX, moved: false }
+      pause()
+    },
+    onPointerMove: (event) => {
+      const drag = dragRef.current
+      if (!drag) return
+
+      const delta = event.clientX - drag.x
+      // 40px — tasodifiy titrashni surish deb hisoblamaslik uchun
+      if (Math.abs(delta) < 40) return
+
+      goTo(index + (delta < 0 ? 1 : -1))
+      dragRef.current = { x: event.clientX, moved: true }
+    },
+    onPointerUp: () => {
+      const moved = dragRef.current?.moved
+      dragRef.current = null
+      resume(moved ? 6000 : 0)
+    },
+    onPointerCancel: () => {
+      dragRef.current = null
+      resume(0)
+    },
+  }
+
+  return { index, goTo, next, prev, holdProps, dragProps }
+}
+
+/**
+ * Yon tomonga suriladigan qator uchun holat ("Tanlangan atirlar").
+ *
+ * NEGA transform emas, NATIVE SCROLL: mijozlarning 90%+ telefonda va
+ * Telegram Mini App ichida. Brauzerning o'z scroll'i barmoq harakatini
+ * piksel-ba-piksel kuzatadi, inertsiya va chetdagi "rezina" effekti
+ * bepul keladi.
+ *
+ * MUHIM: barcha kartochkalar bir xil enda bo'lishi shart — faol element
+ * raqami `scrollLeft / qadam` dan hisoblanadi.
+ */
+export function useCarousel({ count, interval = 4500 }) {
   const trackRef = useRef(null)
   const [index, setIndex] = useState(0)
   // Progress chizig'i: `size` — ko'rinayotgan ulush, `start` — chapdan siljish
   const [progress, setProgress] = useState({ start: 0, size: 1 })
-  const pausedRef = useRef(false)
-  const resumeTimerRef = useRef(null)
+  const { pausedRef, holdProps } = useHold()
 
-  /** Scroll holatidan faol slayd va progress chizig'ini hisoblaydi. */
   const sync = useCallback(() => {
     const el = trackRef.current
     if (!el || count < 1) return
@@ -47,8 +176,7 @@ export function useCarousel({ count, interval = 5000 }) {
     setProgress({ start, size })
   }, [count])
 
-  // Birinchi render va ekran o'lchami o'zgarganda qayta hisoblash:
-  // telefon gorizontalga burilganda slayd eni o'zgaradi.
+  // Ekran o'lchami o'zgarganda qayta hisoblash (telefon gorizontalga burilishi)
   useEffect(() => {
     sync()
     const el = trackRef.current
@@ -65,11 +193,10 @@ export function useCarousel({ count, interval = 5000 }) {
 
       const step = el.scrollWidth / count
       const clamped = Math.max(0, Math.min(count - 1, target))
-      const reduced =
-        typeof window !== 'undefined' &&
-        window.matchMedia('(prefers-reduced-motion: reduce)').matches
-
-      el.scrollTo({ left: step * clamped, behavior: reduced ? 'auto' : 'smooth' })
+      el.scrollTo({
+        left: step * clamped,
+        behavior: prefersReducedMotion() ? 'auto' : 'smooth',
+      })
     },
     [count]
   )
@@ -95,58 +222,12 @@ export function useCarousel({ count, interval = 5000 }) {
     goTo(atStart ? count - 1 : index - 1)
   }, [goTo, index, count])
 
-  // Avtomatik aylanish
-  useEffect(() => {
-    if (count < 2 || interval <= 0) return
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-
-    const id = setInterval(() => {
-      // document.hidden: boshqa tabda turganda aylantirish bekorga
-      // batareya yeydi va foydalanuvchi qaytganda slayd allaqachon
-      // o'nlab marta almashgan bo'ladi.
-      if (pausedRef.current || document.hidden) return
-      next()
-    }, interval)
-
-    return () => clearInterval(id)
-  }, [count, interval, next])
-
-  useEffect(() => () => clearTimeout(resumeTimerRef.current), [])
-
-  const pause = useCallback(() => {
-    clearTimeout(resumeTimerRef.current)
-    pausedRef.current = true
-  }, [])
-
-  /** Teginishdan keyin darrov emas — o'qiyotgan odamni uzmaslik uchun. */
-  const resumeLater = useCallback((delay = 0) => {
-    clearTimeout(resumeTimerRef.current)
-    if (delay === 0) {
-      pausedRef.current = false
-      return
-    }
-    resumeTimerRef.current = setTimeout(() => {
-      pausedRef.current = false
-    }, delay)
-  }, [])
-
-  /**
-   * Karusel konteyneriga tarqatiladigan proplar: sichqoncha ustida,
-   * klaviatura fokusida yoki barmoq tekkanida aylanish to'xtaydi.
-   */
-  const holdProps = {
-    onPointerEnter: pause,
-    onPointerLeave: () => resumeLater(0),
-    onFocusCapture: pause,
-    onBlurCapture: () => resumeLater(0),
-    onTouchStart: pause,
-    onTouchEnd: () => resumeLater(6000),
-  }
+  useAutoplay(next, { interval, enabled: count > 1, pausedRef })
 
   return { trackRef, index, progress, goTo, next, prev, sync, holdProps }
 }
 
-/** Klaviatura: chap/o'ng strelka bilan slayd almashtirish. */
+/** Klaviatura: chap/o'ng strelka bilan almashtirish. */
 export function carouselKeyDown(prev, next) {
   return (event) => {
     if (event.key === 'ArrowLeft') {
@@ -162,9 +243,10 @@ export function carouselKeyDown(prev, next) {
 /**
  * O'q tugmasi.
  *
- * `tone="dark"` — to'q teal fon ustida (banner), `tone="light"` — ochiq
- * ivory fon ustida (atirlar qatori). Ikkala holatda ham tugma 44px dan
- * kichik emas.
+ * DIQQAT: bu yerga `hidden` klassini bermang. Tugmaning asosiy klassi
+ * `inline-flex` — ikkalasi ham bitta klass bo'lgani uchun qaysi biri
+ * yutishi Tailwind CSS'dagi tartibga bog'liq bo'lib qoladi (sinovda
+ * `hidden` yutmadi). Yashirish kerak bo'lsa o'ram div'ga bering.
  */
 export function CarouselArrow({ direction, onClick, tone = 'light', className = '' }) {
   const t = useT()
@@ -187,12 +269,12 @@ export function CarouselArrow({ direction, onClick, tone = 'light', className = 
   )
 }
 
-/** Slayd nuqtalari — banner uchun (slayd soni kam va aniq). */
+/** Slayd nuqtalari — g'ildirak uchun (element soni kam va aniq). */
 export function CarouselDots({ count, index, goTo, label }) {
   const t = useT()
 
   return (
-    <div className="flex items-center justify-center gap-2" role="tablist" aria-label={label}>
+    <div className="flex items-center justify-center" role="tablist" aria-label={label}>
       {Array.from({ length: count }, (_, i) => (
         <button
           key={i}
@@ -202,11 +284,10 @@ export function CarouselDots({ count, index, goTo, label }) {
           aria-label={t('common.slideNumber', { number: i + 1 })}
           onClick={() => goTo(i)}
           /*
-           * Ko'rinadigan nuqta 8px, lekin bosish maydoni 44px (p-2.5 +
-           * h-11 konteyner). Avval nuqtaning o'zi tugma edi — telefonda
-           * tegib bo'lmasdi.
+           * Ko'rinadigan nuqta 8px, lekin bosish maydoni 44px. Avval
+           * nuqtaning o'zi tugma edi — telefonda tegib bo'lmasdi.
            */
-          className="flex size-11 items-center justify-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
+          className="flex size-11 items-center justify-center rounded-full focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-gold"
         >
           <span
             className={`block rounded-full transition-all duration-300 ${
