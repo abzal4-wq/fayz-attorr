@@ -11,7 +11,8 @@
     "delivery": "Yetkazib berish",
     "goToCatalog": "Katalogga o'tish",
     "pieces": "{n} dona",
-    "outOfStock": "Tugagan"
+    "outOfStock": "Tugagan",
+    "priceFrom": "{price}dan"
   },
   "gender": {
     "WOMEN": "Ayollar",

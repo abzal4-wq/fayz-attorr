@@ -34,12 +34,17 @@ export function ProductCard({ product, priority = false }) {
     outOfStock,
   } = product
 
+  /*
+   * Bir nechta hajm bo'lsa — "185 000 so'mdan", oraliq EMAS. Oraliq
+   * ("185 000 – 2 682 000 so'm") tor kartochkada ikki qatorga tushib,
+   * butun qatorni balandlatardi. To'liq narxlar atir sahifasida.
+   */
   const priceLabel =
     minPrice == null
       ? null
       : minPrice === maxPrice
         ? money(minPrice)
-        : `${money(minPrice, { withSuffix: false })} – ${money(maxPrice)}`
+        : t('common.priceFrom', { price: money(minPrice) })
 
   return (
     <Link
@@ -64,7 +69,7 @@ export function ProductCard({ product, priority = false }) {
         )}
 
         {maxDiscount > 0 && !outOfStock ? (
-          <span className="absolute left-2 top-2 rounded-full bg-destructive px-2.5 py-1 text-xs font-semibold text-white">
+          <span className="absolute left-1.5 top-1.5 rounded-full bg-destructive px-2 py-0.5 text-xs font-semibold text-white sm:left-2 sm:top-2 sm:px-2.5 sm:py-1">
             −{maxDiscount}%
           </span>
         ) : null}
@@ -78,24 +83,37 @@ export function ProductCard({ product, priority = false }) {
         ) : null}
       </div>
 
-      <div className="flex flex-1 flex-col p-3">
-        <p className="text-xs text-muted-deep">{brandName}</p>
-        <h3 className="mt-1 line-clamp-2 font-serif text-base leading-snug text-card-foreground sm:text-lg">
+      {/*
+        Telefonda ixcham: ikki qator kartochka (4 ta atir) bitta ekranga
+        sig'ishi kerak (foydalanuvchi talabi). Rasm kvadrat qoladi —
+        kesilsa flakon qopqog'i qirqilardi; qisqargani rasm ostidagi qism.
+      */}
+      <div className="flex flex-1 flex-col p-2.5 sm:p-3">
+        <p className="truncate text-xs text-muted-deep">{brandName}</p>
+        {/*
+          Telefonda nom BITTA qator: ikki qatorli nom + chegirma narxi
+          kartochkani 276px qilib, 360px ekranga ikki qator sig'masdi.
+          To'liq nom ekran o'quvchiga baribir o'qiladi (faqat ko'rinish
+          qirqiladi) va atir sahifasida turadi.
+        */}
+        <h3 className="mt-0.5 line-clamp-1 font-serif text-[15px] leading-tight text-card-foreground sm:mt-1 sm:line-clamp-2 sm:text-lg sm:leading-snug">
           {name}
         </h3>
 
-        <div className="mt-auto pt-3">
-          {priceLabel ? (
-            <>
-              {oldMinPrice ? (
-                <p className="text-xs text-muted-deep line-through">
-                  {money(oldMinPrice)}
-                </p>
-              ) : null}
-              <p className="font-bold text-gold-deep">{priceLabel}</p>
-            </>
-          ) : null}
-        </div>
+        {priceLabel ? (
+          // Eski narx yangisining YONIDA (sig'masa keyingi qatorga o'tadi):
+          // avval alohida qatorda turib kartochkani 16px balandlatardi
+          <p className="mt-auto flex flex-wrap items-baseline gap-x-1.5 pt-1.5 sm:pt-3">
+            <span className="text-sm font-bold text-gold-deep sm:text-base">
+              {priceLabel}
+            </span>
+            {oldMinPrice ? (
+              <span className="text-xs text-muted-deep line-through">
+                {money(oldMinPrice, { withSuffix: false })}
+              </span>
+            ) : null}
+          </p>
+        ) : null}
       </div>
     </Link>
   )
@@ -106,10 +124,10 @@ export function ProductCardSkeleton() {
   return (
     <div className="overflow-hidden rounded-xl border border-border bg-card">
       <div className="skeleton aspect-square" />
-      <div className="space-y-2 p-3">
+      <div className="space-y-2 p-2.5 sm:p-3">
         <div className="skeleton h-3 w-1/3 rounded" />
         <div className="skeleton h-4 w-3/4 rounded" />
-        <div className="skeleton mt-3 h-5 w-1/2 rounded" />
+        <div className="skeleton h-5 w-2/3 rounded" />
       </div>
     </div>
   )

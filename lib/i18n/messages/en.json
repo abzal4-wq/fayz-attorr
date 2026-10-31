@@ -14,7 +14,8 @@
       "one": "{n} pc",
       "other": "{n} pcs"
     },
-    "outOfStock": "Out of stock"
+    "outOfStock": "Out of stock",
+    "priceFrom": "from {price}"
   },
   "gender": {
     "WOMEN": "Women",

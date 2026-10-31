@@ -196,7 +196,7 @@ export default async function HomePage() {
                   // min-w-14: nomi juda qisqa brend (1-2 harf) chipni
                   // 44px dan tor qilib yuborardi — bosish maydoni
                   // mazmunga bog'liq bo'lib qolmasligi kerak
-                  className="flex min-h-12 min-w-12 items-center justify-center gap-2.5 rounded-xl border border-border bg-card px-3 transition-colors duration-200 hover:border-gold md:min-h-14 md:px-4"
+                  className="flex min-h-11 min-w-11 items-center justify-center gap-2.5 rounded-xl border border-border bg-card px-3 transition-colors duration-200 hover:border-gold md:min-h-14 md:px-4"
                 >
                   {brand.logoUrl ? (
                     <Image

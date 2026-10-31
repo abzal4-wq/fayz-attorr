@@ -66,7 +66,7 @@ export default async function ProfilePage() {
       </h2>
 
       <details className="group mt-3 overflow-hidden rounded-xl border border-border bg-card">
-        <summary className="flex min-h-12 cursor-pointer items-center justify-between gap-4 p-4 text-card-foreground">
+        <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-4 px-4 py-2.5 text-card-foreground">
           {t('profile.changePassword')}
           <ChevronDown
             className="size-5 shrink-0 text-muted-deep transition-transform duration-200 group-open:rotate-180"
@@ -77,7 +77,7 @@ export default async function ProfilePage() {
       </details>
 
       <details className="group mt-3 overflow-hidden rounded-xl border border-destructive/40 bg-card">
-        <summary className="flex min-h-12 cursor-pointer items-center justify-between gap-4 p-4 text-danger-deep">
+        <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-4 px-4 py-2.5 text-danger-deep">
           {t('profile.deleteAccount')}
           <ChevronDown
             className="size-5 shrink-0 transition-transform duration-200 group-open:rotate-180"
@@ -102,7 +102,7 @@ export default async function ProfilePage() {
           </p>
           <Link
             href="/katalog"
-            className="mt-6 inline-flex min-h-12 items-center justify-center rounded-lg bg-primary px-6 font-semibold text-primary-foreground transition-colors duration-200 hover:bg-gold-light"
+            className="mt-6 inline-flex min-h-11 items-center justify-center rounded-lg bg-primary px-5 text-sm font-semibold text-primary-foreground transition-colors duration-200 hover:bg-gold-light"
           >
             {t('common.goToCatalog')}
           </Link>

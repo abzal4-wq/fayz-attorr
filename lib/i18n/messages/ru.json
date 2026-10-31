@@ -15,7 +15,8 @@
       "few": "{n} шт.",
       "many": "{n} шт."
     },
-    "outOfStock": "Нет в наличии"
+    "outOfStock": "Нет в наличии",
+    "priceFrom": "от {price}"
   },
   "gender": {
     "WOMEN": "Женские",

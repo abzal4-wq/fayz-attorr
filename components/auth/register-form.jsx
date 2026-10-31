@@ -118,7 +118,7 @@ export function RegisterForm({ redirectTo = '/' }) {
             type={showPassword ? 'text' : 'password'}
             autoComplete="new-password"
             aria-invalid={errors.password ? 'true' : undefined}
-            className="w-full min-h-12 rounded-lg border border-input bg-card pl-4 pr-12 text-[16px] text-card-foreground transition-colors duration-200 placeholder:text-muted-foreground focus:border-accent focus:outline-none focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2 aria-[invalid=true]:border-destructive"
+            className="w-full min-h-11 rounded-lg border border-input bg-card pl-4 pr-12 text-[16px] text-card-foreground transition-colors duration-200 placeholder:text-muted-foreground focus:border-accent focus:outline-none focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2 aria-[invalid=true]:border-destructive"
             {...register('password')}
           />
           <button

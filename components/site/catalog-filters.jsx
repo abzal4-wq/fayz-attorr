@@ -290,7 +290,7 @@ export function CatalogFilters({ filters, options, total }) {
             type="button"
             onClick={() => apply()}
             disabled={isPending}
-            className="mt-5 flex min-h-12 w-full items-center justify-center rounded-lg bg-primary px-4 font-semibold text-primary-foreground transition-colors duration-200 hover:bg-gold-light disabled:opacity-70"
+            className="mt-5 flex min-h-11 w-full items-center justify-center rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground transition-colors duration-200 hover:bg-gold-light disabled:opacity-70"
           >
             {t('catalog.apply')}
           </button>
@@ -301,7 +301,7 @@ export function CatalogFilters({ filters, options, total }) {
       <button
         type="button"
         onClick={() => setSheetOpen(true)}
-        className="fixed bottom-20 left-1/2 z-30 flex min-h-12 -translate-x-1/2 items-center gap-2 rounded-full bg-brand-deep px-5 text-sm font-semibold text-ivory shadow-lg lg:hidden"
+        className="fixed bottom-20 left-1/2 z-30 flex min-h-11 -translate-x-1/2 items-center gap-2 rounded-full bg-brand-deep px-5 text-sm font-semibold text-ivory shadow-lg lg:hidden"
       >
         <SlidersHorizontal className="size-4" aria-hidden="true" />
         {t('catalog.filter')}
@@ -360,7 +360,7 @@ export function CatalogFilters({ filters, options, total }) {
                 <button
                   type="button"
                   onClick={clearAll}
-                  className="min-h-12 rounded-lg border border-border px-4 text-sm font-semibold text-foreground"
+                  className="min-h-11 rounded-lg border border-border px-4 text-sm font-semibold text-foreground"
                 >
                   {t('catalog.clear')}
                 </button>
@@ -369,7 +369,7 @@ export function CatalogFilters({ filters, options, total }) {
                 type="button"
                 onClick={() => apply()}
                 disabled={isPending}
-                className="flex min-h-12 flex-1 items-center justify-center rounded-lg bg-primary px-4 font-semibold text-primary-foreground disabled:opacity-70"
+                className="flex min-h-11 flex-1 items-center justify-center rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground disabled:opacity-70"
               >
                 {draftTotal != null
                   ? t('catalog.showCount', { n: draftTotal })

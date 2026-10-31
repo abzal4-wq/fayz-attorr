@@ -43,7 +43,7 @@ export function CartPage({ deliveryPrice, deliveryInfo }) {
         </p>
         <Link
           href="/katalog"
-          className="mt-6 inline-flex min-h-12 items-center justify-center rounded-lg bg-primary px-6 font-semibold text-primary-foreground transition-colors duration-200 hover:bg-gold-light"
+          className="mt-6 inline-flex min-h-11 items-center justify-center rounded-lg bg-primary px-5 text-sm font-semibold text-primary-foreground transition-colors duration-200 hover:bg-gold-light"
         >
           {t('common.goToCatalog')}
         </Link>
@@ -184,7 +184,7 @@ export function CartPage({ deliveryPrice, deliveryInfo }) {
           ) : (
             <Link
               href="/buyurtma"
-              className="mt-5 flex min-h-12 items-center justify-center rounded-lg bg-primary px-6 font-semibold text-primary-foreground transition-colors duration-200 hover:bg-gold-light"
+              className="mt-5 flex min-h-11 items-center justify-center rounded-lg bg-primary px-5 text-sm font-semibold text-primary-foreground transition-colors duration-200 hover:bg-gold-light"
             >
               {t('cart.checkout')}
             </Link>

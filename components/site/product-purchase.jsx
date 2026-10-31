@@ -84,7 +84,7 @@ export function ProductPurchase({ product }) {
                   setQuantity(1)
                 }}
                 className={cn(
-                  'min-h-12 rounded-lg border px-4 text-sm font-medium transition-colors duration-200',
+                  'min-h-11 rounded-lg border px-4 text-sm font-medium transition-colors duration-200',
                   active
                     ? 'border-brand-deep bg-secondary text-secondary-foreground'
                     : 'border-border text-foreground hover:border-brand-mid',
@@ -138,20 +138,20 @@ export function ProductPurchase({ product }) {
           {t('product.allOutOfStock')}
         </p>
       ) : (
-        <div className="mt-4 flex flex-col gap-3 sm:flex-row md:mt-6">
+        <div className="mt-4 flex gap-2 sm:gap-3 md:mt-6">
           <div className="flex items-center rounded-lg border border-border">
             <button
               type="button"
               onClick={() => setQuantity((q) => Math.max(1, q - 1))}
               disabled={quantity <= 1}
               aria-label={t('common.decrease')}
-              className="flex size-12 items-center justify-center text-foreground disabled:opacity-40"
+              className="flex size-11 items-center justify-center text-foreground disabled:opacity-40"
             >
               <Minus className="size-4" aria-hidden="true" />
             </button>
             <span
               aria-live="polite"
-              className="w-12 text-center font-semibold text-foreground"
+              className="w-8 text-center font-semibold text-foreground"
             >
               {quantity}
             </span>
@@ -160,7 +160,7 @@ export function ProductPurchase({ product }) {
               onClick={() => setQuantity((q) => Math.min(maxQuantity, q + 1))}
               disabled={quantity >= maxQuantity}
               aria-label={t('common.increase')}
-              className="flex size-12 items-center justify-center text-foreground disabled:opacity-40"
+              className="flex size-11 items-center justify-center text-foreground disabled:opacity-40"
             >
               <Plus className="size-4" aria-hidden="true" />
             </button>
@@ -171,7 +171,7 @@ export function ProductPurchase({ product }) {
             onClick={handleAdd}
             disabled={!hydrated || !selected?.available}
             aria-busy={!hydrated || undefined}
-            className="flex min-h-12 flex-1 items-center justify-center gap-2 rounded-lg bg-primary px-6 font-semibold text-primary-foreground transition-colors duration-200 hover:bg-gold-light disabled:cursor-not-allowed disabled:opacity-60"
+            className="flex min-h-11 flex-1 items-center justify-center gap-2 rounded-lg bg-primary px-3 text-sm font-semibold text-primary-foreground transition-colors duration-200 hover:bg-gold-light disabled:cursor-not-allowed disabled:opacity-60 sm:px-5"
           >
             {added ? (
               <>

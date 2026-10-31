@@ -164,7 +164,7 @@ function CodeStep({ t, telegramUrl, onRestart, onDone }) {
           href={telegramUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex min-h-12 w-full items-center justify-center gap-2 rounded-lg bg-accent px-6 font-semibold text-accent-foreground transition-colors duration-200 hover:bg-gold-light"
+          className="flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-accent px-5 text-sm font-semibold text-accent-foreground transition-colors duration-200 hover:bg-gold-light"
         >
           <Send className="size-5" aria-hidden="true" />
           {t('auth.resetOpenTelegram')}
@@ -217,7 +217,7 @@ function CodeStep({ t, telegramUrl, onRestart, onDone }) {
               type={showPassword ? 'text' : 'password'}
               autoComplete="new-password"
               aria-invalid={errors.password ? 'true' : undefined}
-              className="w-full min-h-12 rounded-lg border border-input bg-card pl-4 pr-12 text-[16px] text-card-foreground transition-colors duration-200 placeholder:text-muted-foreground focus:border-accent focus:outline-none focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2 aria-[invalid=true]:border-destructive"
+              className="w-full min-h-11 rounded-lg border border-input bg-card pl-4 pr-12 text-[16px] text-card-foreground transition-colors duration-200 placeholder:text-muted-foreground focus:border-accent focus:outline-none focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2 aria-[invalid=true]:border-destructive"
               {...register('password')}
             />
             <button

@@ -87,7 +87,7 @@ export const PhoneInput = forwardRef(function PhoneInput(
         onChange={handleChange}
         className={cn(
           // pl-16: "+998" va undan keyingi bo'shliq uchun joy
-          'w-full min-h-12 rounded-lg border border-input bg-card pl-16 pr-4 text-[16px] text-card-foreground',
+          'w-full min-h-11 rounded-lg border border-input bg-card pl-16 pr-4 text-[16px] text-card-foreground',
           'transition-colors duration-200 placeholder:text-muted-foreground',
           'focus:border-accent focus:outline-none focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2',
           'aria-[invalid=true]:border-destructive',

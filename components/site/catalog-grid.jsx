@@ -89,7 +89,7 @@ export function CatalogGrid({ initialProducts, initialHasMore, filters }) {
         </p>
         <Link
           href="/katalog"
-          className="mt-6 inline-flex min-h-12 items-center justify-center rounded-lg bg-primary px-6 font-semibold text-primary-foreground transition-colors duration-200 hover:bg-gold-light"
+          className="mt-6 inline-flex min-h-11 items-center justify-center rounded-lg bg-primary px-5 text-sm font-semibold text-primary-foreground transition-colors duration-200 hover:bg-gold-light"
         >
           {t('catalog.emptyAction')}
         </Link>
@@ -127,7 +127,7 @@ export function CatalogGrid({ initialProducts, initialHasMore, filters }) {
             type="button"
             onClick={loadMore}
             disabled={loading}
-            className="min-h-12 rounded-lg border border-border px-6 text-sm font-semibold text-foreground transition-colors duration-200 hover:border-brand-mid disabled:opacity-60"
+            className="min-h-11 rounded-lg border border-border px-5 text-sm font-semibold text-foreground transition-colors duration-200 hover:border-brand-mid disabled:opacity-60"
           >
             {loading ? t('common.loading') : t('catalog.loadMore')}
           </button>

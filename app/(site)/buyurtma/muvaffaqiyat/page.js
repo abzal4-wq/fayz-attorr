@@ -36,13 +36,13 @@ export default async function OrderSuccessPage({ searchParams }) {
       <div className="mt-8 flex w-full flex-col gap-3 sm:flex-row sm:justify-center">
         <Link
           href="/profil"
-          className="inline-flex min-h-12 items-center justify-center rounded-lg bg-primary px-6 font-semibold text-primary-foreground transition-colors duration-200 hover:bg-gold-light"
+          className="inline-flex min-h-11 items-center justify-center rounded-lg bg-primary px-5 text-sm font-semibold text-primary-foreground transition-colors duration-200 hover:bg-gold-light"
         >
           {t('success.myOrders')}
         </Link>
         <Link
           href="/katalog"
-          className="inline-flex min-h-12 items-center justify-center rounded-lg border border-border px-6 font-semibold text-foreground transition-colors duration-200 hover:border-brand-mid"
+          className="inline-flex min-h-11 items-center justify-center rounded-lg border border-border px-5 text-sm font-semibold text-foreground transition-colors duration-200 hover:border-brand-mid"
         >
           {t('success.continueShopping')}
         </Link>

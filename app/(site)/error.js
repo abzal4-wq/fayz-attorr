@@ -39,7 +39,7 @@ export default function SiteError({ error, reset }) {
         <button
           type="button"
           onClick={reset}
-          className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-primary px-6 font-semibold text-primary-foreground transition-colors duration-200 hover:bg-gold-light"
+          className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-primary px-5 text-sm font-semibold text-primary-foreground transition-colors duration-200 hover:bg-gold-light"
         >
           <RotateCcw className="size-5" aria-hidden="true" />
           {t('error.retry')}
@@ -47,7 +47,7 @@ export default function SiteError({ error, reset }) {
 
         <Link
           href="/"
-          className="inline-flex min-h-12 items-center justify-center rounded-lg border border-border px-6 font-semibold text-foreground transition-colors duration-200 hover:border-brand-mid"
+          className="inline-flex min-h-11 items-center justify-center rounded-lg border border-border px-5 text-sm font-semibold text-foreground transition-colors duration-200 hover:border-brand-mid"
         >
           {t('notFound.home')}
         </Link>

@@ -133,7 +133,7 @@ export function CatalogSearch({ filters }) {
         maxLength={MAX_QUERY_LENGTH}
         placeholder={t('catalog.searchPlaceholder')}
         // text-[16px] shart: kichikroq bo'lsa iOS fokusda sahifani zoom qiladi
-        className="w-full min-h-12 rounded-lg border border-input bg-card pl-11 pr-12 text-[16px] text-card-foreground transition-colors duration-200 placeholder:text-muted-foreground focus:border-brand-mid focus:outline-none focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2 [&::-webkit-search-cancel-button]:hidden"
+        className="w-full min-h-11 rounded-lg border border-input bg-card pl-11 pr-12 text-[16px] text-card-foreground transition-colors duration-200 placeholder:text-muted-foreground focus:border-brand-mid focus:outline-none focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2 [&::-webkit-search-cancel-button]:hidden"
       />
 
       {value ? (

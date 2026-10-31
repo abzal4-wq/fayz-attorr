@@ -34,7 +34,7 @@ function Field({ label, htmlFor, error, hint, children }) {
 }
 
 const inputClass =
-  'w-full min-h-12 rounded-lg border border-input bg-card px-4 text-[16px] text-card-foreground transition-colors duration-200 placeholder:text-muted-deep focus:border-brand-mid focus:outline-none focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2 aria-[invalid=true]:border-destructive'
+  'w-full min-h-11 rounded-lg border border-input bg-card px-4 text-[16px] text-card-foreground transition-colors duration-200 placeholder:text-muted-deep focus:border-brand-mid focus:outline-none focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2 aria-[invalid=true]:border-destructive'
 
 export function CheckoutForm({ user, deliveryPrice, deliveryInfo }) {
   const t = useT()
@@ -122,7 +122,7 @@ export function CheckoutForm({ user, deliveryPrice, deliveryInfo }) {
         </p>
         <Link
           href="/katalog"
-          className="mt-6 inline-flex min-h-12 items-center justify-center rounded-lg bg-primary px-6 font-semibold text-primary-foreground hover:bg-gold-light"
+          className="mt-6 inline-flex min-h-11 items-center justify-center rounded-lg bg-primary px-5 text-sm font-semibold text-primary-foreground hover:bg-gold-light"
         >
           {t('common.goToCatalog')}
         </Link>
@@ -407,7 +407,7 @@ export function CheckoutForm({ user, deliveryPrice, deliveryInfo }) {
           <button
             type="submit"
             disabled={pending || blocked}
-            className="mt-5 flex min-h-12 w-full items-center justify-center gap-2 rounded-lg bg-primary px-6 font-semibold text-primary-foreground transition-colors duration-200 hover:bg-gold-light disabled:cursor-not-allowed disabled:opacity-70"
+            className="mt-5 flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-primary px-5 text-sm font-semibold text-primary-foreground transition-colors duration-200 hover:bg-gold-light disabled:cursor-not-allowed disabled:opacity-70"
           >
             {pending ? (
               <>

@@ -39,7 +39,7 @@ async function CatalogContent({ filters }) {
   ])
 
   return (
-    <div className="mx-auto flex max-w-[1280px] gap-8 px-4 py-4 sm:px-6 md:py-6">
+    <div className="mx-auto flex max-w-[1280px] gap-8 px-4 py-3 sm:px-6 md:py-6">
       {/*
         Filtr paneli DOM'da h1 dan KEYIN turadi, ko'rinishda esa chapda —
         `lg:order-first` shuni ta'minlaydi.
@@ -50,9 +50,9 @@ async function CatalogContent({ filters }) {
         Ko'rinish o'zgarmaydi, tartib esa to'g'rilanadi.
       */}
       <div className="min-w-0 flex-1">
-        <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-3 md:mb-5">
           <div>
-            <h1 className="font-serif text-xl text-foreground md:text-3xl">
+            <h1 className="font-serif text-xl leading-tight text-foreground md:text-3xl">
               {filters.gender
                 ? t(`genderFor.${filters.gender}`)
                 : t('catalog.title')}
@@ -63,11 +63,11 @@ async function CatalogContent({ filters }) {
               yo so'rovini, yo natija hajmini bilmay qoladi.
             */}
             {filters.query ? (
-              <p className="mt-1 text-sm text-muted-deep">
+              <p className="mt-0.5 text-xs text-muted-deep md:mt-1 md:text-sm">
                 {t('catalog.searchFor', { q: filters.query })}
               </p>
             ) : null}
-            <p className="mt-1 text-sm text-muted-deep">
+            <p className="mt-0.5 text-xs text-muted-deep md:mt-1 md:text-sm">
               {t('catalog.count', { n: total })}
             </p>
           </div>
@@ -123,14 +123,14 @@ export default async function CatalogPage({ searchParams }) {
         Saralash bilan bir qatorda emas, alohida: telefonda ikkisi
         sig'masdi va maydon 44px dan tor bo'lib qolardi.
       */}
-      <div className="mx-auto max-w-[1280px] px-4 pt-4 sm:px-6 md:pt-6">
+      <div className="mx-auto max-w-[1280px] px-4 pt-3 sm:px-6 md:pt-6">
         <CatalogSearch filters={filters} />
       </div>
 
       <Suspense
         key={key}
         fallback={
-          <div className="mx-auto max-w-[1280px] px-4 py-4 sm:px-6 md:py-6">
+          <div className="mx-auto max-w-[1280px] px-4 py-3 sm:px-6 md:py-6">
             <GridSkeleton />
           </div>
         }
