@@ -1,10 +1,12 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowRight, ShieldCheck, Sparkles, Truck } from 'lucide-react'
+import { HeroWheel } from '@/components/site/hero-wheel'
 import { ProductCard } from '@/components/site/product-card'
 import { getFeaturedProducts, getHomeBrands } from '@/lib/catalog'
 import { brandLogoUrl } from '@/lib/cloudinary-url'
 import { getStoreSettings } from '@/lib/settings'
+import { pickWheelProducts } from '@/lib/wheel'
 import { getT } from '@/lib/i18n/server'
 
 /**
@@ -36,6 +38,10 @@ export default async function HomePage() {
     getStoreSettings(),
     getT(),
   ])
+
+  // G'ildirak tanlangan atirlardan: tugagan va rasmsizlari chiqmaydi.
+  // Bo'sh qolsa — oddiy hero (tanishtiruv matni va katalog tugmasi).
+  const wheel = pickWheelProducts(featured)
 
   const categories = [
     {
@@ -95,32 +101,42 @@ export default async function HomePage() {
             'linear-gradient(160deg, #0D454E 0%, #0A3942 55%, #072B32 100%)',
         }}
       >
-        <div className="mx-auto flex max-w-[1280px] flex-col items-center px-4 py-8 text-center sm:px-6 md:py-20">
+        <div
+          className={`mx-auto flex max-w-[1280px] flex-col items-center px-4 text-center sm:px-6 ${
+            wheel.length > 0 ? 'pb-3 pt-6 md:pb-8 md:pt-10' : 'py-8 md:py-20'
+          }`}
+        >
           <Image
             src="/monogram.png"
             alt=""
             width={200}
             height={200}
             priority
-            className="h-14 w-14 rounded-xl md:h-20 md:w-20 md:rounded-2xl"
+            className="size-12 rounded-xl md:size-16 md:rounded-2xl"
           />
-          <h1 className="mt-4 font-serif text-3xl font-semibold text-ivory md:mt-6 md:text-5xl">
+          <h1 className="mt-3 font-serif text-3xl font-semibold text-ivory md:text-5xl">
             Fayz Attor
           </h1>
-          <p className="mt-1.5 text-xs uppercase tracking-[0.18em] text-muted-on-dark md:text-sm">
+          <p className="mt-1 text-xs uppercase tracking-[0.18em] text-muted-on-dark md:text-sm">
             {t('home.tagline')}
           </p>
-          <p className="mt-3 max-w-xl text-pretty text-sm text-muted-on-dark md:mt-5 md:text-base">
-            {t('home.intro')}
-          </p>
 
-          <Link
-            href="/katalog"
-            className="mt-5 inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-primary px-6 font-semibold text-primary-foreground transition-colors duration-200 hover:bg-gold-light"
-          >
-            {t('home.viewCatalog')}
-            <ArrowRight className="size-4" aria-hidden="true" />
-          </Link>
+          {wheel.length > 0 ? (
+            <HeroWheel products={wheel} />
+          ) : (
+            <>
+              <p className="mt-3 max-w-xl text-pretty text-sm text-muted-on-dark md:mt-5 md:text-base">
+                {t('home.intro')}
+              </p>
+              <Link
+                href="/katalog"
+                className="mt-5 inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-primary px-5 text-sm font-semibold text-primary-foreground transition-colors duration-200 hover:bg-gold-light"
+              >
+                {t('home.viewCatalog')}
+                <ArrowRight className="size-4" aria-hidden="true" />
+              </Link>
+            </>
+          )}
         </div>
       </section>
 

@@ -6,6 +6,19 @@ import { ImageOff } from 'lucide-react'
 import { useMoney, useT } from '@/lib/i18n/client'
 
 /**
+ * Kartochka narxi. Bir nechta hajm bo'lsa — "185 000 so'mdan", oraliq
+ * EMAS. Oraliq ("185 000 – 2 682 000 so'm") tor kartochkada ikki qatorga
+ * tushib, butun qatorni balandlatardi. To'liq narxlar atir sahifasida.
+ * Bosh sahifa g'ildiragi ham shuni ishlatadi — ikki joyda bir xil chiqsin.
+ */
+export function formatCardPrice({ minPrice, maxPrice }, money, t) {
+  if (minPrice == null) return null
+  return minPrice === maxPrice
+    ? money(minPrice)
+    : t('common.priceFrom', { price: money(minPrice) })
+}
+
+/**
  * Katalog va sliderdagi atir kartochkasi.
  *
  * DIQQAT: bu komponent uzun, scroll qilinadigan ro'yxatlarda ishlatiladi —
@@ -34,17 +47,7 @@ export function ProductCard({ product, priority = false }) {
     outOfStock,
   } = product
 
-  /*
-   * Bir nechta hajm bo'lsa — "185 000 so'mdan", oraliq EMAS. Oraliq
-   * ("185 000 – 2 682 000 so'm") tor kartochkada ikki qatorga tushib,
-   * butun qatorni balandlatardi. To'liq narxlar atir sahifasida.
-   */
-  const priceLabel =
-    minPrice == null
-      ? null
-      : minPrice === maxPrice
-        ? money(minPrice)
-        : t('common.priceFrom', { price: money(minPrice) })
+  const priceLabel = formatCardPrice({ minPrice, maxPrice }, money, t)
 
   return (
     <Link
