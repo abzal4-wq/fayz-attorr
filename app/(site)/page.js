@@ -95,28 +95,28 @@ export default async function HomePage() {
             'linear-gradient(160deg, #0D454E 0%, #0A3942 55%, #072B32 100%)',
         }}
       >
-        <div className="mx-auto flex max-w-[1280px] flex-col items-center px-4 py-16 text-center sm:px-6 md:py-24">
+        <div className="mx-auto flex max-w-[1280px] flex-col items-center px-4 py-8 text-center sm:px-6 md:py-20">
           <Image
             src="/monogram.png"
             alt=""
             width={200}
             height={200}
             priority
-            className="h-20 w-20 rounded-2xl md:h-24 md:w-24"
+            className="h-14 w-14 rounded-xl md:h-20 md:w-20 md:rounded-2xl"
           />
-          <h1 className="mt-8 font-serif text-4xl font-semibold text-ivory md:text-6xl">
+          <h1 className="mt-4 font-serif text-3xl font-semibold text-ivory md:mt-6 md:text-5xl">
             Fayz Attor
           </h1>
-          <p className="mt-3 text-sm uppercase tracking-[0.18em] text-muted-on-dark">
+          <p className="mt-1.5 text-xs uppercase tracking-[0.18em] text-muted-on-dark md:text-sm">
             {t('home.tagline')}
           </p>
-          <p className="mt-6 max-w-xl text-pretty text-muted-on-dark">
+          <p className="mt-3 max-w-xl text-pretty text-sm text-muted-on-dark md:mt-5 md:text-base">
             {t('home.intro')}
           </p>
 
           <Link
             href="/katalog"
-            className="mt-8 inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-primary px-6 font-semibold text-primary-foreground transition-colors duration-200 hover:bg-gold-light"
+            className="mt-5 inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-primary px-6 font-semibold text-primary-foreground transition-colors duration-200 hover:bg-gold-light"
           >
             {t('home.viewCatalog')}
             <ArrowRight className="size-4" aria-hidden="true" />
@@ -125,23 +125,27 @@ export default async function HomePage() {
       </section>
 
       {/* Kategoriyalar */}
-      <section className="mx-auto max-w-[1280px] px-4 py-12 sm:px-6">
-        <h2 className="font-serif text-2xl text-foreground md:text-3xl">
+      {/*
+        Telefonda 3 ta plitka BITTA qatorda (avval ustma-ust, ~400px edi).
+        Tavsif faqat sm dan boshlab — tor plitkaga sig'masdi.
+      */}
+      <section className="mx-auto max-w-[1280px] px-4 py-5 sm:px-6 md:py-10">
+        <h2 className="font-serif text-xl text-foreground md:text-3xl">
           {t('home.categories')}
         </h2>
-        <div className="mt-6 grid gap-4 sm:grid-cols-3">
+        <div className="mt-3 grid grid-cols-3 gap-2 sm:gap-4 md:mt-6">
           {categories.map((c) => (
             <Link
               key={c.href}
               href={c.href}
-              className="group flex min-h-32 flex-col justify-between rounded-xl border border-border bg-card p-5 transition-colors duration-200 hover:border-gold"
+              className="group flex min-h-20 flex-col justify-between rounded-xl border border-border bg-card p-3 transition-colors duration-200 hover:border-gold sm:min-h-32 sm:p-5"
             >
               <div>
-                <p className="font-serif text-xl text-card-foreground">{c.label}</p>
-                <p className="mt-1 text-sm text-muted-deep">{c.description}</p>
+                <p className="font-serif text-base leading-tight text-card-foreground sm:text-xl">{c.label}</p>
+                <p className="mt-1 hidden text-sm text-muted-deep sm:block">{c.description}</p>
               </div>
               <ArrowRight
-                className="mt-4 size-5 text-gold-deep transition-transform duration-200 group-hover:translate-x-1"
+                className="mt-2 size-4 text-gold-deep transition-transform duration-200 group-hover:translate-x-1 sm:mt-4 sm:size-5"
                 aria-hidden="true"
               />
             </Link>
@@ -151,9 +155,9 @@ export default async function HomePage() {
 
       {/* Tanlangan atirlar */}
       {featured.length > 0 ? (
-        <section className="mx-auto max-w-[1280px] px-4 pb-12 sm:px-6">
+        <section className="mx-auto max-w-[1280px] px-4 pb-5 sm:px-6 md:pb-10">
           <div className="flex items-baseline justify-between gap-4">
-            <h2 className="font-serif text-2xl text-foreground md:text-3xl">
+            <h2 className="font-serif text-xl text-foreground md:text-3xl">
               {t('home.featured')}
             </h2>
             <Link
@@ -165,7 +169,7 @@ export default async function HomePage() {
           </div>
 
           {/* Gorizontal slider: mobilda swipe, desktopda ham scroll */}
-          <ul className="-mx-4 mt-6 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:px-0">
+          <ul className="-mx-4 mt-2 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 sm:mx-0 sm:gap-4 sm:px-0 md:mt-4">
             {featured.map((product, index) => (
               <li
                 key={product.id}
@@ -180,11 +184,11 @@ export default async function HomePage() {
 
       {/* Brendlar */}
       {brands.length > 0 ? (
-        <section className="mx-auto max-w-[1280px] px-4 pb-12 sm:px-6">
-          <h2 className="font-serif text-2xl text-foreground md:text-3xl">
+        <section className="mx-auto max-w-[1280px] px-4 pb-5 sm:px-6 md:pb-10">
+          <h2 className="font-serif text-xl text-foreground md:text-3xl">
             {t('home.brands')}
           </h2>
-          <ul className="mt-6 flex flex-wrap gap-3">
+          <ul className="mt-3 flex flex-wrap gap-2 md:mt-6 md:gap-3">
             {brands.map((brand) => (
               <li key={brand.slug}>
                 <Link
@@ -192,7 +196,7 @@ export default async function HomePage() {
                   // min-w-14: nomi juda qisqa brend (1-2 harf) chipni
                   // 44px dan tor qilib yuborardi — bosish maydoni
                   // mazmunga bog'liq bo'lib qolmasligi kerak
-                  className="flex min-h-14 min-w-14 items-center justify-center gap-2.5 rounded-xl border border-border bg-card px-4 transition-colors duration-200 hover:border-gold"
+                  className="flex min-h-12 min-w-12 items-center justify-center gap-2.5 rounded-xl border border-border bg-card px-3 transition-colors duration-200 hover:border-gold md:min-h-14 md:px-4"
                 >
                   {brand.logoUrl ? (
                     <Image
@@ -219,13 +223,22 @@ export default async function HomePage() {
       ) : null}
 
       {/* Nega biz */}
-      <section className="mx-auto max-w-[1280px] px-4 pb-16 sm:px-6">
-        <div className="grid gap-4 sm:grid-cols-3">
+      {/*
+        Telefonda belgi chapda, matn o'ngda — ixcham qatorlar (avval har
+        biri baland kartochka, jami ~330px edi). sm dan boshlab kartochka.
+      */}
+      <section className="mx-auto max-w-[1280px] px-4 pb-6 sm:px-6 md:pb-14">
+        <div className="grid gap-2 sm:grid-cols-3 sm:gap-4">
           {advantages.map(({ icon: Icon, title, text }) => (
-            <div key={title} className="rounded-xl border border-border bg-card p-5">
-              <Icon className="size-6 text-gold-deep" aria-hidden="true" />
-              <h3 className="mt-4 font-serif text-xl text-card-foreground">{title}</h3>
-              <p className="mt-2 text-sm text-muted-deep">{text}</p>
+            <div
+              key={title}
+              className="flex gap-3 rounded-xl border border-border bg-card p-3 sm:block sm:p-5"
+            >
+              <Icon className="mt-0.5 size-5 shrink-0 text-gold-deep sm:size-6" aria-hidden="true" />
+              <div>
+                <h3 className="font-serif text-base text-card-foreground sm:mt-4 sm:text-xl">{title}</h3>
+                <p className="mt-0.5 text-xs text-muted-deep sm:mt-2 sm:text-sm">{text}</p>
+              </div>
             </div>
           ))}
         </div>

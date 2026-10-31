@@ -39,7 +39,7 @@ async function CatalogContent({ filters }) {
   ])
 
   return (
-    <div className="mx-auto flex max-w-[1280px] gap-8 px-4 py-6 sm:px-6">
+    <div className="mx-auto flex max-w-[1280px] gap-8 px-4 py-4 sm:px-6 md:py-6">
       {/*
         Filtr paneli DOM'da h1 dan KEYIN turadi, ko'rinishda esa chapda —
         `lg:order-first` shuni ta'minlaydi.
@@ -52,7 +52,7 @@ async function CatalogContent({ filters }) {
       <div className="min-w-0 flex-1">
         <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1 className="font-serif text-2xl text-foreground md:text-3xl">
+            <h1 className="font-serif text-xl text-foreground md:text-3xl">
               {filters.gender
                 ? t(`genderFor.${filters.gender}`)
                 : t('catalog.title')}
@@ -112,7 +112,7 @@ export default async function CatalogPage({ searchParams }) {
      * Lighthouse CLS 0.095, sekin tarmoqda 0.112 (chegara 0.1). Har
      * qidiruvda takrorlanardi. Siljish o'lchab topilgan: aynan footer.
      */
-    <main className="min-h-svh pb-16">
+    <main className="min-h-svh pb-8 md:pb-16">
       {/*
         Qidiruv maydoni Suspense'dan TASHQARIDA. Ichida bo'lganida har
         qidiruvda `key` o'zgarib, maydon ham skeleton bilan almashtirilardi:
@@ -123,14 +123,14 @@ export default async function CatalogPage({ searchParams }) {
         Saralash bilan bir qatorda emas, alohida: telefonda ikkisi
         sig'masdi va maydon 44px dan tor bo'lib qolardi.
       */}
-      <div className="mx-auto max-w-[1280px] px-4 pt-6 sm:px-6">
+      <div className="mx-auto max-w-[1280px] px-4 pt-4 sm:px-6 md:pt-6">
         <CatalogSearch filters={filters} />
       </div>
 
       <Suspense
         key={key}
         fallback={
-          <div className="mx-auto max-w-[1280px] px-4 py-6 sm:px-6">
+          <div className="mx-auto max-w-[1280px] px-4 py-4 sm:px-6 md:py-6">
             <GridSkeleton />
           </div>
         }

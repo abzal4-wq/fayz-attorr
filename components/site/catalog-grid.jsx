@@ -79,7 +79,7 @@ export function CatalogGrid({ initialProducts, initialHasMore, filters }) {
         Lighthouse CLS 0.151 ko'rsatgan edi. Bo'sh katalog ayni
         ochilish kunidagi holat, filtr hech narsa topmaganda ham shu.
       */
-      <div className="flex min-h-[60vh] flex-col items-center justify-center rounded-xl border border-dashed border-border px-6 py-16 text-center">
+      <div className="flex min-h-[60vh] flex-col items-center justify-center rounded-xl border border-dashed border-border px-6 py-10 text-center md:py-16">
         <SearchX className="size-8 text-muted-deep" aria-hidden="true" />
         <p className="mt-4 font-serif text-xl text-foreground">
           {t('catalog.emptyTitle')}

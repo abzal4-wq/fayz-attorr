@@ -21,8 +21,8 @@ export default async function CheckoutPage() {
   ])
 
   return (
-    <main className="mx-auto max-w-[1280px] px-4 py-6 pb-16 sm:px-6">
-      <h1 className="mb-6 font-serif text-2xl text-foreground md:text-3xl">
+    <main className="mx-auto max-w-[1280px] px-4 py-4 pb-8 sm:px-6 md:py-6 md:pb-16">
+      <h1 className="mb-4 font-serif text-xl text-foreground md:mb-6 md:text-3xl">
         {t('checkout.title')}
       </h1>
       <CheckoutForm

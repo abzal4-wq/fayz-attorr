@@ -16,8 +16,8 @@
  */
 export default function SiteLoading() {
   return (
-    <main className="pb-16" aria-busy="true">
-      <div className="mx-auto max-w-[1280px] space-y-4 px-4 py-6 sm:px-6">
+    <main className="pb-8 md:pb-16" aria-busy="true">
+      <div className="mx-auto max-w-[1280px] space-y-4 px-4 py-4 sm:px-6 md:py-6">
         <div className="skeleton h-8 w-48 rounded" />
         <div className="skeleton h-4 w-64 max-w-full rounded" />
         <div className="skeleton h-64 w-full rounded-xl" />

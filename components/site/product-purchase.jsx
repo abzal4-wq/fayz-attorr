@@ -101,7 +101,7 @@ export function ProductPurchase({ product }) {
 
       {/* Narx */}
       {selected ? (
-        <div className="mt-6">
+        <div className="mt-4 md:mt-6">
           {selected.discountPercent > 0 ? (
             <div className="flex flex-wrap items-baseline gap-3">
               <span className="text-2xl font-bold text-gold-deep">
@@ -134,11 +134,11 @@ export function ProductPurchase({ product }) {
 
       {/* Miqdor va savatga qo'shish */}
       {allOutOfStock ? (
-        <p className="mt-6 rounded-lg border border-border bg-muted p-4 text-sm text-muted-deep">
+        <p className="mt-4 rounded-lg border border-border bg-muted p-4 text-sm text-muted-deep md:mt-6">
           {t('product.allOutOfStock')}
         </p>
       ) : (
-        <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+        <div className="mt-4 flex flex-col gap-3 sm:flex-row md:mt-6">
           <div className="flex items-center rounded-lg border border-border">
             <button
               type="button"

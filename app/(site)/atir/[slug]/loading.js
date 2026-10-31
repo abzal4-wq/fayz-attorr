@@ -7,15 +7,15 @@
  */
 export default function ProductLoading() {
   return (
-    <main className="pb-16" aria-busy="true">
-      <div className="mx-auto max-w-[1280px] px-4 py-6 sm:px-6">
-        <div className="mb-5 flex min-h-11 items-center gap-2">
+    <main className="pb-8 md:pb-16" aria-busy="true">
+      <div className="mx-auto max-w-[1280px] px-4 py-4 sm:px-6 md:py-6">
+        <div className="mb-2 flex min-h-11 items-center gap-2 md:mb-5">
           <div className="skeleton h-4 w-16 rounded" />
           <div className="skeleton h-4 w-20 rounded" />
           <div className="skeleton h-4 w-28 rounded" />
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-2">
+        <div className="grid gap-4 md:gap-8 lg:grid-cols-2">
           <div className="skeleton aspect-square w-full rounded-xl" />
 
           <div>

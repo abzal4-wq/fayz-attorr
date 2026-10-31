@@ -17,7 +17,7 @@ export default async function OrderSuccessPage({ searchParams }) {
   const orderNumber = String(params?.raqam ?? '').replace(/\D/g, '')
 
   return (
-    <main className="mx-auto flex max-w-xl flex-col items-center px-4 py-16 text-center sm:px-6">
+    <main className="mx-auto flex max-w-xl flex-col items-center px-4 py-10 text-center sm:px-6 md:py-16">
       <CheckCircle2 className="size-14 text-success-deep" aria-hidden="true" />
 
       <h1 className="mt-6 font-serif text-2xl text-foreground md:text-3xl">

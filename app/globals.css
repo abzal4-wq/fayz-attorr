@@ -179,8 +179,9 @@
      * turardi — bosish menyuga ketardi. Telefon klaviaturasidagi
      * "Keyingi" ham fokusni shu joyga olib borardi (WCAG 2.4.11).
      */
+    /* Sarlavha telefonda 56px, kompyuterda 64px — kattasi olinadi */
     scroll-padding-top: calc(64px + 0.5rem);
-    scroll-padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px) + 0.5rem);
+    scroll-padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px) + 0.5rem);
   }
 
   /* Kompyuterda pastki menyu yo'q (lg:hidden) */
@@ -320,9 +321,9 @@
   padding-top: env(safe-area-inset-top, 0px);
 }
 
-/* Bottom navigation balandligi (64px) + safe area */
+/* Pastki menyu balandligi (56px, bottom-nav.jsx dagi h-14) + safe area */
 @utility pb-bottom-nav {
-  padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px));
 }
 
 /* ---------- Harakatni kamaytirish ---------- */

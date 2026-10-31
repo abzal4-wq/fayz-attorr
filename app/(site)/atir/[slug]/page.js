@@ -54,12 +54,12 @@ export default async function ProductPage({ params }) {
   after(() => incrementViewCount(product.id))
 
   return (
-    <main className="pb-16">
-      <div className="mx-auto max-w-[1280px] px-4 py-6 sm:px-6">
+    <main className="pb-8 md:pb-16">
+      <div className="mx-auto max-w-[1280px] px-4 py-4 sm:px-6 md:py-6">
         {/* Yo'l ko'rsatkich */}
         <nav
           aria-label={t('product.breadcrumb')}
-          className="mb-5 flex flex-wrap items-center gap-1 text-sm"
+          className="mb-2 flex flex-wrap items-center gap-1 text-sm md:mb-5"
         >
           <Link
             href="/katalog"
@@ -78,7 +78,7 @@ export default async function ProductPage({ params }) {
           <span className="text-foreground">{product.name}</span>
         </nav>
 
-        <div className="grid gap-8 lg:grid-cols-2">
+        <div className="grid gap-4 md:gap-8 lg:grid-cols-2">
           <ProductGallery
             images={product.images}
             alt={`${product.brandName} ${product.name}`}
@@ -92,7 +92,7 @@ export default async function ProductPage({ params }) {
               {product.brandName}
             </Link>
 
-            <h1 className="font-serif text-3xl text-foreground md:text-4xl">
+            <h1 className="font-serif text-2xl text-foreground md:text-4xl">
               {product.name}
             </h1>
 
@@ -102,12 +102,12 @@ export default async function ProductPage({ params }) {
               </p>
             ) : null}
 
-            <div className="mt-7">
+            <div className="mt-4 md:mt-7">
               <ProductPurchase product={product} />
             </div>
 
             {product.description ? (
-              <details className="group mt-8 border-t border-border pt-4">
+              <details className="group mt-5 border-t border-border pt-2 md:mt-8 md:pt-4">
                 <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between font-medium text-foreground">
                   {t('product.fullDescription')}
                   <ChevronRight
@@ -124,11 +124,11 @@ export default async function ProductPage({ params }) {
         </div>
 
         {similar.length > 0 ? (
-          <section className="mt-16">
-            <h2 className="font-serif text-2xl text-foreground md:text-3xl">
+          <section className="mt-8 md:mt-16">
+            <h2 className="font-serif text-xl text-foreground md:text-3xl">
               {t('product.similar')}
             </h2>
-            <ul className="mt-6 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
+            <ul className="mt-3 grid grid-cols-2 gap-3 sm:gap-4 md:mt-6 md:grid-cols-3 lg:grid-cols-4">
               {similar.map((item) => (
                 <li key={item.id}>
                   <ProductCard product={item} />

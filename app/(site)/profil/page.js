@@ -42,15 +42,15 @@ export default async function ProfilePage() {
   ])
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-6 pb-16 sm:px-6">
+    <main className="mx-auto max-w-3xl px-4 py-4 pb-8 sm:px-6 md:py-6 md:pb-16">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <h1 className="font-serif text-2xl text-foreground md:text-3xl">
+        <h1 className="font-serif text-xl text-foreground md:text-3xl">
           {t('profile.title')}
         </h1>
         <LogoutButton>{t('profile.logout')}</LogoutButton>
       </div>
 
-      <dl className="mt-6 divide-y divide-border rounded-xl border border-border bg-card">
+      <dl className="mt-4 divide-y divide-border rounded-xl border border-border bg-card">
         <div className="flex items-center justify-between gap-4 p-4">
           <dt className="text-sm text-muted-deep">{t('profile.name')}</dt>
           <dd className="text-card-foreground">{user.fullName || '—'}</dd>
@@ -61,11 +61,11 @@ export default async function ProfilePage() {
         </div>
       </dl>
 
-      <h2 className="mt-10 font-serif text-xl text-foreground md:text-2xl">
+      <h2 className="mt-6 font-serif text-xl text-foreground md:mt-10 md:text-2xl">
         {t('profile.security')}
       </h2>
 
-      <details className="group mt-4 overflow-hidden rounded-xl border border-border bg-card">
+      <details className="group mt-3 overflow-hidden rounded-xl border border-border bg-card">
         <summary className="flex min-h-12 cursor-pointer items-center justify-between gap-4 p-4 text-card-foreground">
           {t('profile.changePassword')}
           <ChevronDown
@@ -87,12 +87,12 @@ export default async function ProfilePage() {
         <AccountDeleteForm />
       </details>
 
-      <h2 className="mt-10 font-serif text-xl text-foreground md:text-2xl">
+      <h2 className="mt-6 font-serif text-xl text-foreground md:mt-10 md:text-2xl">
         {t('profile.myOrders')}
       </h2>
 
       {rows.length === 0 ? (
-        <div className="mt-4 flex flex-col items-center justify-center rounded-xl border border-dashed border-border px-6 py-14 text-center">
+        <div className="mt-3 flex flex-col items-center justify-center rounded-xl border border-dashed border-border px-6 py-10 text-center md:py-14">
           <Package className="size-8 text-muted-deep" aria-hidden="true" />
           <p className="mt-4 font-medium text-foreground">
             {t('profile.noOrders')}
@@ -108,7 +108,7 @@ export default async function ProfilePage() {
           </Link>
         </div>
       ) : (
-        <ul className="mt-4 space-y-4">
+        <ul className="mt-3 space-y-4">
           {rows.map((order) => (
             <li
               key={order.id}

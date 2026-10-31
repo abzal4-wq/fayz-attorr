@@ -38,7 +38,8 @@ export function BottomNav() {
       className="dark fixed inset-x-0 bottom-0 z-40 border-t border-border bg-brand-deep lg:hidden"
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
     >
-      <ul className="mx-auto flex h-16 max-w-md items-stretch">
+      {/* 56px (avval 64) — balandlik globals.css dagi pb-bottom-nav bilan bir xil bo'lishi shart */}
+      <ul className="mx-auto flex h-14 max-w-md items-stretch">
         {navItems.map((item) => {
           const Icon = item.icon
           const active = item.exact
@@ -63,7 +64,8 @@ export function BottomNav() {
                     </span>
                   ) : null}
                 </span>
-                <span className="text-[11px]">{t(item.key)}</span>
+                {/* 12px (avval 11px): o'qilishi qiyin edi */}
+                <span className="text-xs leading-tight">{t(item.key)}</span>
               </Link>
             </li>
           )

@@ -33,7 +33,7 @@ export function CartPage({ deliveryPrice, deliveryInfo }) {
 
   if (items.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border px-6 py-16 text-center">
+      <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border px-6 py-10 text-center md:py-16">
         <ShoppingBag className="size-10 text-muted-deep" aria-hidden="true" />
         <p className="mt-4 font-serif text-xl text-foreground">
           {t('cart.empty')}

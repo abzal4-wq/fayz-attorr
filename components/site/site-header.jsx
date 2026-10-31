@@ -40,7 +40,8 @@ export function SiteHeader() {
         scrolled ? 'glass' : 'bg-brand-deep'
       )}
     >
-      <div className="mx-auto flex h-16 max-w-[1280px] items-center gap-4 px-4 sm:px-6">
+      {/* Telefonda 56px (avval 64): ekranning doim band qismi kamroq */}
+      <div className="mx-auto flex h-14 max-w-[1280px] items-center gap-4 px-4 sm:px-6 md:h-16">
         <Link href="/" className="flex min-h-11 shrink-0 items-center gap-2.5">
           <Image
             src="/monogram.png"
@@ -48,7 +49,7 @@ export function SiteHeader() {
             width={200}
             height={200}
             priority
-            className="size-9 rounded-lg"
+            className="size-8 rounded-lg md:size-9"
           />
           <span className="text-sm font-semibold tracking-[0.18em] text-ivory">
             FAYZ ATTOR
