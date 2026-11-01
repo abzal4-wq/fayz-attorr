@@ -6,7 +6,6 @@ import { ArrowLeft, ArrowRight, ImagePlus, LoaderCircle, Trash2 } from 'lucide-r
 import {
   ACCEPT_ATTR,
   useCloudinaryUpload,
-  validateImageDimensions,
   validateImageFile,
 } from '@/lib/use-upload'
 import { MAX_PRODUCT_IMAGES } from '@/lib/validation/admin'
@@ -27,6 +26,8 @@ export function ProductImages({ images, onChange, error }) {
   const inputRef = useRef(null)
   const { upload, uploading, progress } = useCloudinaryUpload('atirlar')
   const [uploadError, setUploadError] = useState(null)
+  // Xato emas, ma'lumot: masalan "kichik edi, kattalashtirildi"
+  const [uploadNotice, setUploadNotice] = useState(null)
   const [dragIndex, setDragIndex] = useState(null)
   const [queue, setQueue] = useState({ done: 0, total: 0 })
 
@@ -38,6 +39,7 @@ export function ProductImages({ images, onChange, error }) {
     if (files.length === 0) return
 
     setUploadError(null)
+    setUploadNotice(null)
 
     /*
      * Chegaradan oshganlari YUKLANMAYDI. Avval chegara yo'q edi; endi
@@ -63,25 +65,20 @@ export function ProductImages({ images, onChange, error }) {
     }
 
     /*
-     * O'lcham HAMMA fayl uchun OLDINDAN tekshiriladi. Ketma-ket
-     * yuklashda bitta kichik rasm qolganlarini ham to'xtatib qo'yardi;
-     * fayl nomi esa qaysi biri kichik ekanini aniq ko'rsatadi.
+     * O'lcham endi rad etilmaydi: kichik yoki uzunchoq rasm yuklashdan
+     * oldin avtomatik moslanadi (lib/prepare-image.js). Ko'rinishda
+     * ASL fayl emas, haqiqatda yuklangan tayyor rasm turadi — admin
+     * saytda nima chiqishini darhol ko'radi.
      */
-    for (const file of files) {
-      const tooSmall = await validateImageDimensions(file, 'atirlar')
-      if (tooSmall) {
-        setUploadError(`${file.name}: ${tooSmall}`)
-        return
-      }
-    }
-
     setQueue({ done: 0, total: files.length })
     const uploaded = []
+    const warnings = []
 
     try {
       for (const [index, file] of files.entries()) {
-        const publicId = await upload(file)
-        uploaded.push({ publicId, url: URL.createObjectURL(file), isLocal: true })
+        const { publicId, file: ready, warning } = await upload(file)
+        uploaded.push({ publicId, url: URL.createObjectURL(ready), isLocal: true })
+        if (warning) warnings.push(`${file.name}: ${warning}`)
         setQueue({ done: index + 1, total: files.length })
       }
       onChange([...images, ...uploaded])
@@ -91,6 +88,7 @@ export function ProductImages({ images, onChange, error }) {
       if (uploaded.length > 0) onChange([...images, ...uploaded])
       setUploadError(err.message)
     } finally {
+      if (warnings.length > 0) setUploadNotice(warnings.join(' '))
       setQueue({ done: 0, total: 0 })
     }
   }
@@ -224,11 +222,17 @@ export function ProductImages({ images, onChange, error }) {
       />
 
       <p className="mt-2 text-sm text-muted-foreground">
-        JPG, PNG yoki WEBP. Har biri eng ko'pi 5MB, kamida{' '}
-        {MIN_IMAGE_SIDE.atirlar}×{MIN_IMAGE_SIDE.atirlar}px.
-        Ko'pi bilan {MAX_PRODUCT_IMAGES} ta, bir vaqtda bir nechtasini
-        tanlashingiz mumkin.
+        JPG, PNG yoki WEBP, har biri 25MB gacha. Oq (bir xil rangli) cheti
+        avtomatik kesiladi, rasm kvadratga keltiriladi va kamida{' '}
+        {MIN_IMAGE_SIDE.atirlar}px ga moslanadi. Ko'pi bilan{' '}
+        {MAX_PRODUCT_IMAGES} ta, bir vaqtda bir nechtasini tanlashingiz mumkin.
       </p>
+
+      {uploadNotice ? (
+        <p role="status" className="mt-2 text-sm text-foreground">
+          {uploadNotice}
+        </p>
+      ) : null}
 
       {uploadError || error ? (
         <p role="alert" className="mt-2 text-sm text-danger-deep">

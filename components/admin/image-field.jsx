@@ -29,14 +29,13 @@ export function ImageField({
     if (!file) return
 
     setError(null)
-    const localPreview = URL.createObjectURL(file)
 
     try {
-      const publicId = await upload(file)
-      setPreview(localPreview)
+      // Ko'rinishda haqiqatda yuklangan (kerak bo'lsa moslangan) rasm
+      const { publicId, file: ready } = await upload(file)
+      setPreview(URL.createObjectURL(ready))
       onUploaded(publicId)
     } catch (err) {
-      URL.revokeObjectURL(localPreview)
       setError(err.message)
     }
   }
@@ -108,7 +107,7 @@ export function ImageField({
       </div>
 
       <p className="mt-2 text-sm text-muted-foreground">
-        JPG, PNG yoki WEBP. Eng ko'pi 5MB.
+        JPG, PNG yoki WEBP, 25MB gacha. Kichik logotip avtomatik moslanadi.
       </p>
 
       {error ? (
